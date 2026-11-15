@@ -21,7 +21,7 @@ button.ghost{background:rgba(255,255,255,.1);color:var(--fg)}
 </head><body>
 <div class="ttl"><b>MISTYBOX · NEW BOX</b><span>The Cube</span></div>
 <div class="hint">Drag to rotate · pinch / scroll to zoom</div>
-<div class="skins"><button class="ghost on" data-skin="alu">ALUMINIUM</button><button class="ghost" data-skin="carbon">BLACK CARBON</button><button class="ghost" data-skin="zebra">ZEBRA</button><button class="ghost" data-skin="zebrafur">ZEBRA FUR</button></div>
+<div class="skins"><button class="ghost on" data-skin="alu">ALUMINIUM</button><button class="ghost" data-skin="carbon">BLACK CARBON</button><button class="ghost" data-skin="zebra">ZEBRA</button><button class="ghost" data-skin="zebrafur">ZEBRA FUR</button><button class="ghost" data-skin="hearts">HEARTS</button></div>
 <div class="ui"><button id="lid">OPEN LID</button><button class="ghost" id="spin">AUTO-ROTATE</button></div>
 <script type="module">
 import * as THREE from 'three';
@@ -83,7 +83,16 @@ function furShell(i){
   m.onBeforeCompile = sh => { sh.uniforms.uOff = {value: FUR_LEN * f};
     sh.vertexShader = 'uniform float uOff;\n' + sh.vertexShader.replace('#include <begin_vertex>', '#include <begin_vertex>\n  transformed += normal * uOff; transformed.y -= uOff * uOff * 40.0;') };
   return m }
-function makeMat(name){
+const HEARTS = {
+  HeartsPanel: src => new THREE.MeshPhysicalMaterial({map: src && src.map, color: 0xd8d8d8, roughness: .35, metalness: 0, clearcoat: .6, clearcoatRoughness: .1}),
+  HeartRed: () => new THREE.MeshPhysicalMaterial({color: 0x8a0410, roughness: .12, metalness: 0, clearcoat: 1, clearcoatRoughness: .02}),
+  HeartSilver: () => new THREE.MeshStandardMaterial({color: 0xeceef2, metalness: 1, roughness: .12}),
+  ChromeRail: () => new THREE.MeshStandardMaterial({color: 0xe6e8ec, metalness: 1, roughness: .18, roughnessMap: brush}),
+  ChromeBlock: () => new THREE.MeshStandardMaterial({color: 0xe2e4e8, metalness: 1, roughness: .2}),
+  HingeChrome: () => new THREE.MeshStandardMaterial({color: 0xd8dadf, metalness: 1, roughness: .14}),
+  RedVelvet: () => new THREE.MeshPhysicalMaterial({color: 0x3a0308, roughness: .95, metalness: 0, sheen: 1, sheenColor: 0xa01020, sheenRoughness: .6})};
+function makeMat(name, src){
+  if(curSkin === 'hearts' && HEARTS[name]) return HEARTS[name](src);
   if(curSkin === 'zebrafur' && name === 'CarbonPanel') return new THREE.MeshStandardMaterial({map: zebraTex, color: 0x8a8a8a, roughness: .95, metalness: 0});
   if((curSkin === 'zebra' || curSkin === 'zebrafur') && ZEBRA[name]) return ZEBRA[name](); if(name === 'CarbonPanel') return new THREE.MeshPhysicalMaterial({map: carbonTex, metalness: .1, roughness: .4, clearcoat: .8, clearcoatRoughness: .12});
   const L = LOOK[name]; return L ? new THREE.MeshStandardMaterial({...L, roughnessMap: /Alu/.test(name) ? brush : null}) : null }
@@ -93,19 +102,19 @@ const cache = {};
 const gltfs = {};
 function loadSkin(skin){
   curSkin = skin;
-  const url = skin === 'alu' ? 'assets/3d/cube.glb' : 'assets/3d/cube_carbon.glb';   // zebra shares the carbon model (same UVs), new materials
+  const url = skin === 'alu' ? 'assets/3d/cube.glb' : skin === 'hearts' ? 'assets/3d/cube_hearts.glb' : 'assets/3d/cube_carbon.glb';   // zebra shares the carbon model (same UVs), new materials
   (gltfs[url] = gltfs[url] || new Promise(res => new GLTFLoader().load(url, g => res(g.scene)))).then(src => {
     if(curSkin !== skin) return;
     const root = src.clone(true);
     const furry = [];
     root.traverse(o => { if(!o.isMesh) return; o.castShadow = true; o.receiveShadow = true; const nm = o.material.name;
       if(skin === 'zebrafur' && nm === 'CarbonPanel') furry.push(o);
-      const m = makeMat(nm); if(m) o.material = m });
+      const m = makeMat(nm, o.material); if(m) o.material = m });
     furry.forEach(o => { for(let i = 0; i < FUR_N; i++){ const sh = new THREE.Mesh(o.geometry, furShell(i)); sh.castShadow = false; sh.renderOrder = 1; o.add(sh) } });
     const ang = hinge ? hinge.rotation.x : 0;
     if(model) S.remove(model); model = root; hinge = root.getObjectByName('LidHinge'); if(hinge) hinge.rotation.x = ang; S.add(root) });
   document.querySelectorAll('.skins button').forEach(b => b.classList.toggle('on', b.dataset.skin === skin));
-  S.environmentIntensity = skin === 'carbon' ? .45 : .9;
+  S.environmentIntensity = skin === 'carbon' ? .45 : skin === 'hearts' ? .6 : .9;
 }
 document.querySelectorAll('.skins button').forEach(b => b.onclick = () => loadSkin(b.dataset.skin));
 loadSkin(new URLSearchParams(location.search).get('skin') || 'alu');
