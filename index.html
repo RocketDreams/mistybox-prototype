@@ -983,11 +983,11 @@ function paintBg(){
   g.beginPath();g.moveTo(T[0][0],T[0][1]);for(const q of T)g.lineTo(q[0],q[1]);g.lineWidth=Math.max(.6,.8*U);g.strokeStyle=gr;g.globalAlpha=.6;g.stroke();g.globalAlpha=1};
  const F=FB;
  // upper pair, sweeping up to the right
- swoosh(-30*U,F*.34,330*U,F*.08,120*U,F*.36,30*U,.16);
- swoosh(70*U,F*.40,430*U,F*.15,230*U,F*.42,18*U,.11);
+ swoosh(-30*U,F*.34,330*U,F*.08,120*U,F*.36,40*U,.32);
+ swoosh(70*U,F*.40,430*U,F*.15,230*U,F*.42,24*U,.24);
  // lower pair under the box
- swoosh(-40*U,F*1.0,320*U,F*.70,110*U,F*1.0,34*U,.17);
- swoosh(110*U,F*1.02,440*U,F*.77,270*U,F*1.0,20*U,.12);
+ swoosh(-40*U,F*1.0,320*U,F*.70,110*U,F*1.0,44*U,.34);
+ swoosh(110*U,F*1.02,440*U,F*.77,270*U,F*1.0,26*U,.26);
  // soft edge: nothing below the fire area (title / BUY stay on plain dark)
  g.globalCompositeOperation='destination-out';const cut=g.createLinearGradient(0,FB-34*U,0,FB+6*U);cut.addColorStop(0,'rgba(0,0,0,0)');cut.addColorStop(1,'rgba(0,0,0,1)');g.fillStyle=cut;g.fillRect(0,FB-34*U,W,H);
  g.filter='none';g.globalCompositeOperation='source-over';g.shadowBlur=0;startEmbers()}
