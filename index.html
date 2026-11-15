@@ -563,6 +563,28 @@ canvas.glowl{-webkit-mask-image:radial-gradient(closest-side,#000 62%,transparen
  background:radial-gradient(130% 120% at 50% 0%,#ffffff 0%,#eef1f5 48%,#bcc4cf 100%)!important;
  box-shadow:0 0 calc(9px*var(--u)) rgba(255,255,255,.5),inset 0 calc(-3px*var(--u)) calc(6px*var(--u)) rgba(110,120,140,.4)!important}
 .cats button.on img{filter:brightness(0) saturate(0)!important;opacity:.88}
+
+/* responsive pass: full width on every phone (iPhone 17 Pro, Pro Max, SE...), top & bottom pinned, flexible box area */
+.bg{background:url(assets/mk/bg_top.jpg) 0 var(--st,0px)/100% auto no-repeat,url(assets/mk/bg_bot.jpg) 0 100%/100% auto no-repeat,#02040b!important}
+.top{height:calc(146px*var(--u) + var(--st,0px))!important}
+.burger{top:calc(51px*var(--u) + var(--st,0px))!important}.mklogo,.top .hd img.mklogo{top:calc(44.3px*var(--u) + var(--st,0px))!important}.wallet{top:calc(43.8px*var(--u) + var(--st,0px))!important}.cats{top:calc(86.7px*var(--u) + var(--st,0px))!important}
+.views{padding-top:calc(146px*var(--u) + var(--st,0px))!important}
+#v-boxes{margin-top:calc(-1*calc(146px*var(--u) + var(--st,0px)))!important;min-height:calc(852px*var(--u) - var(--dy,0px) + var(--st,0px))!important}
+#giftBtn + .sec{margin-top:calc(852px*var(--u) - var(--dy,0px) + var(--st,0px))!important}
+.hero{top:calc(116px*var(--u) + var(--st,0px))!important;height:calc(322px*var(--u) - var(--dyh,0px))!important}
+#hero3d,#hero3dg{height:calc(322px*var(--u) - var(--dyh,0px))!important}
+.arrow{top:calc(50% - calc(16.85px*var(--u)))!important}
+.inside4{top:calc(405px*var(--u) - var(--dyh,0px) + var(--st,0px))!important}
+.gline{display:block!important;position:absolute;left:calc(10px*var(--u));right:calc(10px*var(--u));margin:0!important;height:calc(2px*var(--u));
+ background:linear-gradient(90deg,transparent,#1f62ff 16%,#7fc0ff 42%,#ffffff 50%,#7fc0ff 58%,#1f62ff 84%,transparent)!important;
+ box-shadow:0 0 calc(6px*var(--u)) rgba(90,170,255,.9),0 0 calc(14px*var(--u)) rgba(60,140,255,.6)!important}
+.gline::after{content:"";position:absolute;left:50%;top:50%;width:calc(70px*var(--u));height:calc(10px*var(--u));transform:translate(-50%,-50%);background:radial-gradient(closest-side,rgba(255,255,255,.95),rgba(140,200,255,.5) 45%,transparent);filter:blur(calc(1px*var(--u)))}
+.inside4 + .gline{top:calc(498.5px*var(--u) - var(--dy,0px) + var(--st,0px))!important}
+.vals + .gline{top:calc(608.5px*var(--u) - var(--dy,0px) + var(--st,0px))!important}
+.t{top:calc(510px*var(--u) - var(--dy,0px) + var(--st,0px))!important}.vals{top:calc(562px*var(--u) - var(--dy,0px) + var(--st,0px))!important}#buy.cta{top:calc(638px*var(--u) - var(--dy,0px) + var(--st,0px))!important}.gift{top:calc(693px*var(--u) - var(--dy,0px) + var(--st,0px))!important}
+.nav{top:calc(743.6px*var(--u) - var(--dy,0px) + var(--st,0px))!important}
+
+.t h1{white-space:nowrap!important;display:inline-block}   /* one line always; fitTitle() shrinks long names */
 </style></head>
 <body>
 <div class="stage-glow" id="sg"></div>
@@ -842,12 +864,18 @@ const item=id=>ALL.find(i=>i.id===id);
 
 /* ---------- theme + waves ---------- */
 const scr=$('#scr');
-function fitHero(){const w=scr.clientWidth,h=scr.clientHeight,u=Math.min(w/393,h/852);scr.style.setProperty('--u',u);scr.style.setProperty('--ox',((w-393*u)/2)+'px');document.documentElement.style.setProperty('--hh',(322*u)+'px');dispatchEvent(new Event('resize'));return;
-const de=document.documentElement,ins=$('#inside4'),buy=$('#giftBtn')||$('#buy'),nav=$('#nav'),vw=$('#views');if(!buy||!nav)return;const st=vw.scrollTop;vw.scrollTop=0;
- const set=h=>de.style.setProperty('--hh',h+'px');ins.style.display='';set(300);
- let over=buy.getBoundingClientRect().bottom-(nav.getBoundingClientRect().top-8);let H=300-Math.max(0,over);
- if(H<185){ins.style.display='none';set(300);over=buy.getBoundingClientRect().bottom-(nav.getBoundingClientRect().top-8);H=300-Math.max(0,over)}
- set(Math.max(150,Math.min(300,H)));vw.scrollTop=st;dispatchEvent(new Event('resize'))}
+function fitHero(){   // responsive: full width, header pinned top, BUY/gift/menu pinned bottom, the box area absorbs the difference
+ const w=scr.clientWidth,h=scr.clientHeight,u=w/393;
+ let pr=document.getElementById('saProbe');if(!pr){pr=document.createElement('div');pr.id='saProbe';pr.style.cssText='position:absolute;visibility:hidden;pointer-events:none;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)';scr.appendChild(pr)}
+ const cs=getComputedStyle(pr),st=parseFloat(cs.paddingTop)||0,sb=Math.max(0,(parseFloat(cs.paddingBottom)||0)-10);
+ const dy=852*u-(h-st-sb);let dyh=dy,hide=false;
+ if(dy>110*u){hide=true;dyh=dy-80*u}
+ dyh=Math.max(-120*u,Math.min(dyh,172*u));
+ const S=(k,v)=>scr.style.setProperty(k,v);S('--u',u);S('--ox','0px');S('--st',st+'px');S('--dy',dy+'px');S('--dyh',dyh+'px');
+ document.documentElement.style.setProperty('--hh',(322*u-dyh)+'px');
+ const insEl=document.getElementById('inside4');if(insEl)insEl.style.visibility=hide?'hidden':'';
+ dispatchEvent(new Event('resize'));if(typeof fitTitle==='function')fitTitle();return;}
+if(document.fonts)document.fonts.ready.then(()=>typeof fitTitle==='function'&&fitTitle());
 let fitT;addEventListener('resize',e=>{if(e.isTrusted){clearTimeout(fitT);fitT=setTimeout(fitHero,80)}});setTimeout(fitHero,0);
 const DESIGN={w1:'#1a5cff',w2:'#38b2ff',accent:'#8fcaff',glow:'rgba(60,140,255,.45)',c1:'#ffffff',c2:'#e3e7ee',c3:'#a3acba',ctat:'#0a1022',cglow:'rgba(90,170,255,.85)'};
 function theme(b){for(const k of ['w1','w2','accent','glow','c1','c2','c3','ctat','cglow'])scr.style.setProperty('--'+k,DESIGN[k]);$('#sg').style.setProperty('--w1',DESIGN.w1);}
@@ -973,8 +1001,11 @@ const slides=BOXES.map((b,i)=>{const sl=document.createElement('div');sl.classNa
  sl.innerHTML=`<div class="bob"><div class="tilt">${LBOX(b)}</div></div>`;track.appendChild(sl);
  const d=document.createElement('i');d.onclick=()=>go(i);dots.appendChild(d);return sl;});
 let cur=0;
-const TITLE=b=>b.tier.toUpperCase()+(/box$/i.test(b.tier)?'':' BOX');
-function paintBox(){const b=BOXES[cur];$('#name').textContent=TITLE(b);
+const SHORT={hearts:'Hearts',hoops:'Hoops',alu:'Aluminium',santa:'Santa',xmas:'Christmas',nye:'New Year',valentine:'Valentine',patrick:'Lucky',eggs:'Easter',kings:'Kings',game:'Big Game'};
+const TITLE=b=>(SHORT[b.key]||b.tier).toUpperCase();   // short names, no 'BOX'
+function fitTitle(){const h=$('#name');if(!h)return;h.style.fontSize='';const max=h.parentElement.clientWidth*.9;let fs=parseFloat(getComputedStyle(h).fontSize);
+ for(let i=0;i<20&&h.scrollWidth>max&&fs>14;i++){fs*=.94;h.style.setProperty('font-size',fs+'px','important')}}
+function paintBox(){const b=BOXES[cur];$('#name').textContent=TITLE(b);fitTitle();
  {const seen=new Set(),top=[...b.items].sort((x,y)=>y.price-x.price).filter(i=>!seen.has(i.brand)&&seen.add(i.brand)).slice(0,4);
   $('#inside4').innerHTML='<div class="lab">WHAT’S<br>INSIDE?</div>'+top.map(i=>`<button class="it" data-w="${i.id}" data-b="${cur}"><img src="${i.img}" alt=""><span>${esc(i.brand)}</span><b>${money(i.price)}</b></button>`).join('')}$('#minV').textContent=money(b.min);$('#maxV').textContent=money(b.max);$('#buyT').textContent='BUY FOR '+money(b.price);
  $('#insideTop').innerHTML=b.items.filter(i=>i.tier==='grail').slice(0,2).concat(b.items.filter(i=>i.tier==='legendary').slice(0,1)).map(rowHTML).join('');
@@ -984,7 +1015,7 @@ function go(n,dir){n=(n+BOXES.length)%BOXES.length;if(n===cur)return;dir=dir||(n
  const old=slides[cur],nw=slides[n];nw.className='slide '+(dir>0?'enter-r':'enter-l');nw.offsetWidth;
  old.className='slide '+(dir>0?'out-l':'out-r');nw.className='slide cur burst';setTimeout(()=>nw.classList.remove('burst'),950);
  hero.classList.remove('flash');void hero.offsetWidth;hero.classList.add('flash');
- $('#name').classList.add('sw');setTimeout(()=>{$('#name').textContent=TITLE(BOXES[n]);$('#name').classList.remove('sw')},220);
+ $('#name').classList.add('sw');setTimeout(()=>{$('#name').textContent=TITLE(BOXES[n]);fitTitle();$('#name').classList.remove('sw')},220);
  [...dots.children].forEach((d,i)=>d.classList.toggle('on',i===n));cur=n;theme(BOXES[n]);paintBox();SFX.sw();try{navigator.vibrate&&navigator.vibrate(12)}catch(e){}}
 $('#prev').onclick=()=>go(cur-1,-1);$('#next').onclick=()=>go(cur+1,1);
 addEventListener('keydown',e=>{if($('#sheet').classList.contains('on')||$('#reveal').classList.contains('on')){if(e.key==='Escape')closeSheet();return}
