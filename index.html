@@ -2,7 +2,7 @@
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>MistyBox App Prototype</title>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;0,800;1,700;1,800;1,900&display=swap" rel="stylesheet">
 <style>
 @property --w1{syntax:'<color>';inherits:true;initial-value:#ff9ad5}
 @property --w2{syntax:'<color>';inherits:true;initial-value:#9be8cf}
@@ -355,17 +355,94 @@ canvas.glowl{-webkit-mask-image:radial-gradient(closest-side,#000 62%,transparen
 .cta.sm::before{clip-path:polygon(10px 0,calc(100% - 10px) 0,100% 10px,100% calc(100% - 10px),calc(100% - 10px) 100%,10px 100%,0 calc(100% - 10px),0 10px)}
 .odds,.pill,.chip,.btn,.seg button,.amts button,.wallet,.snd,.code{clip-path:polygon(8px 0,calc(100% - 8px) 0,100% 8px,100% calc(100% - 8px),calc(100% - 8px) 100%,8px 100%,0 calc(100% - 8px),0 8px)}
 .arrow,.sheet .x,.pick .pk-x,.wallet .plus{clip-path:polygon(30% 0,70% 0,100% 30%,100% 70%,70% 100%,30% 100%,0 70%,0 30%)}
+
+/* ================= redesign (Nov 2026 mockup): deep navy, electric-blue light, chrome type ================= */
+.screen{background:#020611}
+.bg{background:radial-gradient(120% 60% at 50% 32%,#0d2c72 0%,#061536 38%,#020713 72%)}
+.bg canvas{opacity:.55}
+.bg .sk{position:absolute;border-radius:50%;border:2px solid transparent;border-top-color:#4fb0ff;filter:drop-shadow(0 0 6px #2f86ff) drop-shadow(0 0 18px #1c5cff);opacity:.75;pointer-events:none}
+.bg .s1{width:560px;height:240px;left:-260px;top:300px;transform:rotate(-18deg)}
+.bg .s2{width:520px;height:260px;right:-250px;top:380px;transform:rotate(196deg)}
+.bg .s3{width:640px;height:260px;left:-120px;bottom:-120px;transform:rotate(-6deg);opacity:.55}
+.bg .s4{width:420px;height:200px;right:-160px;top:40px;transform:rotate(168deg);opacity:.5}
+.stage-glow{background:radial-gradient(40% 50% at 50% 45%,rgba(40,110,255,.22),transparent 70%)}
+.top{background:linear-gradient(180deg,rgba(2,6,17,.92) 70%,rgba(2,6,17,0))}
+.hl{display:flex;align-items:center;gap:12px}
+.burger{width:26px;height:20px;display:flex;flex-direction:column;justify-content:space-between}
+.burger i{display:block;height:2.4px;border-radius:2px;background:#fff}
+.logo{display:block;width:132px;height:22px;background:linear-gradient(180deg,#ffffff 0%,#e8ecf2 38%,#7f8999 52%,#f4f6fa 78%,#c7ced9 100%);
+ -webkit-mask:url(assets/logo-white.png) left center/contain no-repeat;mask:url(assets/logo-white.png) left center/contain no-repeat;filter:drop-shadow(0 0 6px rgba(80,160,255,.45))}
+.wallet{background:rgba(6,14,34,.75);border:1.5px solid rgba(140,190,255,.55);box-shadow:0 0 16px rgba(60,140,255,.35) inset;height:40px;font-size:16px;font-weight:600}
+.wallet .plus{width:32px;height:32px;background:linear-gradient(180deg,#fff,#cfd6e2);color:#0a1022}
+.ticker{display:none}
+.cats{margin:12px 0 0;display:flex;align-items:stretch;height:58px;padding:4px;background:rgba(6,14,34,.6);border:1.5px solid rgba(120,175,255,.5);
+ box-shadow:0 0 18px rgba(50,130,255,.35),inset 0 0 12px rgba(50,130,255,.18);clip-path:polygon(14px 0,calc(100% - 14px) 0,100% 14px,100% calc(100% - 14px),calc(100% - 14px) 100%,14px 100%,0 calc(100% - 14px),0 14px)}
+.cats button{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:10.5px;font-weight:500;color:#fff;position:relative}
+.cats button+button:before{content:"";position:absolute;left:0;top:12px;bottom:12px;width:1px;background:rgba(255,255,255,.18)}
+.cats svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.cats button.on{color:#0a1022;background:linear-gradient(180deg,#ffffff,#cdd4df);box-shadow:0 0 14px rgba(255,255,255,.4);
+ clip-path:polygon(10px 0,calc(100% - 10px) 0,100% 10px,100% calc(100% - 10px),calc(100% - 10px) 100%,10px 100%,0 calc(100% - 10px),0 10px)}
+.cats button.on:before,.cats button.on+button:before{display:none}
+.views{padding-top:142px}
+.arrow{background:rgba(4,10,26,.55);border:1.5px solid rgba(170,205,255,.75);box-shadow:0 0 12px rgba(60,140,255,.4)}
+.inside4{display:flex;align-items:center;margin:4px 14px 0;padding:6px 0}
+.inside4 .lab{flex:none;width:74px;font-size:12px;font-weight:700;line-height:1.25;letter-spacing:.4px;padding-right:8px;border-right:1px solid rgba(255,255,255,.25)}
+.inside4 .it{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:9.5px;position:relative}
+.inside4 .it+.it:before{content:"";position:absolute;left:0;top:10px;bottom:10px;width:1px;background:rgba(255,255,255,.2)}
+.inside4 .it img{width:44px;height:44px;object-fit:contain;filter:drop-shadow(0 4px 8px rgba(0,0,0,.6))}
+.inside4 .it span{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:0 2px}
+.inside4 .it b{font-weight:600;font-size:10.5px}
+.gline{height:1.5px;margin:8px 22px 0;background:linear-gradient(90deg,transparent,#2f7dff 25%,#cfe6ff 50%,#2f7dff 75%,transparent);box-shadow:0 0 10px rgba(80,160,255,.8)}
+.t{margin-top:8px}
+.t .tier{color:rgba(190,215,255,.85);font-size:9.5px;letter-spacing:3px}
+.t h1{font-size:40px;font-weight:900;font-style:italic;letter-spacing:-.5px;line-height:1.05;margin-top:2px;
+ background:linear-gradient(180deg,#ffffff 0%,#eef1f6 34%,#8790a0 50%,#ffffff 74%,#c2c9d4 100%);-webkit-background-clip:text;background-clip:text;color:transparent;
+ filter:drop-shadow(0 2px 0 rgba(0,0,0,.55)) drop-shadow(0 0 16px rgba(80,160,255,.35))}
+.vals small{color:rgba(255,255,255,.75);font-size:10px;letter-spacing:1.6px}
+.vals b{font-size:21px;font-weight:700}
+.vals .sl{background:rgba(255,255,255,.6);transform:none;width:1px;height:34px}
+.odds{background:rgba(6,14,34,.6);border:1.5px solid rgba(140,190,255,.6);color:#fff;height:32px;padding:0 16px;font-size:11px;box-shadow:0 0 12px rgba(60,140,255,.3)}
+.odds svg{color:#fff}
+.cta{height:56px;font-size:21px;font-weight:800;font-style:italic;letter-spacing:.2px;filter:drop-shadow(0 0 14px rgba(90,170,255,.85)) drop-shadow(0 0 4px rgba(255,255,255,.6))!important}
+.gift{color:#fff;font-size:12.5px;letter-spacing:2px}
+.nav{background:rgba(4,10,26,.82);border:1.5px solid rgba(120,175,255,.45);box-shadow:0 0 18px rgba(50,130,255,.3),inset 0 0 14px rgba(50,130,255,.15)}
+.nav button{color:#fff}
+.nav button.on{color:#fff}
+.nav button.on:after{background:#fff;box-shadow:0 0 8px #8fcaff;width:44px}
+.hero .glow{background:radial-gradient(closest-side,rgba(70,140,255,.45),transparent)}
+
+.screen{overflow:clip}   /* the phone frame never scrolls (a focused control could otherwise shift the overlays) */
+/* faithful to the mockup: rounded pill controls on the box screen */
+.wallet,.wallet .plus,.odds,.arrow,.cats,.cats button.on,.nav{clip-path:none!important}
+.wallet{border-radius:22px!important}.wallet .plus{border-radius:50%!important}
+.odds{border-radius:18px!important;height:38px;padding:0 20px;font-size:12px}
+.arrow{border-radius:50%!important;width:44px;height:44px}
+.cats{border-radius:32px;height:62px;padding:5px}
+.cats button.on{border-radius:28px}
+.nav{border-radius:24px}
+#buy.cta,#buy.cta::before,.pick .pk-go.cta,.pick .pk-go.cta::before{clip-path:none!important;border-radius:30px!important}
+#buy.cta{height:58px;margin-top:14px}
+#buy.cta::before{box-shadow:inset 0 2px 0 rgba(255,255,255,.9),inset 0 -4px 10px rgba(120,140,170,.45)}
+.vals{gap:14px}.vals>div{min-width:96px}
+.gift{margin-top:14px}
 </style></head>
 <body>
 <div class="stage-glow" id="sg"></div>
 <button class="snd" id="snd" type="button"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path id="sndw" d="M15.5 8.5a5 5 0 0 1 0 7M19 5a10 10 0 0 1 0 14"/></svg><span id="sndt">Sound on</span></button>
 <div class="phone" id="phone"><div class="screen" id="scr">
- <div class="bg"><canvas id="ct" aria-hidden="true"></canvas></div>
+ <div class="bg"><canvas id="ct" aria-hidden="true"></canvas><i class="sk s1"></i><i class="sk s2"></i><i class="sk s3"></i><i class="sk s4"></i></div>
 
  <div class="top" id="top">
-  <div class="hd"><img src="assets/logo-white.png" alt="MistyBox">
+  <div class="hd"><div class="hl"><button class="burger" id="burger" aria-label="Menu"><i></i><i></i><i></i></button><span class="logo" role="img" aria-label="MistyBox"></span></div>
    <button class="wallet" id="walletBtn" aria-label="Add funds"><span class="dot"></span><span id="bal">$0</span><span class="plus"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span></button></div>
   <div class="ticker"><div class="lbl"><i></i>TOP REVEALS</div><div class="run" id="tick"></div></div>
+  <div class="cats" id="cats">
+   <button data-c="bags"><svg viewBox="0 0 24 24"><path d="M5 8h14l-1 13H6L5 8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg><span>Bags</span></button>
+   <button data-c="cards"><svg viewBox="0 0 24 24"><rect x="3" y="7" width="13" height="10" rx="1.5" transform="rotate(-12 9.5 12)"/><rect x="8" y="7" width="13" height="10" rx="1.5"/></svg><span>Cards</span></button>
+   <button data-c="sneakers"><svg viewBox="0 0 24 24"><path d="M2 16c0-3 2-6 4-6l3 2 4-1 5 3c2 .5 4 1 4 3v1H2v-2z"/><path d="M2 18h20"/></svg><span>Sneakers</span></button>
+   <button data-c="watches" class="on"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="6"/><path d="M12 9v3l2 1M9 6.5 9.5 2h5l.5 4.5M9 17.5 9.5 22h5l.5-4.5"/></svg><span>Watches</span></button>
+   <button data-c="phones"><svg viewBox="0 0 24 24"><rect x="7" y="2.5" width="10" height="19" rx="2"/><path d="M11 18.5h2"/></svg><span>Phones</span></button>
+  </div>
  </div>
 
  <div class="views" id="views">
@@ -375,8 +452,11 @@ canvas.glowl{-webkit-mask-image:radial-gradient(closest-side,#000 62%,transparen
     <button class="arrow l" id="prev" aria-label="Previous box"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
     <button class="arrow r" id="next" aria-label="Next box"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button></div>
    <div class="dots" id="dots"></div>
-   <div class="t"><div class="tier" id="tierLbl">HERITAGE · $50</div><h1 id="name">Easter Drop</h1></div>
-   <div class="vals"><div><small>MIN</small><b id="minV">$20</b></div><span class="sl"></span><div><small>MAX</small><b id="maxV">$1,175</b></div><button class="odds" id="oddsBtn"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 16.8 5.8 21.3l2.4-7.4L2 9.4h7.6z"/></svg>ODDS</button></div>
+   <div class="inside4" id="inside4"></div>
+   <div class="gline"></div>
+   <div class="t"><h1 id="name">HERITAGE BOX</h1></div>
+   <div class="vals"><div><small>MIN VALUE</small><b id="minV">$20</b></div><span class="sl"></span><div><small>MAX VALUE</small><b id="maxV">$1,175</b></div><button class="odds" id="oddsBtn"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 16.8 5.8 21.3l2.4-7.4L2 9.4h7.6z"/></svg>ODDS</button></div>
+   <div class="gline"></div>
    <button class="cta" id="buy"><span id="buyT">BUY FOR $50</span> <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h16M14 6l6 6-6 6"/></svg></button>
    <button class="gift" id="giftBtn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7M7.5 8a2.5 2.5 0 0 1 0-5C10 3 12 8 12 8s2-5 4.5-5a2.5 2.5 0 0 1 0 5"/></svg>SEND AS A GIFT</button>
    <div class="sec"><h2>What’s Inside</h2><button class="link" id="viewAll">VIEW ALL <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button></div>
@@ -463,7 +543,7 @@ const RC={grail:'#ff4d6d',legendary:'#ffb02e',epic:'#b36bff',rare:'#4aa8ff',unco
 const TIERS=['grail','legendary','epic','rare','uncommon','common'];
 const T1={g:'grail',l:'legendary',e:'epic',r:'rare',u:'uncommon',c:'common'};
 const BOXES=[
- {tier:'Heritage',key:'bronze',price:50,min:20,max:1175,skin:'Easter Drop',img:'assets/3d/easter-box.webp',led:'assets/3d/easter-led.png',w:240,w1:'#ff9ad5',w2:'#9be8cf',accent:'#ff9ad5',glow:'rgba(255,140,210,.55)',c1:'#ffb3dc',c2:'#d9b8ff',c3:'#9be8cf',ctat:'#2a1340',cglow:'rgba(255,160,220,.45)',
+ {tier:'Heritage',key:'bronze',price:50,min:20,max:1175,skin:'Red Leather',cube:'redleather',img:'assets/3d/cube_redleather-box.webp',led:'assets/3d/none.png',w:240,w1:'#ff9ad5',w2:'#9be8cf',accent:'#ff9ad5',glow:'rgba(255,140,210,.55)',c1:'#ffb3dc',c2:'#d9b8ff',c3:'#9be8cf',ctat:'#2a1340',cglow:'rgba(255,160,220,.45)',
   odds:{common:[50.56,'$20 – $22'],uncommon:[27.47,'$25 – $60'],rare:[11.45,'$50 – $60'],epic:[6.42,'$62 – $85'],legendary:[3.18,'$89 – $115'],grail:[.92,'$120 – $1,175']},
   items:`g|Tissot|PRX Damascus Steel|1175|tissot-prx-damascus-steel-38mm
 g|Tissot|PRX Carbon (Black/Black)|1150|tissot-prx-carbon-40-5mm-black-black
@@ -483,7 +563,7 @@ u|Timex|Expedition Scout (White)|49|timex-expedition-scout-40mm-white
 c|U.S. Polo Assn.|Chronograph|22|accutime-us-polo-assn-chronograph
 c|KXAITO|LED Military Watch (Black)|21|kxaito-led-outdoor-waterproof-military-watch-black
 c|KXAITO|LED Military Watch (Blue)|21|kxaito-led-outdoor-waterproof-military-watch-blue`},
- {tier:'Icon',key:'silver',price:100,min:40,max:4000,skin:'Halloween Night',img:'assets/3d/halloween-box.webp',led:'assets/3d/halloween-led.png',w:240,w1:'#ff7a12',w2:'#8b3dff',accent:'#ff8a1f',glow:'rgba(255,120,20,.55)',c1:'#ffd08a',c2:'#ff9a3c',c3:'#e2661a',ctat:'#1a0826',cglow:'rgba(255,130,30,.5)',
+ {tier:'Icon',key:'silver',price:100,min:40,max:4000,skin:'Zebra',cube:'zebra',img:'assets/3d/cube_zebra-box.webp',led:'assets/3d/none.png',w:240,w1:'#ff7a12',w2:'#8b3dff',accent:'#ff8a1f',glow:'rgba(255,120,20,.55)',c1:'#ffd08a',c2:'#ff9a3c',c3:'#e2661a',ctat:'#1a0826',cglow:'rgba(255,130,30,.5)',
   odds:{common:[45.47,'$40 – $44'],uncommon:[29.65,'$45 – $95'],rare:[12.37,'$100 – $120'],epic:[6.92,'$125 – $158'],legendary:[3.46,'$160 – $180'],grail:[2.13,'$195 – $4K']},
   items:`g|Cartier|Tank (Metal)|4000|cartier-tank-metal
 g|Cartier|Tank (Leather)|3750|cartier-tank-leather
@@ -503,7 +583,7 @@ u|Swatch|Polawhite|90|swatch-polawhite
 c|ToyWatch|Black Velvet|44|toy-watch-black-velvet
 c|Casio|AEQ100W-1AV|43|casio-aeq100w1av
 c|Cillso|Smart Watch (Black)|40|cillso-smart-watch-black`},
- {tier:'Masterpiece',key:'ruby',price:250,min:100,max:15000,skin:'The Agent',img:'assets/3d/agent-box.webp',led:'assets/3d/agent-led.png',w:240,w1:'#d81b1b',w2:'#ff4a4a',accent:'#ff2b2b',glow:'rgba(255,255,255,.10)',c1:'#ffffff',c2:'#e4e4e4',c3:'#a9a9a9',ctat:'#111111',cglow:'rgba(255,255,255,.28)',
+ {tier:'Masterpiece',key:'ruby',price:250,min:100,max:15000,skin:'Black Carbon',cube:'carbon',img:'assets/3d/cube_carbon-box.webp',led:'assets/3d/none.png',w:240,w1:'#d81b1b',w2:'#ff4a4a',accent:'#ff2b2b',glow:'rgba(255,255,255,.10)',c1:'#ffffff',c2:'#e4e4e4',c3:'#a9a9a9',ctat:'#111111',cglow:'rgba(255,255,255,.28)',
   odds:{common:[48.51,'$100 – $120'],uncommon:[28.6,'$125 – $249'],rare:[11.92,'$250 – $295'],epic:[6.67,'$300 – $400'],legendary:[3.35,'$419 – $525'],grail:[.95,'$550 – $15K']},
   items:`g|Rolex|Datejust (Mother of Pearl)|15000|rolex-datejust-mother-of-pearl
 g|Omega|Speedmaster (Black/Black)|14400|omega-speedmaster-black-black
@@ -523,7 +603,7 @@ u|Invicta|Pro Diver White Dial|249|invicta-pro-diver-white-dial
 c|Fossil|Minimalist Slim (Light Brown)|120|fossil-minimalist-slim-threehand-light-brown-leather-watch
 c|Fossil|Minimalist Three-Hand (Beige)|120|fossil-minimalist-threehand-brown-leather-watch-beige
 c|Casio|GA100-1A4|120|casio-ga1001a4`},
- {tier:'Legacy',key:'gold',price:500,min:200,max:39500,skin:'Solar Drop',img:'assets/3d/solar-box.webp',led:'assets/3d/solar-led.png',w:240,w1:'#ff7a1a',w2:'#ffc02e',accent:'#ff5a1f',glow:'rgba(255,106,20,.55)',c1:'#ffe2a3',c2:'#ffbf55',c3:'#f39a2c',ctat:'#1c0f04',cglow:'rgba(255,150,40,.55)',
+ {tier:'Legacy',key:'gold',price:500,min:200,max:39500,skin:'Black Leather',cube:'leather',img:'assets/3d/cube_leather-box.webp',led:'assets/3d/none.png',w:240,w1:'#ff7a1a',w2:'#ffc02e',accent:'#ff5a1f',glow:'rgba(255,106,20,.55)',c1:'#ffe2a3',c2:'#ffbf55',c3:'#f39a2c',ctat:'#1c0f04',cglow:'rgba(255,150,40,.55)',
   odds:{common:[57.12,'$200 – $272'],uncommon:[23.82,'$280 – $475'],rare:[9.92,'$500 – $595'],epic:[5.56,'$620 – $850'],legendary:[2.79,'$895 – $1.5K'],grail:[.79,'$1.6K – $39.5K']},
   items:`g|Rolex|GMT-Master II (Pepsi)|39500|rolex-gmt-master-ii-pepsi
 g|Vacheron Constantin|Overseas Chronograph|38399|vacheron-constantin-overseas-chronograph
@@ -543,7 +623,7 @@ u|Swatch|Mission to the Moonphase|450|mission-to-the-moonphase-full-moon
 c|Skagen|Holst Chronograph|272|skagen-holst-chronograph-charcoal
 c|Seiko|SUR525|265|seiko-sur525
 c|Seiko|SSB429|265|seiko-ssb429`},
- {tier:'The Crown',key:'icy',price:1000,min:309,max:121500,skin:'The Crown',img:'assets/3d/crown-box.webp',led:'assets/3d/crown-led.png',w:240,w1:'#8b5cf6',w2:'#3b6bff',accent:'#a78bfa',glow:'rgba(124,58,237,.75)',c1:'#8b5cf6',c2:'#7c3aed',c3:'#5a1fd8',ctat:'#ffffff',cglow:'rgba(124,58,237,.55)',
+ {tier:'The Crown',key:'icy',price:1000,min:309,max:121500,skin:'Zebra Fur',cube:'zebrafur',img:'assets/3d/cube_zebrafur-box.webp',led:'assets/3d/none.png',w:240,w1:'#8b5cf6',w2:'#3b6bff',accent:'#a78bfa',glow:'rgba(124,58,237,.75)',c1:'#8b5cf6',c2:'#7c3aed',c3:'#5a1fd8',ctat:'#ffffff',cglow:'rgba(124,58,237,.55)',
   odds:{common:[51.27,'$309 – $385'],uncommon:[27.06,'$400 – $975'],rare:[11.28,'$1,000 – $1.3K'],epic:[6.33,'$1.5K – $2,175'],legendary:[3.16,'$2.2K – $2,890'],grail:[.9,'$3K – $121.5K']},
   items:`g|Patek Philippe|Nautilus (Blue)|121500|patek-philippe-nautilus-blue
 g|Patek Philippe|Cubitus (Rose Gold/Blue)|116450|patek-philippe-cubitus-rose-gold-blue
@@ -588,6 +668,11 @@ c|Timex|Peanuts x Marlin Americana|359|timex-peanuts-x-timex-marlin-automatic-am
 // Big Game special (eighth): same contents and odds as the $250 Masterpiece box
 (()=>{const r=BOXES.find(b=>b.key==='ruby');BOXES.splice(7,0,{...r,tier:'Game Day Special',key:'game',skin:'Big Game',img:'assets/3d/game-box.webp',led:'assets/3d/game-led.png',w:240,
  w1:'#3c82ff',w2:'#ff2840',accent:'#4f8cff',glow:'rgba(60,130,255,.55)',c1:'#e6f0ff',c2:'#ff3b4e',c3:'#3c82ff',ctat:'#060f2a',cglow:'rgba(255,60,80,.45)'})})();
+BOXES.forEach(b=>{if(b.cube&&!b.img.includes('/cube_'))delete b.cube});   // holiday specials copy a tier's contents, not its cube skin
+// new cube boxes beyond the five tiers (same contents/odds as the tier they price-match)
+[['silver','hearts','Hearts','Hearts Special'],['ruby','hoops','Hoops','Game Day Special'],['gold','alu','Aluminium','Aluminium Special']].forEach(([k,c,skin,tier])=>{
+ const r=BOXES.find(b=>b.key===k&&b.cube);BOXES.push({...r,tier,key:c,cube:c,skin,img:'assets/3d/cube_'+c+'-box.webp',led:'assets/3d/none.png'})});
+BOXES.sort((a,b)=>(b.cube?1:0)-(a.cube?1:0));   // the new cube boxes lead the carousel, holiday specials follow
 BOXES.forEach((b,bi)=>{b.items=b.items.trim().split('\n').map(l=>{const[t,br,md,p,s]=l.split('|');return{tier:T1[t],brand:br,model:md,price:+p,img:'assets/watches/'+s+'.webp',id:s,box:bi}})});
 const ALL=(()=>{const m=new Map();BOXES.forEach(b=>b.items.forEach(i=>{if(!m.has(i.id))m.set(i.id,i)}));return[...m.values()].sort((a,b)=>b.price-a.price)})();
 
@@ -608,9 +693,14 @@ const item=id=>ALL.find(i=>i.id===id);
 
 /* ---------- theme + waves ---------- */
 const scr=$('#scr');
-function fitHero(){const H=Math.max(170,Math.min(262,scr.clientHeight-384));if(document.documentElement.style.getPropertyValue('--hh')!==H+'px'){document.documentElement.style.setProperty('--hh',H+'px');dispatchEvent(new Event('resize'))}}
-addEventListener('resize',fitHero);fitHero();
-function theme(b){for(const k of ['w1','w2','accent','glow','c1','c2','c3','ctat','cglow'])scr.style.setProperty('--'+k,b[k]);$('#sg').style.setProperty('--w1',b.w1);}
+function fitHero(){const de=document.documentElement,ins=$('#inside4'),buy=$('#giftBtn')||$('#buy'),nav=$('#nav'),vw=$('#views');if(!buy||!nav)return;const st=vw.scrollTop;vw.scrollTop=0;
+ const set=h=>de.style.setProperty('--hh',h+'px');ins.style.display='';set(300);
+ let over=buy.getBoundingClientRect().bottom-(nav.getBoundingClientRect().top-8);let H=300-Math.max(0,over);
+ if(H<185){ins.style.display='none';set(300);over=buy.getBoundingClientRect().bottom-(nav.getBoundingClientRect().top-8);H=300-Math.max(0,over)}
+ set(Math.max(150,Math.min(300,H)));vw.scrollTop=st;dispatchEvent(new Event('resize'))}
+let fitT;addEventListener('resize',e=>{if(e.isTrusted){clearTimeout(fitT);fitT=setTimeout(fitHero,80)}});setTimeout(fitHero,0);
+const DESIGN={w1:'#1a5cff',w2:'#38b2ff',accent:'#8fcaff',glow:'rgba(60,140,255,.45)',c1:'#ffffff',c2:'#e3e7ee',c3:'#a3acba',ctat:'#0a1022',cglow:'rgba(90,170,255,.85)'};
+function theme(b){for(const k of ['w1','w2','accent','glow','c1','c2','c3','ctat','cglow'])scr.style.setProperty('--'+k,DESIGN[k]);$('#sg').style.setProperty('--w1',DESIGN.w1);}
 /* animated contour waves: one shared shape, skin colours, always flowing */
 (function(){const cv=$('#ct'),g=cv.getContext('2d'),RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
  let W=0,H=0,dpr=1,c1='#ff9ad5',c2='#9be8cf',fr=0;
@@ -733,7 +823,10 @@ const slides=BOXES.map((b,i)=>{const sl=document.createElement('div');sl.classNa
  sl.innerHTML=`<div class="bob"><div class="tilt">${LBOX(b)}</div></div>`;track.appendChild(sl);
  const d=document.createElement('i');d.onclick=()=>go(i);dots.appendChild(d);return sl;});
 let cur=0;
-function paintBox(){const b=BOXES[cur];$('#tierLbl').textContent=b.tier.toUpperCase()+' · '+money(b.price);$('#minV').textContent=money(b.min);$('#maxV').textContent=money(b.max);$('#buyT').textContent='BUY FOR '+money(b.price);
+const TITLE=b=>b.tier.toUpperCase()+(/box$/i.test(b.tier)?'':' BOX');
+function paintBox(){const b=BOXES[cur];$('#name').textContent=TITLE(b);
+ {const seen=new Set(),top=[...b.items].sort((x,y)=>y.price-x.price).filter(i=>!seen.has(i.brand)&&seen.add(i.brand)).slice(0,4);
+  $('#inside4').innerHTML='<div class="lab">WHAT’S<br>INSIDE?</div>'+top.map(i=>`<button class="it" data-w="${i.id}" data-b="${cur}"><img src="${i.img}" alt=""><span>${esc(i.brand)}</span><b>${money(i.price)}</b></button>`).join('')}$('#minV').textContent=money(b.min);$('#maxV').textContent=money(b.max);$('#buyT').textContent='BUY FOR '+money(b.price);
  $('#insideTop').innerHTML=b.items.filter(i=>i.tier==='grail').slice(0,2).concat(b.items.filter(i=>i.tier==='legendary').slice(0,1)).map(rowHTML).join('');
  $$('.bcard').forEach((c,i)=>c.classList.toggle('cur',i===cur));}
 function rowHTML(i){return `<button class="row" data-w="${i.id}" data-b="${i.box}"><img src="${i.img}" alt="" loading="lazy"><div class="n">${esc(i.brand)} ${esc(i.model)}<br>${rar(i.tier)}</div><div class="p">${money(i.price)}</div></button>`}
@@ -741,7 +834,7 @@ function go(n,dir){n=(n+BOXES.length)%BOXES.length;if(n===cur)return;dir=dir||(n
  const old=slides[cur],nw=slides[n];nw.className='slide '+(dir>0?'enter-r':'enter-l');nw.offsetWidth;
  old.className='slide '+(dir>0?'out-l':'out-r');nw.className='slide cur burst';setTimeout(()=>nw.classList.remove('burst'),950);
  hero.classList.remove('flash');void hero.offsetWidth;hero.classList.add('flash');
- $('#name').classList.add('sw');setTimeout(()=>{$('#name').textContent=BOXES[n].skin;$('#name').classList.remove('sw')},220);
+ $('#name').classList.add('sw');setTimeout(()=>{$('#name').textContent=TITLE(BOXES[n]);$('#name').classList.remove('sw')},220);
  [...dots.children].forEach((d,i)=>d.classList.toggle('on',i===n));cur=n;theme(BOXES[n]);paintBox();SFX.sw();try{navigator.vibrate&&navigator.vibrate(12)}catch(e){}}
 $('#prev').onclick=()=>go(cur-1,-1);$('#next').onclick=()=>go(cur+1,1);
 addEventListener('keydown',e=>{if($('#sheet').classList.contains('on')||$('#reveal').classList.contains('on')){if(e.key==='Escape')closeSheet();return}
@@ -781,6 +874,9 @@ function openInside(bi,filter='all'){const b=BOXES[bi];
   const w=e.target.closest('[data-w]');if(w)openWatch(w.dataset.w,+w.dataset.b)}})}
 function wcHTML(i,extra=''){return `<button class="wc" data-w="${i.id}" data-b="${i.box}">${extra}<div class="wi"><img src="${i.img}" alt="" loading="lazy"></div>${rar(i.tier)}<div class="br">${esc(i.brand)}</div><div class="md">${esc(i.model)}</div><div class="pr">${money(i.price)}</div></button>`}
 $('#viewAll').onclick=()=>openInside(cur);
+$('#inside4').onclick=e=>{const w=e.target.closest('[data-w]');if(w)openWatch(w.dataset.w,+w.dataset.b)};
+$('#cats').onclick=e=>{const c=e.target.closest('[data-c]');if(!c)return;SFX.tap();if(c.dataset.c!=='watches'){toast(c.querySelector('span').textContent+' boxes are coming soon');return}};
+$('#burger').onclick=()=>show('account');
 $('#insideTop').onclick=e=>{const w=e.target.closest('[data-w]');if(w)openWatch(w.dataset.w,+w.dataset.b)};
 
 function openWatch(id,bi){const i=item(id),b=BOXES[bi??i.box];
@@ -871,10 +967,10 @@ function OBOX(b){const G=GEO[b.key==='icy'?'crown':'std'],sm=G.seam,pt=p=>`${p[0
    <polygon class="holeglow" points="${q.map(p=>p.join(',')).join(' ')}" fill="url(#hg${b.key})" opacity=".95"/></svg>
   <div class="lidp">${LBOX(b)}</div></div>`;
  return {html,hx,hy}}
-function openBox(bi){const b=BOXES[bi];S.bal-=b.price;S.pts+=b.price*5;save();paintBal();
+function openBox(bi){const b=BOXES[bi];scr.scrollTop=0;S.bal-=b.price;S.pts+=b.price*5;save();paintBal();
  const win=draw(b);lastWin={id:win.id,box:bi};
  const rv=$('#reveal'),W=scr.clientWidth,H=scr.clientHeight,cx=W/2,boxY=H*.54,ringY=boxY-24,R=Math.min(170,W*.43),O=4;
- const OB=OBOX(b),RA=(window.MB3D&&window.MB3D.anchor)?window.MB3D.anchor():null,BW=Math.min(255,W*.68),BH=BW*(760/900),hX=cx-BW/2+BW*(RA?RA.hx:OB.hx)/100,hY=boxY-BH/2+BH*(RA?RA.hy:OB.hy)/100;
+ const OB=OBOX(b),RA=(window.MB3D&&window.MB3D.anchor)?window.MB3D.anchor(b):null,BW=Math.min(255,W*.68),BH=BW*(760/900),hX=cx-BW/2+BW*(RA?RA.hx:OB.hx)/100,hY=boxY-BH/2+BH*(RA?RA.hy:OB.hy)/100;
  rv.style.setProperty('--rc',b.accent);
  // pick 10 cards: the winner + 9 others from this box
  const others=b.items.filter(i=>i.id!==win.id).sort(()=>Math.random()-.5).slice(0,9);
@@ -1083,7 +1179,7 @@ function fit(){if(innerWidth<=500){$('#phone').style.transform='';return}const s
 addEventListener('resize',fit);fit();
 
 /* boot */
-[...dots.children][0].classList.add('on');theme(BOXES[0]);$('#name').textContent=BOXES[0].skin;paintBox();paintBal();paintSnd();renderSR();renderCol();renderLB();tickReset();
+[...dots.children][0].classList.add('on');theme(BOXES[0]);paintBox();paintBal();paintSnd();renderSR();renderCol();renderLB();tickReset();
 const h=location.hash.slice(1);if(['showroom','collection','leaderboard','account'].includes(h))show(h);
 </script>
 
@@ -1179,7 +1275,72 @@ function glowLayer(baseCanvas){
     dispose(){ RG.dispose(); RG.forceContextLoss(); gc.remove() } } }
 const loader = new GLTFLoader(), cache = {}, models = {};
 function keyOf(b){const m=/3d\/(\w+)-box/.exec(b.img);return m?m[1]:'agent'}
+// ---- the new cube boxes: one model family, skinned per box (materials ported from cube.html) ----
+const CUBE_GLB = {alu: 'cube.glb', carbon: 'cube_carbon.glb', zebra: 'cube_carbon.glb', zebrafur: 'cube_carbon.glb', hearts: 'cube_hearts.glb', hoops: 'cube_hoops.glb', leather: 'cube_leather.glb', redleather: 'cube_leather.glb'};
+const CUBE_SCALE = 1.15, cubeSrc = {}, TL = new THREE.TextureLoader();
+let ROOM = null;   // bright studio reflections for the cube boxes (chrome would read black in the app's dark scene)
+function studioEnv(){   // equirect canvas (works in every renderer: three PMREMs it per context): softboxes on a grey studio
+  const c = document.createElement('canvas'); c.width = 1024; c.height = 512; const g = c.getContext('2d');
+  const sky = g.createLinearGradient(0, 0, 0, 512); sky.addColorStop(0, '#d8dde6'); sky.addColorStop(.45, '#6c7380'); sky.addColorStop(.55, '#3a3f48'); sky.addColorStop(1, '#101215');
+  g.fillStyle = sky; g.fillRect(0, 0, 1024, 512);
+  g.fillStyle = '#ffffff'; for(const [x, y, w, h] of [[120, 150, 150, 110], [430, 120, 220, 70], [760, 160, 120, 140], [0, 0, 1024, 40]]){ g.globalAlpha = .9; g.fillRect(x, y, w, h) }
+  g.globalAlpha = .5; g.fillStyle = '#9fc4ff'; g.fillRect(560, 210, 300, 30); g.globalAlpha = 1;
+  const t = new THREE.CanvasTexture(c); t.mapping = THREE.EquirectangularReflectionMapping; t.colorSpace = THREE.SRGBColorSpace; return t }
+const tex = (f, srgb, rep) => { const t = TL.load('assets/3d/' + f); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.anisotropy = 8; if(srgb) t.colorSpace = THREE.SRGBColorSpace; if(rep) t.repeat.set(rep, rep); return t };
+let CT = null;
+function cubeTex(){ if(CT) return CT;
+  const carbon = (() => { const n = 8, px = 32, c = document.createElement('canvas'); c.width = c.height = n * px; const g = c.getContext('2d');
+    for(let i = 0; i < n; i++) for(let j = 0; j < n; j++){ const horiz = ((i + j) % 4) < 2, x = i * px, y = j * px;
+      const gr = horiz ? g.createLinearGradient(0, y, 0, y + px) : g.createLinearGradient(x, 0, x + px, 0); const hi = horiz ? 44 : 22;
+      gr.addColorStop(0, '#060607'); gr.addColorStop(.5, `rgb(${hi},${hi},${hi + 3})`); gr.addColorStop(1, '#060607'); g.fillStyle = gr; g.fillRect(x, y, px, px) }
+    const t = new THREE.CanvasTexture(c); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(4, 4); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; return t })();
+  const zebra = tex('zebra_fur.jpg', true, 1.45); zebra.center.set(.5, .5); zebra.rotation = -.55;
+  const noise = (() => { const n = 512, c = document.createElement('canvas'); c.width = c.height = n; const g = c.getContext('2d'), d = g.createImageData(n, n);
+    for(let i = 0; i < n * n; i++){ const v = Math.random() * 255 | 0; d.data[4 * i] = d.data[4 * i + 1] = d.data[4 * i + 2] = v; d.data[4 * i + 3] = 255 }
+    g.putImageData(d, 0, 0); const t = new THREE.CanvasTexture(c); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(3, 3); t.magFilter = t.minFilter = THREE.NearestFilter; t.generateMipmaps = false; return t })();
+  return CT = {carbon, zebra, noise, lcol: tex('leather_col.jpg', true), lred: tex('leather_red_col.jpg', true), lrough: tex('leather_rough.jpg'), lnrm: tex('leather_nrm.jpg')} }
+const M_ = (o) => new THREE.MeshStandardMaterial(o), MP = (o) => new THREE.MeshPhysicalMaterial(o);
+const chrome = () => ({ChromeRail: M_({color: 0xe6e8ec, metalness: 1, roughness: .18, roughnessMap: BRUSH}), ChromeBlock: M_({color: 0xe2e4e8, metalness: 1, roughness: .2}),
+  BlackRail: M_({color: 0xe6e8ec, metalness: 1, roughness: .18, roughnessMap: BRUSH}), BlackBlock: M_({color: 0xe2e4e8, metalness: 1, roughness: .2}),
+  HingeDark: M_({color: 0xd8dadf, metalness: 1, roughness: .14}), HingeChrome: M_({color: 0xd8dadf, metalness: 1, roughness: .14}), BoltChrome: M_({color: 0xe8e9ec, metalness: 1, roughness: .08})});
+function cubeMat(skin, name, src){
+  const T = cubeTex();
+  const base = {AluPanel: M_({color: 0xb4b7bd, metalness: 1, roughness: .42, roughnessMap: BRUSH}), AluRail: M_({color: 0xd9dce1, metalness: 1, roughness: .26, roughnessMap: BRUSH}),
+    AluBlock: M_({color: 0xd4d7dc, metalness: 1, roughness: .3}), BoltSteel: M_({color: 0x9a9da3, metalness: 1, roughness: .18}), BoltChrome: M_({color: 0xe8e9ec, metalness: 1, roughness: .08}),
+    InteriorBlack: M_({color: 0x0b0b0d, roughness: .95}), HingeSteel: M_({color: 0xa8abb1, metalness: 1, roughness: .22})};
+  let S_ = {};
+  if(skin === 'carbon') S_ = {CarbonPanel: MP({map: T.carbon, metalness: .1, roughness: .4, clearcoat: .8, clearcoatRoughness: .12}), BlackRail: M_({color: 0x1a1a1d, metalness: 1, roughness: .3}),
+    BlackBlock: M_({color: 0x1c1c20, metalness: 1, roughness: .32}), HingeDark: M_({color: 0x45464a, metalness: 1, roughness: .25})};
+  if(skin === 'zebra') S_ = {...chrome(), CarbonPanel: M_({map: T.zebra, roughness: .95, envMapIntensity: .55})};
+  if(skin === 'zebrafur') S_ = {...chrome(), CarbonPanel: M_({map: T.zebra, color: 0x8a8a8a, roughness: .95})};
+  if(skin === 'hearts') S_ = {...chrome(), HeartsPanel: MP({map: src && src.map, color: 0xd8d8d8, roughness: .35, clearcoat: .6, clearcoatRoughness: .1}),
+    HeartRed: MP({color: 0x8a0410, roughness: .12, clearcoat: 1, clearcoatRoughness: .02}), HeartSilver: M_({color: 0xeceef2, metalness: 1, roughness: .12}),
+    RedVelvet: MP({color: 0x3a0308, roughness: .95, sheen: 1, sheenColor: 0xa01020, sheenRoughness: .6})};
+  if(skin === 'hoops') S_ = {...chrome(), HoopsPanel: MP({map: src && src.map, roughness: .55, clearcoat: .15, clearcoatRoughness: .2}),
+    HoopsBadge: MP({map: src && src.map, roughness: .3, clearcoat: .6, clearcoatRoughness: .08}), HoopsStripes: MP({map: src && src.map, roughness: .3, clearcoat: .5}),
+    RedPost: MP({color: 0xc8101e, metalness: .5, roughness: .22, clearcoat: 1, clearcoatRoughness: .04}), RedVelvet: MP({color: 0x2a0205, roughness: .95, sheen: 1, sheenColor: 0x900a18, sheenRoughness: .6})};
+  if(skin === 'leather' || skin === 'redleather') S_ = {...chrome(), LeatherBlack: MP({map: skin === 'redleather' ? T.lred : T.lcol, roughnessMap: T.lrough, roughness: 1, normalMap: T.lnrm,
+    normalScale: new THREE.Vector2(.55, .55), clearcoat: .12, clearcoatRoughness: .35, envMapIntensity: .6}),
+    StitchThread: M_({color: skin === 'redleather' ? 0xe6d6b0 : 0xa8a8a4, roughness: .8}), BlackSuede: MP({color: 0x050506, roughness: .95, sheen: .6, sheenColor: 0x333336}), LeatherUnder: M_({color: 0x080809, roughness: .8})};
+  return S_[name] || base[name] || null }
+function furShells(o){
+  const T = cubeTex(), N = 18, L = .011;
+  for(let i = 0; i < N; i++){ const f = (i + 1) / N;
+    const m = M_({map: T.zebra, color: new THREE.Color().setScalar(.5 + .55 * f), roughness: .92, alphaMap: T.noise, alphaTest: .15 + .8 * f, envMapIntensity: .5});
+    m.onBeforeCompile = sh => { sh.uniforms.uOff = {value: L * f}; sh.vertexShader = 'uniform float uOff;\n' + sh.vertexShader.replace('#include <begin_vertex>', '#include <begin_vertex>\n  transformed += normal * uOff; transformed.y -= uOff * uOff * 40.0;') };
+    const sh = new THREE.Mesh(o.geometry, m); sh.userData.fur = true; o.add(sh) } }
+function loadCube(skin){
+  const url = 'assets/3d/' + CUBE_GLB[skin];
+  return (cubeSrc[url] = cubeSrc[url] || loader.loadAsync(url)).then(g => {
+    const root = g.scene.clone(true), furry = [];
+    root.traverse(o => { if(!o.isMesh) return; const nm = o.material.name; if(skin === 'zebrafur' && nm === 'CarbonPanel') furry.push(o);
+      const m = cubeMat(skin, nm, o.material); if(m){ ROOM = ROOM || studioEnv(); m.envMap = ROOM; if(m.metalness >= .9) m.envMapIntensity = 1.1; o.material = m } });   // chrome needs bright reflections in the app's dark studio
+    furry.forEach(furShells);
+    root.scale.setScalar(CUBE_SCALE);
+    const box = new THREE.Box3().setFromObject(root); root.position.set(-(box.min.x + box.max.x) / 2, -box.min.y, -(box.min.z + box.max.z) / 2);
+    const holder = new THREE.Group(); holder.add(root); holder.userData.cube = skin; return holder }) }
 function load(k){ if(models[k]) return models[k];
+  if(k.startsWith('cube_')) return models[k] = loadCube(k.slice(5)).catch(e => { delete models[k]; throw e });
   return models[k] = loader.loadAsync('assets/3d/' + k + '.glb').then(g => { const root = g.scene;
     root.traverse(o => { if(o.isMesh && /Front$/.test(o.material.name)){ const geo = o.geometry, p = geo.attributes.position; geo.computeBoundingBox(); const bb = geo.boundingBox, uv = new Float32Array(p.count * 2);
         const sideways = (bb.max.z - bb.min.z) > (bb.max.x - bb.min.x);   // side panels run along z
@@ -1213,7 +1374,7 @@ hero.addEventListener('pointermove', e => { const r = hero.getBoundingClientRect
 hero.addEventListener('pointerleave', () => { tx = ty = 0 });
 async function sync(){ const n = cur; if(n === shown) return; shown = n; const k = keyOf(BOXES[n]);
   const m = await load(k); if(shown !== n) return; pending = m; swapT = 0; swapAt = performance.now();
-  BOXES.forEach(b => load(keyOf(b))); }   // warm the rest in the background
+  BOXES.reduce((p, b) => p.then(() => load(keyOf(b)).catch(() => {})), Promise.resolve()); }   // warm the rest one at a time   // warm the rest in the background
 const clock = new THREE.Clock();
 function frame(){ requestAnimationFrame(frame);
   const visible = typeof curView === 'undefined' || (curView === 'boxes' && !document.querySelector('.rv-on,.pk-on') && !document.hidden);
@@ -1244,8 +1405,8 @@ function frontCam(){
   const Hc = 1000 / OBA; C.setViewOffset(1000, Hc, 0, -.165 * Hc, 1000, Hc); C.updateProjectionMatrix(); C.updateMatrixWorld();
   return C }
 window.MB3D = window.MB3D || {};
-window.MB3D.anchor = () => {   // where the box opening lands, in % of the box image area (what openBox uses for beam/cards)
-  const C = frontCam(), v = new THREE.Vector3(0, 1.12, 0).project(C), fx = v.x * .5 + .5, fy = -v.y * .5 + .5;
+window.MB3D.anchor = (bx) => {   // where the box opening lands, in % of the box image area (what openBox uses for beam/cards)
+  const C = frontCam(), v = new THREE.Vector3(0, bx && bx.cube ? .98 : 1.12, 0).project(C), fx = v.x * .5 + .5, fy = -v.y * .5 + .5;   // cube: its opening sits lower
   return {hx: (fx * 1.3 - .15) * 100, hy: (fy * 1.8 - .7) * 100} };
 const BL = {az: -27, el: 24, d: 7.5, tz: .555, lens: 111.98, fw: 1523, fh: 1206, shx: -.0029, shy: .0006, crop: [100, 52, 1418, 1165], zfix: -.019};
 window.MB3D.reveal = function(boxEl, b){
@@ -1313,7 +1474,7 @@ window.MB3D.picker = function(pk, b, cb){
   fit(); addEventListener('resize', fit);
   const slots = [];
   load(k).then(src => { if(!cv3.isConnected) return;
-    for(let i = 0; i < N; i++){ const piv = new THREE.Group(); piv.rotation.y = i * STEP; const h = src.clone(true); h.position.z = RAD; piv.add(h); ring.add(piv); slots.push(h) } });
+    for(let i = 0; i < N; i++){ const piv = new THREE.Group(); piv.rotation.y = i * STEP; const h = src.clone(true); const fur = []; h.traverse(o => { if(o.userData.fur) fur.push(o) }); fur.forEach(o => o.parent.remove(o)); h.position.z = RAD; piv.add(h); ring.add(piv); slots.push(h) } });
   // spin in from the side, then the user drives
   let rot = -STEP * 3.5, target = 0, vel = 0, drag = false, lx = 0, sx = 0, sy = 0, moved = 0, lastIdx = null, pickAt = 0, lastT = 0;
   const idxOf = r => ((Math.round(-r / STEP) % N) + N) % N;
