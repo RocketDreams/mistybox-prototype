@@ -425,12 +425,54 @@ canvas.glowl{-webkit-mask-image:radial-gradient(closest-side,#000 62%,transparen
 #buy.cta::before{box-shadow:inset 0 2px 0 rgba(255,255,255,.9),inset 0 -4px 10px rgba(120,140,170,.45)}
 .vals{gap:14px}.vals>div{min-width:96px}
 .gift{margin-top:14px}
+
+/* pass 2: closer to the mockup */
+.bg{background:radial-gradient(75% 42% at 50% 40%,#0b1c45 0%,#050c22 48%,#010308 100%)}
+.bg canvas{display:none}
+.bg .wisps{position:absolute;inset:0;width:100%;height:100%}
+.screen{background:#010308}
+.logo{width:150px;height:26px;background:linear-gradient(180deg,#ffffff 0%,#f1f3f7 30%,#5d6675 50%,#d9dee6 64%,#ffffff 100%);filter:drop-shadow(0 1px 0 rgba(0,0,0,.6)) drop-shadow(0 0 8px rgba(120,180,255,.35))}
+.burger{width:28px;height:22px}.burger i{height:3px}
+.wallet{border:1.5px solid rgba(225,235,255,.75)!important;box-shadow:0 0 14px rgba(80,150,255,.55),inset 0 0 10px rgba(80,150,255,.2)!important;background:rgba(2,6,16,.85)!important;height:42px;font-size:17px}
+.wallet .plus{width:34px;height:34px;background:radial-gradient(circle at 40% 30%,#ffffff,#d5dbe5 70%,#aab3c0);box-shadow:0 0 10px rgba(255,255,255,.5)}
+.wallet .plus svg{width:16px;height:16px;stroke-width:3}
+.cats{border:1.5px solid rgba(215,230,255,.8);box-shadow:0 0 16px rgba(70,140,255,.55),inset 0 0 14px rgba(70,140,255,.2);background:rgba(2,6,16,.7);height:66px}
+.cats svg{width:28px;height:28px;stroke-width:1.7}
+.cats button{font-size:11.5px}
+.cats button.on{background:radial-gradient(120% 140% at 50% 0%,#ffffff 0%,#e6eaf0 45%,#b7bfcb 100%);box-shadow:0 0 14px rgba(255,255,255,.45),inset 0 -3px 8px rgba(120,130,150,.4)}
+.arrow{border:1.5px solid rgba(235,242,255,.9)!important;background:rgba(1,4,12,.65)!important;box-shadow:0 0 10px rgba(80,150,255,.35)!important}
+.arrow svg{stroke:#fff}
+.inside4 .lab{font-size:14px;font-weight:700;width:86px;border-right:1px solid rgba(255,255,255,.4)}
+.inside4 .it{font-size:11px}
+.inside4 .it b{font-weight:500;font-size:11px}
+.inside4 .it img{width:48px;height:48px}
+.gline{height:2px;background:linear-gradient(90deg,transparent,#1f62ff 18%,#7fc0ff 42%,#ffffff 50%,#7fc0ff 58%,#1f62ff 82%,transparent);box-shadow:0 0 12px rgba(90,170,255,.9)}
+.t h1{background:linear-gradient(180deg,#ffffff 0%,#f4f6fa 30%,#6b7484 48%,#c9cfd8 62%,#ffffff 100%);-webkit-background-clip:text;background-clip:text}
+.vals small{font-size:10.5px;letter-spacing:.6px;color:#fff;font-weight:500}
+.odds{border:1.5px solid rgba(225,235,255,.75)!important;background:rgba(2,6,16,.7)!important;font-weight:600;letter-spacing:1px}
+.odds svg{width:16px;height:16px}
+.gift{font-weight:600;font-size:13px;letter-spacing:1.6px}.gift svg{width:22px;height:22px}
+.nav{border:1.5px solid rgba(215,230,255,.6)!important;background:rgba(2,6,16,.85)!important;box-shadow:0 0 14px rgba(70,140,255,.35)!important}
+.nav button{font-size:11.5px}
+.navfade{position:absolute;left:0;right:0;bottom:0;height:120px;z-index:5;pointer-events:none;background:linear-gradient(180deg,rgba(1,3,8,0),rgba(1,3,8,.96) 55%)}
+.rv-on .navfade,.pk-on .navfade{display:none}
 </style></head>
 <body>
 <div class="stage-glow" id="sg"></div>
 <button class="snd" id="snd" type="button"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path id="sndw" d="M15.5 8.5a5 5 0 0 1 0 7M19 5a10 10 0 0 1 0 14"/></svg><span id="sndt">Sound on</span></button>
 <div class="phone" id="phone"><div class="screen" id="scr">
- <div class="bg"><canvas id="ct" aria-hidden="true"></canvas><i class="sk s1"></i><i class="sk s2"></i><i class="sk s3"></i><i class="sk s4"></i></div>
+ <div class="bg"><canvas id="ct" aria-hidden="true"></canvas><svg class="wisps" viewBox="0 0 393 852" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+  <defs><filter id="wb" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="5"/></filter><filter id="wc"><feGaussianBlur stdDeviation=".6"/></filter>
+   <linearGradient id="wg" x1="0" x2="1"><stop offset="0" stop-color="#1d6bff" stop-opacity="0"/><stop offset=".35" stop-color="#3d8dff"/><stop offset=".7" stop-color="#5fb6ff"/><stop offset="1" stop-color="#1d6bff" stop-opacity="0"/></linearGradient></defs>
+  <g fill="none" stroke-linecap="round">
+   <g stroke="url(#wg)" stroke-width="11" filter="url(#wb)" opacity=".9">
+    <path d="M232 6 C290 26 340 18 393 -4"/><path d="M-6 330 C60 296 140 276 206 300"/><path d="M-6 392 C50 360 110 350 160 366"/>
+    <path d="M399 440 C340 416 300 440 262 488"/><path d="M399 520 C350 500 312 522 288 566"/><path d="M-6 760 C110 700 270 690 399 728"/><path d="M50 858 C140 808 262 806 340 858"/></g>
+   <g stroke="#cfe8ff" stroke-width="1.6" filter="url(#wc)" opacity=".95">
+    <path d="M240 8 C292 24 338 17 388 -2"/><path d="M0 332 C64 298 140 279 200 300"/><path d="M0 394 C52 363 110 353 156 367"/>
+    <path d="M393 442 C342 419 302 442 266 486"/><path d="M393 522 C352 503 314 524 291 564"/><path d="M0 762 C112 704 270 694 393 730"/><path d="M56 852 C142 810 262 808 334 852"/></g>
+  </g></svg></div>
+ <div class="navfade" aria-hidden="true"></div>
 
  <div class="top" id="top">
   <div class="hd"><div class="hl"><button class="burger" id="burger" aria-label="Menu"><i></i><i></i><i></i></button><span class="logo" role="img" aria-label="MistyBox"></span></div>
