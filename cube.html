@@ -100,7 +100,7 @@ const HOOPS = {
 const tl = new THREE.TextureLoader(), lt = f => { const t = tl.load('assets/3d/' + f); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.anisotropy = 8; return t };
 let LEA = null;
 function leatherMats(){ if(LEA) return LEA; const col = lt('leather_col.jpg'); col.colorSpace = THREE.SRGBColorSpace;
-  LEA = {LeatherBlack: () => new THREE.MeshPhysicalMaterial({map: col, roughnessMap: lt('leather_rough.jpg'), roughness: 1, normalMap: lt('leather_nrm.jpg'), normalScale: new THREE.Vector2(.45, .45),
+  LEA = {LeatherBlack: () => new THREE.MeshPhysicalMaterial({map: col, roughnessMap: lt('leather_rough.jpg'), roughness: 1, normalMap: lt('leather_nrm.jpg'), normalScale: new THREE.Vector2(.55, .55),
            metalness: 0, clearcoat: .12, clearcoatRoughness: .35, envMapIntensity: .6}),
          StitchThread: () => new THREE.MeshStandardMaterial({color: 0xa8a8a4, roughness: .8}),
          BlackSuede: () => new THREE.MeshPhysicalMaterial({color: 0x050506, roughness: .95, sheen: .6, sheenColor: 0x333336}),
