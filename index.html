@@ -653,6 +653,10 @@ html,body{overscroll-behavior:none}
 .bg canvas#ct{animation:flameBreath 3.2s ease-in-out infinite}
 @keyframes flameBreath{50%{filter:brightness(1.12) saturate(1.1)}}
 @media (prefers-reduced-motion:reduce){.bg canvas#ct{animation:none}}
+
+/* safari: arrows always above the 3D canvases */
+.arrow{z-index:12!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;transform:translateZ(0);-webkit-transform:translateZ(0)}
+.arrow:active{transform:translateZ(0) scale(.9)}
 </style></head>
 <body>
 <div class="stage-glow" id="sg"></div>
@@ -1001,7 +1005,7 @@ function fitHero(){   // responsive: full width, header pinned top, BUY/gift/men
  const cs=getComputedStyle(pr),st=(parseFloat(cs.paddingTop)||0)+6,sb=Math.max(0,(parseFloat(cs.paddingBottom)||0)-6);
  const dy=(747*u)-(h-st-sb);   // logo row .. gift line, then the flush bottom bar (62u + safe area)   // layout from logo row to menu (+10px under it); top/bottom reserves come from the real safe areas
  let dyh=dy,hide=false;
- if(dy>40*u){hide=true;dyh=dy-80*u}   // the inside row rises faster than the box shrinks: drop it early on short screens
+ if(dy>200*u){hide=true;dyh=dy-80*u}   // the inside row rises faster than the box shrinks: drop it early on short screens
  dyh=Math.max(-120*u,Math.min(dyh,172*u));
  const S=(k,v)=>scr.style.setProperty(k,v);S('--u',u);S('--U',u+'px');S('--ox','0px');S('--st',st+'px');S('--dy',dy+'px');S('--dyh',dyh+'px');
  document.documentElement.style.setProperty('--hh',(322*u-dyh)+'px');
@@ -1749,7 +1753,8 @@ window.MB3D.reveal = function(boxEl, b){
     const spill = new THREE.PointLight(accent, 0, 3, 1.6); spill.position.set(ctr.x, box3.max.y + .5, ctr.z + .15); S2.add(spill);
     const C2 = frontCam();   // straight-on view of the box (slightly from above so the opening reads)
     const gl2 = glowLayer(cv2);
-    const fit = () => { const w = cv2.clientWidth, h = cv2.clientHeight; if(w && h){ R2.setSize(w, h, false); gl2.size(w, h) } };
+    const fit = () => { const w = cv2.clientWidth, h = cv2.clientHeight; if(w && h){ R2.setSize(w, h, false); gl2.size(w, h);
+      const a = w / h, Hc = 1000 / a; C2.fov = 2 * Math.atan(1.28 / 6.2 / a) * 180 / Math.PI; C2.aspect = a; C2.setViewOffset(1000, Hc, 0, -.165 * Hc, 1000, Hc); C2.updateProjectionMatrix() } };
     fit(); boxEl.classList.add('three');
     const t0 = performance.now(); let openAt = 0;
     const step = now => {
