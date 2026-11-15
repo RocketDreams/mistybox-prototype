@@ -971,18 +971,17 @@ function paintBg(){
  const sr=scr.getBoundingClientRect(),tEl=$('#v-boxes .t'),tb=tEl&&tEl.offsetParent?tEl.getBoundingClientRect().top-sr.top:0;
  const FB=Math.max(H*.4,Math.min(H*.8,tb||H*.62));FIRE_BOT=FB;
  let seed=7;const rnd=()=>(seed=(seed*16807)%2147483647)/2147483647;
- // subtle flame pattern on black: small flame motifs on a staggered grid, tone-on-tone
+ // subtle flame stripes on black: thin wavy ribbons rising like licks of flame, swelling and pinching, over the whole top area
  g.globalCompositeOperation='source-over';
- const flame=(cx,cy,sz,flip)=>{const f=flip?-1:1,x=v=>cx+v*sz*f,y=v=>cy+v*sz;
-  g.beginPath();g.moveTo(x(0),y(.5));
-  g.bezierCurveTo(x(-.42),y(.48),x(-.5),y(.05),x(-.22),y(-.2));g.bezierCurveTo(x(-.2),y(-.02),x(-.08),y(.06),x(-.04),y(.02));
-  g.bezierCurveTo(x(-.16),y(-.22),x(-.02),y(-.4),x(.1),y(-.5));g.bezierCurveTo(x(.06),y(-.3),x(.2),y(-.18),x(.26),y(-.06));
-  g.bezierCurveTo(x(.3),y(-.16),x(.34),y(-.2),x(.36),y(-.26));g.bezierCurveTo(x(.52),y(-.02),x(.46),y(.46),x(0),y(.5));g.closePath();
-  g.fillStyle='rgba(150,30,5,.10)';g.fill();g.lineWidth=Math.max(.8,1.1*U);g.strokeStyle='rgba(255,110,40,.13)';g.stroke();
-  g.beginPath();g.moveTo(x(0),y(.36));g.bezierCurveTo(x(-.2),y(.34),x(-.2),y(.12),x(-.06),y(-.02));g.bezierCurveTo(x(.02),y(.1),x(.1),y(.08),x(.12),y(.02));g.bezierCurveTo(x(.22),y(.16),x(.16),y(.36),x(0),y(.36));g.closePath();
-  g.fillStyle='rgba(255,120,40,.06)';g.fill()};
- const sx=46*U,sy=58*U;let row=0;
- for(let yy=-sy*.5;yy<FB+sy;yy+=sy,row++)for(let xx=(row%2?sx/2:0)-sx*.5;xx<W+sx;xx+=sx)flame(xx,yy,30*U,(row+Math.round(xx/sx))%2===1);
+ let sd=11;const rr=()=>(sd=(sd*16807)%2147483647)/2147483647;
+ const gap=19*U;
+ for(let x0=-gap*2;x0<W+gap*2;x0+=gap){
+  const ph=rr()*6.28,ph2=rr()*6.28,amp=(7+rr()*6)*U,fq=(.010+rr()*.004)/U,wd=(3.2+rr()*2.4)*U,lean=-.10,L=[],R=[];
+  for(let yy=FB+12;yy>=-12;yy-=3){const t=(FB-yy)/FB,cx=x0+Math.sin(yy*fq+ph)*amp*(.6+.4*t)+Math.sin(yy*fq*2.3+ph2)*amp*.35+(FB-yy)*lean;
+   const hw=wd*(.25+.75*Math.abs(Math.sin(yy*fq*1.6+ph2)))*(1-.35*t)/2;L.push([cx-hw,yy]);R.push([cx+hw,yy])}
+  g.beginPath();g.moveTo(L[0][0],L[0][1]);for(const q of L)g.lineTo(q[0],q[1]);for(let k=R.length-1;k>=0;k--)g.lineTo(R[k][0],R[k][1]);g.closePath();
+  const gr=g.createLinearGradient(0,FB,0,0);gr.addColorStop(0,'rgba(190,45,8,.16)');gr.addColorStop(.6,'rgba(150,30,5,.11)');gr.addColorStop(1,'rgba(110,18,3,.06)');
+  g.fillStyle=gr;g.fill();g.lineWidth=Math.max(.6,.7*U);g.strokeStyle='rgba(255,120,45,.07)';g.stroke()}
  // soft edge: nothing below the fire area (title / BUY stay on plain dark)
  g.globalCompositeOperation='destination-out';const cut=g.createLinearGradient(0,FB-34*U,0,FB+6*U);cut.addColorStop(0,'rgba(0,0,0,0)');cut.addColorStop(1,'rgba(0,0,0,1)');g.fillStyle=cut;g.fillRect(0,FB-34*U,W,H);
  g.filter='none';g.globalCompositeOperation='source-over';g.shadowBlur=0;startEmbers()}
