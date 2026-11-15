@@ -21,7 +21,7 @@ button.ghost{background:rgba(255,255,255,.1);color:var(--fg)}
 </head><body>
 <div class="ttl"><b>MISTYBOX · NEW BOX</b><span>The Cube</span></div>
 <div class="hint">Drag to rotate · pinch / scroll to zoom</div>
-<div class="skins"><button class="ghost on" data-skin="alu">ALUMINIUM</button><button class="ghost" data-skin="carbon">BLACK CARBON</button><button class="ghost" data-skin="zebra">ZEBRA</button><button class="ghost" data-skin="zebrafur">ZEBRA FUR</button><button class="ghost" data-skin="hearts">HEARTS</button><button class="ghost" data-skin="hoops">HOOPS</button></div>
+<div class="skins"><button class="ghost on" data-skin="alu">ALUMINIUM</button><button class="ghost" data-skin="carbon">BLACK CARBON</button><button class="ghost" data-skin="zebra">ZEBRA</button><button class="ghost" data-skin="zebrafur">ZEBRA FUR</button><button class="ghost" data-skin="hearts">HEARTS</button><button class="ghost" data-skin="hoops">HOOPS</button><button class="ghost" data-skin="leather">BLACK LEATHER</button></div>
 <div class="ui"><button id="lid">OPEN LID</button><button class="ghost" id="spin">AUTO-ROTATE</button></div>
 <script type="module">
 import * as THREE from 'three';
@@ -97,7 +97,16 @@ const HOOPS = {
   HoopsStripes: src => new THREE.MeshPhysicalMaterial({map: src && src.map, roughness: .3, metalness: 0, clearcoat: .5}),
   RedPost: () => new THREE.MeshPhysicalMaterial({color: 0xc8101e, metalness: .5, roughness: .22, clearcoat: 1, clearcoatRoughness: .04}),
   RedVelvet: () => new THREE.MeshPhysicalMaterial({color: 0x2a0205, roughness: .95, metalness: 0, sheen: 1, sheenColor: 0x900a18, sheenRoughness: .6})};
+const tl = new THREE.TextureLoader(), lt = f => { const t = tl.load('assets/3d/' + f); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.anisotropy = 8; return t };
+let LEA = null;
+function leatherMats(){ if(LEA) return LEA; const col = lt('leather_col.jpg'); col.colorSpace = THREE.SRGBColorSpace;
+  LEA = {LeatherBlack: () => new THREE.MeshPhysicalMaterial({map: col, roughnessMap: lt('leather_rough.jpg'), roughness: 1, normalMap: lt('leather_nrm.jpg'), normalScale: new THREE.Vector2(.45, .45),
+           metalness: 0, clearcoat: .12, clearcoatRoughness: .35, envMapIntensity: .6}),
+         StitchThread: () => new THREE.MeshStandardMaterial({color: 0xa8a8a4, roughness: .8}),
+         BlackSuede: () => new THREE.MeshPhysicalMaterial({color: 0x050506, roughness: .95, sheen: .6, sheenColor: 0x333336}),
+         LeatherUnder: () => new THREE.MeshStandardMaterial({color: 0x080809, roughness: .8})}; return LEA }
 function makeMat(name, src){
+  if(curSkin === 'leather'){ const L = leatherMats(); if(L[name]) return L[name](); if(HEARTS[name]) return HEARTS[name](src) }
   if(curSkin === 'hoops' && HOOPS[name]) return HOOPS[name](src);
   if(curSkin === 'hoops' && HEARTS[name]) return HEARTS[name](src);
   if(curSkin === 'hearts' && HEARTS[name]) return HEARTS[name](src);
@@ -110,7 +119,7 @@ const cache = {};
 const gltfs = {};
 function loadSkin(skin){
   curSkin = skin;
-  const url = skin === 'alu' ? 'assets/3d/cube.glb' : skin === 'hearts' ? 'assets/3d/cube_hearts.glb' : skin === 'hoops' ? 'assets/3d/cube_hoops.glb' : 'assets/3d/cube_carbon.glb';   // zebra shares the carbon model (same UVs), new materials
+  const url = skin === 'alu' ? 'assets/3d/cube.glb' : skin === 'hearts' ? 'assets/3d/cube_hearts.glb' : skin === 'hoops' ? 'assets/3d/cube_hoops.glb' : skin === 'leather' ? 'assets/3d/cube_leather.glb' : 'assets/3d/cube_carbon.glb';   // zebra shares the carbon model (same UVs), new materials
   (gltfs[url] = gltfs[url] || new Promise(res => new GLTFLoader().load(url, g => res(g.scene)))).then(src => {
     if(curSkin !== skin) return;
     const root = src.clone(true);
@@ -122,7 +131,7 @@ function loadSkin(skin){
     const ang = hinge ? hinge.rotation.x : 0;
     if(model) S.remove(model); model = root; hinge = root.getObjectByName('LidHinge'); if(hinge) hinge.rotation.x = ang; S.add(root) });
   document.querySelectorAll('.skins button').forEach(b => b.classList.toggle('on', b.dataset.skin === skin));
-  S.environmentIntensity = skin === 'carbon' ? .45 : skin === 'hearts' ? .6 : .9;
+  S.environmentIntensity = skin === 'carbon' ? .45 : (skin === 'hearts' || skin === 'leather') ? .6 : .9;
 }
 document.querySelectorAll('.skins button').forEach(b => b.onclick = () => loadSkin(b.dataset.skin));
 loadSkin(new URLSearchParams(location.search).get('skin') || 'alu');
