@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>MistyBox Cube 3D</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#111114;--fg:#f2f2f4;--mut:rgba(255,255,255,.55);--acc:#d9dce2}
+*{box-sizing:border-box;margin:0}
+html,body{height:100%;background:var(--bg);color:var(--fg);font-family:Poppins,system-ui,sans-serif;overflow:hidden}
+canvas{display:block;width:100vw;height:100vh;touch-action:none}
+.ui{position:fixed;left:0;right:0;bottom:28px;display:flex;justify-content:center;gap:10px;padding:0 16px}
+button{height:44px;padding:0 22px;border:0;font:600 13px Poppins,sans-serif;letter-spacing:1.6px;color:#141416;cursor:pointer;
+ background:linear-gradient(180deg,#f4f5f7,#c9ccd2);clip-path:polygon(10px 0,calc(100% - 10px) 0,100% 10px,100% calc(100% - 10px),calc(100% - 10px) 100%,10px 100%,0 calc(100% - 10px),0 10px)}
+button.ghost{background:rgba(255,255,255,.1);color:var(--fg)}
+.ttl{position:fixed;top:20px;left:0;right:0;text-align:center;pointer-events:none}
+.ttl b{display:block;font-size:11px;letter-spacing:4px;color:var(--mut);font-weight:600}
+.ttl span{font-size:20px;font-weight:600}
+.hint{position:fixed;top:78px;left:0;right:0;text-align:center;font-size:11px;color:var(--mut);pointer-events:none}
+</style>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"}}</script>
+</head><body>
+<div class="ttl"><b>MISTYBOX · NEW BOX</b><span>Aluminium Cube</span></div>
+<div class="hint">Drag to rotate · pinch / scroll to zoom</div>
+<div class="ui"><button id="lid">OPEN LID</button><button class="ghost" id="spin">AUTO-ROTATE</button></div>
+<script type="module">
+import * as THREE from 'three';
+import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
+import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
+import {RoomEnvironment} from 'three/addons/environments/RoomEnvironment.js';
+
+const R = new THREE.WebGLRenderer({antialias: true});
+R.setPixelRatio(Math.min(devicePixelRatio, 2)); R.setSize(innerWidth, innerHeight);
+R.toneMapping = THREE.ACESFilmicToneMapping; R.toneMappingExposure = 1.05; R.outputColorSpace = THREE.SRGBColorSpace;
+R.shadowMap.enabled = true; R.shadowMap.type = THREE.PCFSoftShadowMap;
+document.body.prepend(R.domElement);
+const S = new THREE.Scene(); S.background = new THREE.Color(0x111114);
+S.environment = new THREE.PMREMGenerator(R).fromScene(new RoomEnvironment(), .04).texture; S.environmentIntensity = .9;
+const key = new THREE.DirectionalLight(0xffffff, 2.2); key.position.set(-2.5, 4, 3); key.castShadow = true;
+key.shadow.mapSize.set(2048, 2048); key.shadow.camera.left = key.shadow.camera.bottom = -1.5; key.shadow.camera.right = key.shadow.camera.top = 1.5; key.shadow.radius = 6; S.add(key);
+const rim = new THREE.DirectionalLight(0xcfd8ff, 1.2); rim.position.set(2.5, 2, -3); S.add(rim);
+const floor = new THREE.Mesh(new THREE.PlaneGeometry(8, 8), new THREE.ShadowMaterial({opacity: .45})); floor.rotation.x = -Math.PI / 2; floor.receiveShadow = true; S.add(floor);
+
+const cam = new THREE.PerspectiveCamera(30, innerWidth / innerHeight, .05, 50);
+const ctl = new OrbitControls(cam, R.domElement); ctl.target.set(0, .48, 0); ctl.enableDamping = true; ctl.minDistance = 1.6; ctl.maxDistance = 7;
+ctl.maxPolarAngle = Math.PI * .52;
+function frame(){ const d = innerWidth < innerHeight ? 5.2 : 3.9; cam.position.set(-Math.sin(.62) * d, .48 + d * .42, Math.cos(.62) * d); cam.lookAt(ctl.target) }
+frame();
+
+// brushed-aluminium look (the Blender noise roughness doesn't travel in glTF, so tune it here)
+const brush = (() => { const c = document.createElement('canvas'); c.width = 512; c.height = 64; const g = c.getContext('2d'); g.fillStyle = '#808080'; g.fillRect(0, 0, 512, 64);
+  for(let i = 0; i < 1400; i++){ const y = Math.random() * 64, v = 100 + Math.random() * 70 | 0; g.fillStyle = `rgba(${v},${v},${v},.35)`; g.fillRect(0, y, 512, Math.random() * 1.2 + .3) }
+  const t = new THREE.CanvasTexture(c); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(2, 10); return t })();
+const LOOK = {
+  AluPanel: {color: 0xb4b7bd, metalness: 1, roughness: .42}, AluRail: {color: 0xd9dce1, metalness: 1, roughness: .26},
+  AluBlock: {color: 0xd4d7dc, metalness: 1, roughness: .3}, BoltSteel: {color: 0x9a9da3, metalness: 1, roughness: .18},
+  InteriorBlack: {color: 0x0b0b0d, metalness: 0, roughness: .95}, HingeSteel: {color: 0xa8abb1, metalness: 1, roughness: .22}};
+
+let hinge = null;
+new GLTFLoader().load('assets/3d/cube.glb', g => {
+  const root = g.scene;
+  root.traverse(o => { if(!o.isMesh) return; o.castShadow = true; o.receiveShadow = true;
+    const L = LOOK[o.material.name]; if(L){ o.material = new THREE.MeshStandardMaterial({...L, roughnessMap: /Alu/.test(o.material.name) ? brush : null}) } });
+  hinge = root.getObjectByName('LidHinge'); S.add(root);
+});
+
+let lidT = 0, lidGoal = 0, spin = false;
+const btn = document.getElementById('lid');
+btn.onclick = () => { lidGoal = lidGoal ? 0 : 1; btn.textContent = lidGoal ? 'CLOSE LID' : 'OPEN LID' };
+const sb = document.getElementById('spin'); sb.onclick = () => { spin = !spin; ctl.autoRotate = spin; ctl.autoRotateSpeed = 1.6; sb.textContent = spin ? 'STOP' : 'AUTO-ROTATE' };
+addEventListener('resize', () => { R.setSize(innerWidth, innerHeight); cam.aspect = innerWidth / innerHeight; cam.updateProjectionMatrix() });
+const clk = new THREE.Clock();
+R.setAnimationLoop(() => {
+  const dt = Math.min(clk.getDelta(), .05);
+  lidT += (lidGoal - lidT) * Math.min(1, dt * 3.2);
+  if(hinge){ const e = lidT; hinge.rotation.x = -THREE.MathUtils.degToRad(115 * e) }
+  ctl.update(); R.render(S, cam);
+});
+</script>
+</body></html>
