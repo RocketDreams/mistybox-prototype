@@ -585,6 +585,21 @@ canvas.glowl{-webkit-mask-image:radial-gradient(closest-side,#000 62%,transparen
 .nav{top:calc(743.6px*var(--u) - var(--dy,0px) + var(--st,0px))!important}
 
 .t h1{white-space:nowrap!important;display:inline-block}   /* one line always; fitTitle() shrinks long names */
+
+/* mobile-browser pass: no dead status-bar / home-indicator space; the room goes to the box */
+.bg{background:url(assets/mk/bg_top.jpg) 0 calc(var(--st,0px) - 40px*var(--u))/100% auto no-repeat,url(assets/mk/bg_bot.jpg) left 0 bottom calc(10px - 54px*var(--u))/100% auto no-repeat,#02040b!important}
+.top{height:calc(106px*var(--u) + var(--st,0px))!important}
+.burger{top:calc(11px*var(--u) + var(--st,0px))!important}.mklogo,.top .hd img.mklogo{top:calc(4.299999999999997px*var(--u) + var(--st,0px))!important}.wallet{top:calc(3.799999999999997px*var(--u) + var(--st,0px))!important}.cats{top:calc(46.7px*var(--u) + var(--st,0px))!important}
+.views{padding-top:calc(106px*var(--u) + var(--st,0px))!important}
+#v-boxes{margin-top:calc(-1*calc(106px*var(--u) + var(--st,0px)))!important;min-height:calc(812px*var(--u) - var(--dy,0px) + var(--st,0px))!important}
+#giftBtn + .sec{margin-top:calc(812px*var(--u) - var(--dy,0px) + var(--st,0px))!important}
+.hero{top:calc(76px*var(--u) + var(--st,0px))!important}
+.inside4{top:calc(365px*var(--u) - var(--dyh,0px) + var(--st,0px))!important}
+.inside4 + .gline{top:calc(458.5px*var(--u) - var(--dy,0px) + var(--st,0px))!important}.vals + .gline{top:calc(568.5px*var(--u) - var(--dy,0px) + var(--st,0px))!important}
+.t{top:calc(470px*var(--u) - var(--dy,0px) + var(--st,0px))!important}.vals{top:calc(522px*var(--u) - var(--dy,0px) + var(--st,0px))!important}#buy.cta{top:calc(598px*var(--u) - var(--dy,0px) + var(--st,0px))!important}.gift{top:calc(653px*var(--u) - var(--dy,0px) + var(--st,0px))!important}.nav{top:calc(703.6px*var(--u) - var(--dy,0px) + var(--st,0px))!important}
+/* wallet grows with the balance (right-anchored) */
+.wallet{left:auto!important;right:calc(13.8px*var(--u))!important;width:auto!important;min-width:calc(131px*var(--u));display:flex!important;align-items:center;padding:0 calc(36px*var(--u)) 0 calc(32px*var(--u))!important}
+.wallet #bal{position:static!important;transform:none!important;white-space:nowrap}
 </style></head>
 <body>
 <div class="stage-glow" id="sg"></div>
@@ -867,8 +882,8 @@ const scr=$('#scr');
 function fitHero(){   // responsive: full width, header pinned top, BUY/gift/menu pinned bottom, the box area absorbs the difference
  const w=scr.clientWidth,h=scr.clientHeight,u=w/393;
  let pr=document.getElementById('saProbe');if(!pr){pr=document.createElement('div');pr.id='saProbe';pr.style.cssText='position:absolute;visibility:hidden;pointer-events:none;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)';scr.appendChild(pr)}
- const cs=getComputedStyle(pr),st=parseFloat(cs.paddingTop)||0,sb=Math.max(0,(parseFloat(cs.paddingBottom)||0)-10);
- const dy=852*u-(h-st-sb);let dyh=dy,hide=false;
+ const cs=getComputedStyle(pr),st=(parseFloat(cs.paddingTop)||0)+6,sb=Math.max(0,(parseFloat(cs.paddingBottom)||0)-6);
+ const dy=(758*u+10)-(h-st-sb);   // layout from logo row to menu (+10px under it); top/bottom reserves come from the real safe areaslet dyh=dy,hide=false;
  if(dy>40*u){hide=true;dyh=dy-80*u}   // the inside row rises faster than the box shrinks: drop it early on short screens
  dyh=Math.max(-120*u,Math.min(dyh,172*u));
  const S=(k,v)=>scr.style.setProperty(k,v);S('--u',u);S('--ox','0px');S('--st',st+'px');S('--dy',dy+'px');S('--dyh',dyh+'px');
