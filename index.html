@@ -630,6 +630,10 @@ html,body{overscroll-behavior:none}
 /* boxes float on the site background: no glow / floor behind them */
 .hero .glow,.hero .floor,.hero .track{display:none!important}
 #hero3d,#hero3dg{background:transparent!important}
+
+/* crisp vector background replaces the stretched mockup JPEG */
+.bg{background:#01030a!important}
+.bg canvas#ct{display:block!important;position:absolute;inset:0;width:100%!important;height:100%!important;opacity:1!important;-webkit-mask-image:none!important;mask-image:none!important}
 </style></head>
 <body>
 <div class="stage-glow" id="sg"></div>
@@ -909,6 +913,39 @@ const item=id=>ALL.find(i=>i.id===id);
 
 /* ---------- theme + waves ---------- */
 const scr=$('#scr');
+
+/* crisp background: the mockup's light wisps redrawn as vector glow at native resolution (no stretched JPEG) */
+const WISPS=[ // [anchor, mockup-space bezier points (852 wide), width, brightness]
+ ['top',[[300,78],[470,40],[600,10],[760,-10]],18,.9],
+ ['box',[[-10,520],[60,430],[150,370],[262,338]],34,1],['box',[[-10,590],[60,520],[130,480],[214,462]],16,.7],
+ ['box',[[0,778],[60,730],[130,700],[226,690]],24,.85],['box',[[40,812],[110,786],[180,770],[246,768]],10,.6],
+ ['box',[[862,610],[820,700],[740,770],[630,800]],30,1],['box',[[862,560],[840,600],[810,640],[770,668]],10,.5],
+ ['bot',[[110,1588],[220,1566],[330,1574],[430,1602]],14,.75],['bot',[[540,1606],[650,1572],[760,1550],[862,1536]],22,.95],
+ ['bot',[[120,1860],[260,1772],[520,1752],[780,1860]],26,1]];
+function paintBg(){
+ const c=$('#ct');if(!c)return;const W=scr.clientWidth,H=scr.clientHeight,dpr=Math.min(3,devicePixelRatio||1);
+ c.width=Math.round(W*dpr);c.height=Math.round(H*dpr);c.style.display='block';
+ const g=c.getContext('2d');g.setTransform(dpr,0,0,dpr,0,0);g.clearRect(0,0,W,H);
+ const cs=getComputedStyle(scr),U=parseFloat(cs.getPropertyValue('--u'))||W/393,st=parseFloat(cs.getPropertyValue('--st'))||0,
+  dy=parseFloat(cs.getPropertyValue('--dy'))||0,dyh=parseFloat(cs.getPropertyValue('--dyh'))||0,k=393*U/852;
+ // base: deep navy, a soft haze around the box
+ const bgr=g.createLinearGradient(0,0,0,H);bgr.addColorStop(0,'#01030a');bgr.addColorStop(.45,'#030817');bgr.addColorStop(1,'#01030a');g.fillStyle=bgr;g.fillRect(0,0,W,H);
+ const hy=(116-40)*U+st+(322*U-dyh)/2,hz=g.createRadialGradient(W/2,hy,0,W/2,hy,W*.75);hz.addColorStop(0,'rgba(20,50,140,.28)');hz.addColorStop(1,'rgba(20,50,140,0)');g.fillStyle=hz;g.fillRect(0,0,W,H);
+ const Y=(a,y)=>a==='top'?(y-80)*k+st:a==='box'?(y-80)*k+st-dyh/2:(y-80)*k+st-dy;
+ const bez=(p,t)=>{const u=1-t;return[u*u*u*p[0][0]+3*u*u*t*p[1][0]+3*u*t*t*p[2][0]+t*t*t*p[3][0],u*u*u*p[0][1]+3*u*u*t*p[1][1]+3*u*t*t*p[2][1]+t*t*t*p[3][1]]};
+ g.globalCompositeOperation='lighter';
+ for(const [a,P,w,b] of WISPS){
+  const N=40,pts=[];for(let i=0;i<=N;i++){const q=bez(P,i/N);pts.push([q[0]*k,Y(a,q[1])])}
+  const ribbon=(scale,off)=>{const L=[],R=[];for(let i=0;i<=N;i++){const t=i/N,i0=Math.max(0,i-1),i1=Math.min(N,i+1);
+     let dx=pts[i1][0]-pts[i0][0],dy2=pts[i1][1]-pts[i0][1];const l=Math.hypot(dx,dy2)||1;const nx=-dy2/l,ny=dx/l;
+     const hw=w*k*scale*Math.pow(Math.sin(Math.PI*t),1.15)/2,o=off*w*k*Math.sin(Math.PI*t);
+     L.push([pts[i][0]+nx*(hw+o),pts[i][1]+ny*(hw+o)]);R.push([pts[i][0]-nx*(hw-o),pts[i][1]-ny*(hw-o)])}
+   g.beginPath();g.moveTo(L[0][0],L[0][1]);for(const q of L)g.lineTo(q[0],q[1]);for(let i=R.length-1;i>=0;i--)g.lineTo(R[i][0],R[i][1]);g.closePath()};
+  for(const [sc,off,col,al,blur] of [[2.6,0,'30,90,255',.22,16],[1.4,.06,'45,130,255',.34,8],[.7,.14,'90,175,255',.46,3.5],[.24,.2,'205,235,255',.6,1.2]]){
+   ribbon(sc,off);g.filter=`blur(${Math.max(.6,blur*k*1.1)}px)`;g.shadowBlur=0;g.fillStyle=`rgba(${col},${al*b*1.25})`;g.fill()}
+  g.filter='none'}
+ g.globalCompositeOperation='source-over';g.shadowBlur=0}
+
 function fitHero(){   // responsive: full width, header pinned top, BUY/gift/menu pinned bottom, the box area absorbs the difference
  const w=scr.clientWidth,h=scr.clientHeight,u=w/393;
  let pr=document.getElementById('saProbe');if(!pr){pr=document.createElement('div');pr.id='saProbe';pr.style.cssText='position:absolute;visibility:hidden;pointer-events:none;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)';scr.appendChild(pr)}
@@ -920,7 +957,7 @@ function fitHero(){   // responsive: full width, header pinned top, BUY/gift/men
  const S=(k,v)=>scr.style.setProperty(k,v);S('--u',u);S('--U',u+'px');S('--ox','0px');S('--st',st+'px');S('--dy',dy+'px');S('--dyh',dyh+'px');
  document.documentElement.style.setProperty('--hh',(322*u-dyh)+'px');
  const insEl=document.getElementById('inside4');if(insEl)insEl.style.visibility=hide?'hidden':'';
- dispatchEvent(new Event('resize'));if(typeof fitTitle==='function')fitTitle();return;}
+ dispatchEvent(new Event('resize'));if(typeof fitTitle==='function')fitTitle();try{paintBg()}catch(e){console.warn('bg',e)}return;}
 if(document.fonts)document.fonts.ready.then(()=>typeof fitTitle==='function'&&fitTitle());
 addEventListener('load',()=>setTimeout(fitHero,50));addEventListener('pageshow',()=>setTimeout(fitHero,50));document.addEventListener('visibilitychange',()=>{if(!document.hidden)setTimeout(fitHero,50)});
 if(window.visualViewport)visualViewport.addEventListener('resize',()=>{clearTimeout(fitT);fitT=setTimeout(fitHero,80)});
@@ -928,7 +965,7 @@ let fitT;addEventListener('resize',e=>{if(e.isTrusted){clearTimeout(fitT);fitT=s
 const DESIGN={w1:'#1a5cff',w2:'#38b2ff',accent:'#8fcaff',glow:'rgba(60,140,255,.45)',c1:'#ffffff',c2:'#e3e7ee',c3:'#a3acba',ctat:'#0a1022',cglow:'rgba(90,170,255,.85)'};
 function theme(b){for(const k of ['w1','w2','accent','glow','c1','c2','c3','ctat','cglow'])scr.style.setProperty('--'+k,DESIGN[k]);$('#sg').style.setProperty('--w1',DESIGN.w1);}
 /* animated contour waves: one shared shape, skin colours, always flowing */
-(function(){const cv=$('#ct'),g=cv.getContext('2d'),RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
+(function(){const cv=document.createElement('canvas'),g=cv.getContext('2d'),RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
  let W=0,H=0,dpr=1,c1='#ff9ad5',c2='#9be8cf',fr=0;
  function size(){dpr=Math.min(2,devicePixelRatio||1);W=scr.clientWidth;H=scr.clientHeight;cv.width=W*dpr;cv.height=H*dpr}
  size();addEventListener('resize',size);
