@@ -869,7 +869,7 @@ function fitHero(){   // responsive: full width, header pinned top, BUY/gift/men
  let pr=document.getElementById('saProbe');if(!pr){pr=document.createElement('div');pr.id='saProbe';pr.style.cssText='position:absolute;visibility:hidden;pointer-events:none;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)';scr.appendChild(pr)}
  const cs=getComputedStyle(pr),st=parseFloat(cs.paddingTop)||0,sb=Math.max(0,(parseFloat(cs.paddingBottom)||0)-10);
  const dy=852*u-(h-st-sb);let dyh=dy,hide=false;
- if(dy>110*u){hide=true;dyh=dy-80*u}
+ if(dy>40*u){hide=true;dyh=dy-80*u}   // the inside row rises faster than the box shrinks: drop it early on short screens
  dyh=Math.max(-120*u,Math.min(dyh,172*u));
  const S=(k,v)=>scr.style.setProperty(k,v);S('--u',u);S('--ox','0px');S('--st',st+'px');S('--dy',dy+'px');S('--dyh',dyh+'px');
  document.documentElement.style.setProperty('--hh',(322*u-dyh)+'px');
