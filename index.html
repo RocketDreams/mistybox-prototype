@@ -661,6 +661,8 @@ html,body{overscroll-behavior:none}
 /* no hamburger; logo pinned to the left edge */
 .burger{display:none!important}
 .mklogo,.top .hd img.mklogo{left:calc(var(--ox) + 16*var(--U))!important}
+
+.bg canvas#swc{position:absolute;inset:0;width:100%!important;height:100%!important;pointer-events:none;display:block!important;-webkit-mask-image:none!important;mask-image:none!important}
 </style></head>
 <body>
 <div class="stage-glow" id="sg"></div>
@@ -975,26 +977,39 @@ function paintBg(){
  const sr=scr.getBoundingClientRect(),tEl=$('#v-boxes .t'),tb=tEl&&tEl.offsetParent?tEl.getBoundingClientRect().top-sr.top:0;
  const FB=Math.max(H*.4,Math.min(H*.8,tb||H*.62));FIRE_BOT=FB;
  let seed=7;const rnd=()=>(seed=(seed*16807)%2147483647)/2147483647;
- // packaging look: matte black with a few big tapered graphite swooshes (tone-on-tone, like the MistyBox shipper)
- g.globalCompositeOperation='source-over';g.filter='none';
- const swoosh=(x0,y0,x1,y1,cx,cy,th,al)=>{const N=60,C=[],T=[];
-  for(let i=0;i<=N;i++){const t=i/N,u=1-t,x=u*u*x0+2*u*t*cx+t*t*x1,y=u*u*y0+2*u*t*cy+t*t*y1;C.push([x,y])}
-  for(let i=0;i<=N;i++){const t=i/N,a=C[Math.max(0,i-1)],b=C[Math.min(N,i+1)],dx=b[0]-a[0],dy2=b[1]-a[1],l=Math.hypot(dx,dy2)||1,hw=th*Math.pow(Math.sin(Math.PI*Math.pow(t,.8)),1.4);
-   T.push([C[i][0]+dy2/l*hw,C[i][1]-dx/l*hw])}
-  g.beginPath();g.moveTo(C[0][0],C[0][1]);for(const q of T)g.lineTo(q[0],q[1]);for(let i=N;i>=0;i--)g.lineTo(C[i][0],C[i][1]);g.closePath();
-  const gr=g.createLinearGradient(x0,y0,x1,y1);gr.addColorStop(0,'rgba(150,150,158,0)');gr.addColorStop(.55,`rgba(150,150,158,${al})`);gr.addColorStop(.85,`rgba(185,185,195,${al*1.15})`);gr.addColorStop(1,'rgba(185,185,195,0)');
-  g.fillStyle=gr;g.fill();
-  g.beginPath();g.moveTo(T[0][0],T[0][1]);for(const q of T)g.lineTo(q[0],q[1]);g.lineWidth=Math.max(.6,.8*U);g.strokeStyle=gr;g.globalAlpha=.6;g.stroke();g.globalAlpha=1};
- const F=FB;
- // upper pair, sweeping up to the right
- swoosh(-30*U,F*.34,330*U,F*.08,120*U,F*.36,40*U,.32);
- swoosh(70*U,F*.40,430*U,F*.15,230*U,F*.42,24*U,.24);
- // lower pair under the box
- swoosh(-40*U,F*1.0,320*U,F*.70,110*U,F*1.0,44*U,.34);
- swoosh(110*U,F*1.02,440*U,F*.77,270*U,F*1.0,26*U,.26);
+ SWP={U,FB,W,H};startSwoosh();
  // soft edge: nothing below the fire area (title / BUY stay on plain dark)
  g.globalCompositeOperation='destination-out';const cut=g.createLinearGradient(0,FB-34*U,0,FB+6*U);cut.addColorStop(0,'rgba(0,0,0,0)');cut.addColorStop(1,'rgba(0,0,0,1)');g.fillStyle=cut;g.fillRect(0,FB-34*U,W,H);
  g.filter='none';g.globalCompositeOperation='source-over';g.shadowBlur=0;startEmbers()}
+/* packaging-style graphite swooshes on their own canvas, slowly drifting and breathing */
+let SWP=null,SWON=0;
+const SWL=[ // x0,y0,x1,y1,cx,cy (x in u; y as [frac, 'f'=fire area | 'h'=screen]), thickness u, alpha, period s
+ [-30,[.34,'f'],330,[.08,'f'],120,[.36,'f'],40,.32,9],
+ [70,[.40,'f'],430,[.15,'f'],230,[.42,'f'],24,.24,11],
+ [210,[.64,'f'],440,[.50,'f'],330,[.66,'f'],18,.20,8],
+ [-40,[1.0,'f'],320,[.70,'f'],110,[1.0,'f'],44,.34,10],
+ [110,[1.02,'f'],440,[.77,'f'],270,[1.0,'f'],26,.26,12],
+ [-50,[.93,'h'],300,[.76,'h'],100,[.93,'h'],34,.18,13],
+ [140,[.99,'h'],440,[.83,'h'],300,[.97,'h'],22,.15,9.5]];
+function startSwoosh(){if(SWON)return;SWON=1;
+ const c=document.createElement('canvas');c.id='swc';c.setAttribute('aria-hidden','true');$('#ct').after(c);
+ const g=c.getContext('2d'),RM=matchMedia('(prefers-reduced-motion: reduce)').matches;let cw=0,ch=0,dpr=1,last=0;
+ const draw=t=>{if(!SWP)return;const {U,FB,W,H}=SWP;dpr=Math.min(2,devicePixelRatio||1);
+  if(cw!==W||ch!==H){cw=W;ch=H;c.width=Math.round(W*dpr);c.height=Math.round(H*dpr)}
+  g.setTransform(dpr,0,0,dpr,0,0);g.clearRect(0,0,W,H);
+  const Y=v=>v[0]*(v[1]==='f'?FB:H),ts=t/1000;
+  SWL.forEach(([X0,Y0,X1,Y1,CX,CY,TH,AL,PER],k)=>{
+   const w=6.2832/PER,s1=Math.sin(ts*w+k*1.7),s2=Math.cos(ts*w*.7+k),
+    x0=X0*U,y0=Y(Y0),x1=X1*U,y1=Y(Y1),L=Math.hypot(x1-x0,y1-y0),ux=(x1-x0)/L,uy=(y1-y0)/L,
+    sh=18*U*s1,ox=ux*sh,oy=uy*sh,cx=CX*U+ox-uy*10*U*s2,cy=Y(CY)+oy+ux*10*U*s2,al=AL*(.78+.22*Math.sin(ts*w*1.3+k*2.3)),th=TH*U*(.92+.08*s2);
+   const N=48,C=[],T=[];
+   for(let i=0;i<=N;i++){const q=i/N,u=1-q;C.push([u*u*(x0+ox)+2*u*q*cx+q*q*(x1+ox),u*u*(y0+oy)+2*u*q*cy+q*q*(y1+oy)])}
+   for(let i=0;i<=N;i++){const q=i/N,a=C[Math.max(0,i-1)],b=C[Math.min(N,i+1)],dx=b[0]-a[0],dy=b[1]-a[1],l=Math.hypot(dx,dy)||1,hw=th*Math.pow(Math.sin(Math.PI*Math.pow(q,.8)),1.4);T.push([C[i][0]+dy/l*hw,C[i][1]-dx/l*hw])}
+   g.beginPath();g.moveTo(C[0][0],C[0][1]);for(const q of T)g.lineTo(q[0],q[1]);for(let i=N;i>=0;i--)g.lineTo(C[i][0],C[i][1]);g.closePath();
+   const gr=g.createLinearGradient(x0+ox,y0+oy,x1+ox,y1+oy);gr.addColorStop(0,'rgba(150,150,158,0)');gr.addColorStop(.55,`rgba(150,150,158,${al})`);gr.addColorStop(.85,`rgba(185,185,195,${al*1.15})`);gr.addColorStop(1,'rgba(185,185,195,0)');
+   g.fillStyle=gr;g.fill();g.beginPath();g.moveTo(T[0][0],T[0][1]);for(const q of T)g.lineTo(q[0],q[1]);g.lineWidth=Math.max(.6,.8*U);g.strokeStyle=gr;g.globalAlpha=.6;g.stroke();g.globalAlpha=1})};
+ const step=t=>{requestAnimationFrame(step);if(t-last<33||document.hidden||document.querySelector('.rv-on,.pk-on'))return;last=t;draw(RM?0:t)};
+ draw(0);requestAnimationFrame(step)}
 /* embers: small sparks drifting up (own canvas, cheap) */
 let EMB=null,FIRE_BOT=0;
 function startEmbers(){return;if(EMB)return;const c=document.createElement('canvas');c.id='embers';c.setAttribute('aria-hidden','true');$('.bg').appendChild(c);
