@@ -648,9 +648,9 @@ html,body{overscroll-behavior:none}
 @media (prefers-reduced-motion:reduce){.inside4 .mqt{animation:none}}
 
 /* dragon-flame background */
-.bg{background:#050101!important}
+.bg{background:#000!important}
 .bg canvas#embers{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
-.bg canvas#ct{animation:flameBreath 3.2s ease-in-out infinite}
+.bg canvas#ct{animation:none}
 @keyframes flameBreath{50%{filter:brightness(1.12) saturate(1.1)}}
 @media (prefers-reduced-motion:reduce){.bg canvas#ct{animation:none}}
 
@@ -952,8 +952,8 @@ function paintBg(){
  const cs=getComputedStyle(scr),U=parseFloat(cs.getPropertyValue('--u'))||W/393,st=parseFloat(cs.getPropertyValue('--st'))||0,
   dy=parseFloat(cs.getPropertyValue('--dy'))||0,dyh=parseFloat(cs.getPropertyValue('--dyh'))||0,k=393*U/852;
  // base: deep navy, a soft haze around the box
- const bgr=g.createLinearGradient(0,0,0,H);bgr.addColorStop(0,'#070201');bgr.addColorStop(.5,'#120402');bgr.addColorStop(1,'#1a0602');g.fillStyle=bgr;g.fillRect(0,0,W,H);
- const hy=(116-40)*U+st+(322*U-dyh)/2,hz=g.createRadialGradient(W/2,hy,0,W/2,hy,W*.75);hz.addColorStop(0,'rgba(255,70,10,.20)');hz.addColorStop(.5,'rgba(160,20,0,.10)');hz.addColorStop(1,'rgba(120,10,0,0)');g.fillStyle=hz;g.fillRect(0,0,W,H);
+ const bgr=g.createLinearGradient(0,0,0,H);bgr.addColorStop(0,'#000');bgr.addColorStop(1,'#030101');g.fillStyle=bgr;g.fillRect(0,0,W,H);
+ const hy=(116-40)*U+st+(322*U-dyh)/2,hz=g.createRadialGradient(W/2,hy,0,W/2,hy,W*.75);hz.addColorStop(0,'rgba(255,70,10,.07)');hz.addColorStop(.5,'rgba(160,20,0,.03)');hz.addColorStop(1,'rgba(120,10,0,0)');g.fillStyle=hz;g.fillRect(0,0,W,H);
  const Y=(a,y)=>a==='top'?(y-80)*k+st:a==='box'?(y-80)*k+st-dyh/2:(y-80)*k+st-dy;
  const bez=(p,t)=>{const u=1-t;return[u*u*u*p[0][0]+3*u*u*t*p[1][0]+3*u*t*t*p[2][0]+t*t*t*p[3][0],u*u*u*p[0][1]+3*u*u*t*p[1][1]+3*u*t*t*p[2][1]+t*t*t*p[3][1]]};
  g.globalCompositeOperation='lighter';
@@ -965,22 +965,24 @@ function paintBg(){
      L.push([pts[i][0]+nx*(hw+o),pts[i][1]+ny*(hw+o)]);R.push([pts[i][0]-nx*(hw-o),pts[i][1]-ny*(hw-o)])}
    g.beginPath();g.moveTo(L[0][0],L[0][1]);for(const q of L)g.lineTo(q[0],q[1]);for(let i=R.length-1;i>=0;i--)g.lineTo(R[i][0],R[i][1]);g.closePath()};
   for(const [sc,off,col,al,blur] of [[2.6,0,'200,30,0',.26,16],[1.4,.06,'255,90,10',.38,8],[.7,.14,'255,165,40',.5,3.5],[.24,.2,'255,238,190',.65,1.2]]){
-   ribbon(sc,off);g.filter=`blur(${Math.max(.6,blur*k*1.1)}px)`;g.shadowBlur=0;g.fillStyle=`rgba(${col},${al*b*1.25})`;g.fill()}
+   ribbon(sc,off);g.filter=`blur(${Math.max(.6,blur*k*1.1)}px)`;g.shadowBlur=0;g.fillStyle=`rgba(${col},${al*b*.45})`;g.fill()}
   g.filter='none'}
  // dragon fire filling the whole top area (behind and under the box), ending just above the box title
  const sr=scr.getBoundingClientRect(),tEl=$('#v-boxes .t'),tb=tEl&&tEl.offsetParent?tEl.getBoundingClientRect().top-sr.top:0;
  const FB=Math.max(H*.4,Math.min(H*.8,tb||H*.62));FIRE_BOT=FB;
  let seed=7;const rnd=()=>(seed=(seed*16807)%2147483647)/2147483647;
- // hot bed of fire under the box
- const bed=g.createLinearGradient(0,FB,0,FB*.35);bed.addColorStop(0,'rgba(170,40,0,.40)');bed.addColorStop(.4,'rgba(110,15,0,.22)');bed.addColorStop(1,'rgba(60,5,0,0)');g.fillStyle=bed;g.fillRect(0,0,W,FB);
+ // subtle flame pattern on black: small flame motifs on a staggered grid, tone-on-tone
  g.globalCompositeOperation='source-over';
- const tongue=(xx,ww,hgt,sw,col,al)=>{const gr=g.createLinearGradient(0,FB,0,FB-hgt);gr.addColorStop(0,`rgba(${col},${al})`);gr.addColorStop(.5,`rgba(${col},${al*.6})`);gr.addColorStop(1,`rgba(${col},0)`);
-  g.fillStyle=gr;g.beginPath();g.moveTo(xx-ww,FB+4);g.bezierCurveTo(xx-ww*.95,FB-hgt*.4,xx+sw*.5-ww*.3,FB-hgt*.72,xx+sw,FB-hgt);g.bezierCurveTo(xx+sw*.4+ww*.35,FB-hgt*.68,xx+ww*1.05,FB-hgt*.36,xx+ww,FB+4);g.closePath();g.fill()};
- // [min h, max h (fraction of area), width (u), colours [col, alpha, blur(u)]] back -> front
- for(const [h0,h1,wid,cols] of [[.75,1.05,46,[['80,6,0',.5,16]]],[.55,.9,34,[['140,20,0',.34,9],['190,45,0',.16,4]]],[.32,.62,24,[['210,70,5',.2,4],['255,120,25',.11,2]]],[.12,.32,14,[['255,170,60',.12,1.4],['255,215,150',.08,.7]]]]){
-  for(let x=-wid*U;x<W+wid*U;x+=wid*U*.55){const hgt=FB*(h0+rnd()*(h1-h0)),ww=wid*U*(.65+rnd()*.6),sw=(rnd()-.5)*ww*2.6,xx=x+(rnd()-.5)*wid*U*.4;
-   for(const [col,al,bl] of cols){g.filter=`blur(${bl*U}px)`;tongue(xx,ww,hgt,sw,col,al)}}}
- g.filter='none';
+ const flame=(cx,cy,sz,flip)=>{const f=flip?-1:1,x=v=>cx+v*sz*f,y=v=>cy+v*sz;
+  g.beginPath();g.moveTo(x(0),y(.5));
+  g.bezierCurveTo(x(-.42),y(.48),x(-.5),y(.05),x(-.22),y(-.2));g.bezierCurveTo(x(-.2),y(-.02),x(-.08),y(.06),x(-.04),y(.02));
+  g.bezierCurveTo(x(-.16),y(-.22),x(-.02),y(-.4),x(.1),y(-.5));g.bezierCurveTo(x(.06),y(-.3),x(.2),y(-.18),x(.26),y(-.06));
+  g.bezierCurveTo(x(.3),y(-.16),x(.34),y(-.2),x(.36),y(-.26));g.bezierCurveTo(x(.52),y(-.02),x(.46),y(.46),x(0),y(.5));g.closePath();
+  g.fillStyle='rgba(150,30,5,.10)';g.fill();g.lineWidth=Math.max(.8,1.1*U);g.strokeStyle='rgba(255,110,40,.13)';g.stroke();
+  g.beginPath();g.moveTo(x(0),y(.36));g.bezierCurveTo(x(-.2),y(.34),x(-.2),y(.12),x(-.06),y(-.02));g.bezierCurveTo(x(.02),y(.1),x(.1),y(.08),x(.12),y(.02));g.bezierCurveTo(x(.22),y(.16),x(.16),y(.36),x(0),y(.36));g.closePath();
+  g.fillStyle='rgba(255,120,40,.06)';g.fill()};
+ const sx=46*U,sy=58*U;let row=0;
+ for(let yy=-sy*.5;yy<FB+sy;yy+=sy,row++)for(let xx=(row%2?sx/2:0)-sx*.5;xx<W+sx;xx+=sx)flame(xx,yy,30*U,(row+Math.round(xx/sx))%2===1);
  // soft edge: nothing below the fire area (title / BUY stay on plain dark)
  g.globalCompositeOperation='destination-out';const cut=g.createLinearGradient(0,FB-34*U,0,FB+6*U);cut.addColorStop(0,'rgba(0,0,0,0)');cut.addColorStop(1,'rgba(0,0,0,1)');g.fillStyle=cut;g.fillRect(0,FB-34*U,W,H);
  g.filter='none';g.globalCompositeOperation='source-over';g.shadowBlur=0;startEmbers()}
@@ -990,11 +992,11 @@ function startEmbers(){if(EMB)return;const c=document.createElement('canvas');c.
  const g=c.getContext('2d'),RM=matchMedia('(prefers-reduced-motion: reduce)').matches;let W=0,H=0,dpr=1,P=[];
  const sz=()=>{dpr=Math.min(2,devicePixelRatio||1);W=scr.clientWidth;H=scr.clientHeight;c.width=W*dpr;c.height=H*dpr};sz();addEventListener('resize',sz);
  const spawn=(y)=>({x:Math.random()*W,y:y??(FIRE_BOT||H)-Math.random()*10,r:.6+Math.random()*1.8,v:.25+Math.random()*.7,ph:Math.random()*6.28,life:1});
- for(let i=0;i<40;i++)P.push(spawn(Math.random()*(FIRE_BOT||H)));
+ for(let i=0;i<16;i++)P.push(spawn(Math.random()*(FIRE_BOT||H)));
  EMB=1;let last=0;
  const step=t=>{requestAnimationFrame(step);if(t-last<33||document.hidden||document.querySelector('.rv-on,.pk-on'))return;last=t;
   g.setTransform(dpr,0,0,dpr,0,0);g.clearRect(0,0,W,H);g.globalCompositeOperation='lighter';
-  for(const p of P){if(!RM){p.y-=p.v;p.x+=Math.sin(t/900+p.ph)*.35}const f=Math.max(0,Math.min(1,p.y/(FIRE_BOT||H)));const a=.25+.6*f;
+  for(const p of P){if(!RM){p.y-=p.v;p.x+=Math.sin(t/900+p.ph)*.35}const f=Math.max(0,Math.min(1,p.y/(FIRE_BOT||H)));const a=(.25+.6*f)*.45;
    const gr=g.createRadialGradient(p.x,p.y,0,p.x,p.y,p.r*4);gr.addColorStop(0,`rgba(255,220,140,${a})`);gr.addColorStop(.4,`rgba(255,110,20,${a*.6})`);gr.addColorStop(1,'rgba(255,60,0,0)');
    g.fillStyle=gr;g.beginPath();g.arc(p.x,p.y,p.r*4,0,6.28);g.fill();if(p.y<-20)Object.assign(p,spawn())}};
  requestAnimationFrame(step)}
