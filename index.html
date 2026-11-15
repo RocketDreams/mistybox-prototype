@@ -614,6 +614,18 @@ canvas.glowl{-webkit-mask-image:radial-gradient(closest-side,#000 62%,transparen
 .views:has(#v-boxes.on) .hero{touch-action:pan-x}
 html,body{overscroll-behavior:none}
 .views{overscroll-behavior:contain}
+
+/* bottom bar: flush to the very bottom, full width, no frame */
+.nav{left:0!important;right:0!important;width:auto!important;top:auto!important;bottom:0!important;
+ height:calc(62*var(--U) + env(safe-area-inset-bottom,0px))!important;padding:0 calc(6*var(--U)) env(safe-area-inset-bottom,0px)!important;
+ border:0!important;border-radius:0!important;box-shadow:none!important;background:#0d0e11!important;backdrop-filter:none!important;
+ display:flex!important;align-items:stretch;z-index:7}
+.nav button{flex:1;display:flex!important;flex-direction:column;align-items:center;justify-content:center;gap:calc(5*var(--U))!important;padding:0!important;
+ color:rgba(255,255,255,.62)!important;font:500 calc(10.4*var(--U))/1 Montserrat,sans-serif!important;letter-spacing:calc(.3*var(--U))}
+.nav button img{width:calc(25*var(--U))!important;height:calc(25*var(--U))!important;opacity:.62}
+.nav button.on{color:#fff!important;font-weight:700!important}
+.nav button.on img{opacity:1}
+.nav button.on:after{display:none!important}
 </style></head>
 <body>
 <div class="stage-glow" id="sg"></div>
@@ -897,7 +909,7 @@ function fitHero(){   // responsive: full width, header pinned top, BUY/gift/men
  const w=scr.clientWidth,h=scr.clientHeight,u=w/393;
  let pr=document.getElementById('saProbe');if(!pr){pr=document.createElement('div');pr.id='saProbe';pr.style.cssText='position:absolute;visibility:hidden;pointer-events:none;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)';scr.appendChild(pr)}
  const cs=getComputedStyle(pr),st=(parseFloat(cs.paddingTop)||0)+6,sb=Math.max(0,(parseFloat(cs.paddingBottom)||0)-6);
- const dy=(758*u+10)-(h-st-sb);   // layout from logo row to menu (+10px under it); top/bottom reserves come from the real safe areas
+ const dy=(747*u)-(h-st-sb);   // logo row .. gift line, then the flush bottom bar (62u + safe area)   // layout from logo row to menu (+10px under it); top/bottom reserves come from the real safe areas
  let dyh=dy,hide=false;
  if(dy>40*u){hide=true;dyh=dy-80*u}   // the inside row rises faster than the box shrinks: drop it early on short screens
  dyh=Math.max(-120*u,Math.min(dyh,172*u));
