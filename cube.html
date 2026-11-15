@@ -14,14 +14,14 @@ button.ghost{background:rgba(255,255,255,.1);color:var(--fg)}
 .ttl{position:fixed;top:20px;left:0;right:0;text-align:center;pointer-events:none}
 .ttl b{display:block;font-size:11px;letter-spacing:4px;color:var(--mut);font-weight:600}
 .ttl span{font-size:20px;font-weight:600}
-.skins{position:fixed;top:104px;left:0;right:0;display:flex;justify-content:center;gap:8px}.skins button{height:34px;padding:0 14px;font-size:11px}.skins button.on{background:linear-gradient(180deg,#f4f5f7,#c9ccd2);color:#141416}
+.skins{position:fixed;top:104px;left:0;right:0;display:flex;flex-wrap:wrap;justify-content:center;gap:8px;padding:0 12px}.skins button{height:34px;padding:0 14px;font-size:11px}.skins button.on{background:linear-gradient(180deg,#f4f5f7,#c9ccd2);color:#141416}
 .hint{position:fixed;top:78px;left:0;right:0;text-align:center;font-size:11px;color:var(--mut);pointer-events:none}
 </style>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"}}</script>
 </head><body>
 <div class="ttl"><b>MISTYBOX · NEW BOX</b><span>The Cube</span></div>
 <div class="hint">Drag to rotate · pinch / scroll to zoom</div>
-<div class="skins"><button class="ghost on" data-skin="alu">ALUMINIUM</button><button class="ghost" data-skin="carbon">BLACK CARBON</button><button class="ghost" data-skin="zebra">ZEBRA</button></div>
+<div class="skins"><button class="ghost on" data-skin="alu">ALUMINIUM</button><button class="ghost" data-skin="carbon">BLACK CARBON</button><button class="ghost" data-skin="zebra">ZEBRA</button><button class="ghost" data-skin="zebrafur">ZEBRA FUR</button></div>
 <div class="ui"><button id="lid">OPEN LID</button><button class="ghost" id="spin">AUTO-ROTATE</button></div>
 <script type="module">
 import * as THREE from 'three';
@@ -71,7 +71,21 @@ const ZEBRA = {CarbonPanel: () => new THREE.MeshStandardMaterial({map: zebraTex,
   BlackBlock: () => new THREE.MeshStandardMaterial({color: 0xe2e4e8, metalness: 1, roughness: .2}),
   HingeDark: () => new THREE.MeshStandardMaterial({color: 0xd8dadf, metalness: 1, roughness: .14})};
 let curSkin = 'alu';
-function makeMat(name){ if(curSkin === 'zebra' && ZEBRA[name]) return ZEBRA[name](); if(name === 'CarbonPanel') return new THREE.MeshPhysicalMaterial({map: carbonTex, metalness: .1, roughness: .4, clearcoat: .8, clearcoatRoughness: .12});
+// real-time fur: N shells of the panel pushed out along the normal, strands cut out by a noise mask that thins toward the tips
+const FUR_N = 18, FUR_LEN = .014;
+const furNoise = (() => { const n = 512, c = document.createElement('canvas'); c.width = c.height = n; const g = c.getContext('2d'), d = g.createImageData(n, n);
+  for(let i = 0; i < n * n; i++){ const v = Math.random() * 255 | 0; d.data[4 * i] = d.data[4 * i + 1] = d.data[4 * i + 2] = v; d.data[4 * i + 3] = 255 }
+  g.putImageData(d, 0, 0); const t = new THREE.CanvasTexture(c); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(3, 3); t.magFilter = t.minFilter = THREE.NearestFilter; t.generateMipmaps = false; return t })();   // ~1 strand per pixel at normal zoom, kept crisp
+function furShell(i){
+  const f = (i + 1) / FUR_N;
+  const m = new THREE.MeshStandardMaterial({map: zebraTex, color: new THREE.Color().setScalar(.5 + .55 * f), roughness: .92, metalness: 0,
+    alphaMap: furNoise, alphaTest: .15 + .8 * f, envMapIntensity: .5});
+  m.onBeforeCompile = sh => { sh.uniforms.uOff = {value: FUR_LEN * f};
+    sh.vertexShader = 'uniform float uOff;\n' + sh.vertexShader.replace('#include <begin_vertex>', '#include <begin_vertex>\n  transformed += normal * uOff; transformed.y -= uOff * uOff * 40.0;') };
+  return m }
+function makeMat(name){
+  if(curSkin === 'zebrafur' && name === 'CarbonPanel') return new THREE.MeshStandardMaterial({map: zebraTex, color: 0x8a8a8a, roughness: .95, metalness: 0});
+  if((curSkin === 'zebra' || curSkin === 'zebrafur') && ZEBRA[name]) return ZEBRA[name](); if(name === 'CarbonPanel') return new THREE.MeshPhysicalMaterial({map: carbonTex, metalness: .1, roughness: .4, clearcoat: .8, clearcoatRoughness: .12});
   const L = LOOK[name]; return L ? new THREE.MeshStandardMaterial({...L, roughnessMap: /Alu/.test(name) ? brush : null}) : null }
 
 let hinge = null, model = null, lidAngle = 0;
@@ -83,7 +97,11 @@ function loadSkin(skin){
   (gltfs[url] = gltfs[url] || new Promise(res => new GLTFLoader().load(url, g => res(g.scene)))).then(src => {
     if(curSkin !== skin) return;
     const root = src.clone(true);
-    root.traverse(o => { if(!o.isMesh) return; o.castShadow = true; o.receiveShadow = true; const m = makeMat(o.material.name); if(m) o.material = m });
+    const furry = [];
+    root.traverse(o => { if(!o.isMesh) return; o.castShadow = true; o.receiveShadow = true; const nm = o.material.name;
+      if(skin === 'zebrafur' && nm === 'CarbonPanel') furry.push(o);
+      const m = makeMat(nm); if(m) o.material = m });
+    furry.forEach(o => { for(let i = 0; i < FUR_N; i++){ const sh = new THREE.Mesh(o.geometry, furShell(i)); sh.castShadow = false; sh.renderOrder = 1; o.add(sh) } });
     const ang = hinge ? hinge.rotation.x : 0;
     if(model) S.remove(model); model = root; hinge = root.getObjectByName('LidHinge'); if(hinge) hinge.rotation.x = ang; S.add(root) });
   document.querySelectorAll('.skins button').forEach(b => b.classList.toggle('on', b.dataset.skin === skin));
