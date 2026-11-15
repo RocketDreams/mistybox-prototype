@@ -669,6 +669,25 @@ html,body{overscroll-behavior:none}
  background:linear-gradient(90deg,rgba(150,150,158,0) 0%,rgba(120,120,128,.55) 18%,rgba(200,200,210,.85) 42%,#fff 50%,rgba(200,200,210,.85) 58%,rgba(120,120,128,.55) 82%,rgba(150,150,158,0) 100%)!important}
 .gline::after{width:calc(46*var(--U))!important;height:calc(5*var(--U))!important;background:radial-gradient(closest-side,rgba(255,255,255,.85),rgba(210,210,220,.35) 50%,transparent)!important;filter:blur(calc(.8*var(--U)))!important}
 .gline::before{display:none!important}
+
+/* box-details transition */
+#name{perspective:420px}
+#name .ch{display:inline-block;text-align:center;white-space:pre;background:inherit;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+ animation:chIn .6s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(var(--i) * 38ms)}
+#name .ch.sc{-webkit-text-fill-color:rgba(205,210,220,.5)}
+@keyframes chIn{from{opacity:0;transform:translateX(calc(var(--d) * 28px)) rotateY(calc(var(--d) * -85deg)) scale(.75);filter:blur(6px)}to{opacity:1;transform:none;filter:none}}
+#name.shine{background-image:linear-gradient(100deg,rgba(255,255,255,0) 44%,#fff 50%,rgba(255,255,255,0) 56%),linear-gradient(180deg,#ffffff 0%,#f2f4f8 26%,#8d95a3 44%,#3f4652 52%,#7d8695 60%,#e8ecf1 80%,#ffffff 100%)!important;
+ background-size:300% 100%,100% 100%!important;background-repeat:no-repeat!important;animation:nmShine .9s ease-out both}
+@keyframes nmShine{from{background-position:85% 0,0 0}to{background-position:15% 0,0 0}}
+.vals.roll b{animation:valIn .55s cubic-bezier(.2,.8,.2,1) both}
+.vals.roll div:nth-of-type(2) b{animation-delay:.07s}
+.vals.roll .odds{animation:valIn .55s .14s cubic-bezier(.2,.8,.2,1) both}
+@keyframes valIn{from{opacity:0;transform:translateY(12px) scale(.9);filter:blur(5px)}to{opacity:1;transform:none;filter:none}}
+#buy.roll #buyT{display:inline-block;animation:buyIn .6s .12s cubic-bezier(.2,.8,.2,1) both}
+@keyframes buyIn{from{opacity:0;transform:translateY(10px);filter:blur(4px);letter-spacing:.3em}to{opacity:1;transform:none;filter:none}}
+.gline.go::after{animation:glRun 1s cubic-bezier(.3,.7,.2,1) both}
+@keyframes glRun{0%{left:var(--gf);opacity:0;width:calc(20*var(--U))}25%{opacity:1}60%{width:calc(90*var(--U))}100%{left:50%;opacity:1}}
+@media (prefers-reduced-motion:reduce){#name .ch,#name.shine,.vals.roll b,#buy.roll #buyT,.gline.go::after{animation:none!important}}
 </style></head>
 <body>
 <div class="stage-glow" id="sg"></div>
@@ -1188,12 +1207,29 @@ function paintBox(){const b=BOXES[cur];$('#name').textContent=TITLE(b);fitTitle(
  $('#insideTop').innerHTML=b.items.filter(i=>i.tier==='grail').slice(0,2).concat(b.items.filter(i=>i.tier==='legendary').slice(0,1)).map(rowHTML).join('');
  $$('.bcard').forEach((c,i)=>c.classList.toggle('cur',i===cur));}
 function rowHTML(i){return `<button class="row" data-w="${i.id}" data-b="${i.box}"><img src="${i.img}" alt="" loading="lazy"><div class="n">${esc(i.brand)} ${esc(i.model)}<br>${rar(i.tier)}</div><div class="p">${money(i.price)}</div></button>`}
-function go(n,dir){n=(n+BOXES.length)%BOXES.length;if(n===cur)return;dir=dir||(n>cur?1:-1);
+/* box-details transition: the name decodes letter by letter (scramble -> chrome lock) with a 3D swing in the swipe
+   direction and a light sweep; min / max / price roll to their new values; the frame lines' glint runs across. */
+let DFX=0;
+function detFx(pb,dir){const tok=++DFX,b=BOXES[cur],h=$('#name'),RM=matchMedia('(prefers-reduced-motion: reduce)').matches;if(RM||!h)return;
+ const roll=(el,from,to,fmt,ms,delay)=>{if(!el||from===to)return;const t0=performance.now()+delay;el.textContent=fmt(from);
+  const st=now=>{if(tok!==DFX)return;const k=Math.min(1,Math.max(0,(now-t0)/ms)),e=1-Math.pow(1-k,3),v=from+(to-from)*e;el.textContent=fmt(k<1?Math.round(v):to);if(k<1)requestAnimationFrame(st)};requestAnimationFrame(st)};
+ roll($('#minV'),pb.min,b.min,money,700,60);roll($('#maxV'),pb.max,b.max,money,900,120);roll($('#buyT'),pb.price,b.price,v=>'BUY FOR '+money(v),800,180);
+ const vals=$('.vals'),cta=$('#buy');[vals,cta].forEach(el=>{if(!el)return;el.classList.remove('roll');void el.offsetWidth;el.classList.add('roll')});
+ $$('.gline').forEach(g=>{g.style.setProperty('--gf',dir>0?'0%':'100%');g.classList.remove('go');void g.offsetWidth;g.classList.add('go')});
+ const T=TITLE(b),G='ABCDEFGHKLMNPRSTUVWXYZ0123456789#$%&@';h.classList.remove('shine');
+ h.innerHTML=[...T].map((c,i)=>`<span class="ch" style="--i:${i};--d:${dir}">${c===' '?'&nbsp;':esc(c)}</span>`).join('');fitTitle();
+ const sp=[...h.children],wd=sp.map(x=>x.getBoundingClientRect().width);sp.forEach((x,i)=>{x.style.width=wd[i]+'px';if(T[i]!==' ')x.classList.add('sc')});
+ const t0=performance.now(),lockAt=i=>140+i*60;
+ const tick=now=>{if(tok!==DFX)return;const el=now-t0;let done=true;
+  sp.forEach((x,i)=>{if(T[i]===' '||!x.classList.contains('sc'))return;if(el>=lockAt(i)){x.textContent=T[i];x.classList.remove('sc')}else{done=false;if(Math.random()<.6)x.textContent=G[Math.random()*G.length|0]}});
+  if(!done){setTimeout(()=>requestAnimationFrame(tick),45);return}
+  setTimeout(()=>{if(tok!==DFX)return;h.textContent=T;fitTitle();void h.offsetWidth;h.classList.add('shine')},380)};
+ requestAnimationFrame(tick)}
+function go(n,dir){n=(n+BOXES.length)%BOXES.length;if(n===cur)return;dir=dir||(n>cur?1:-1);const pb=BOXES[cur];
  const old=slides[cur],nw=slides[n];nw.className='slide '+(dir>0?'enter-r':'enter-l');nw.offsetWidth;
  old.className='slide '+(dir>0?'out-l':'out-r');nw.className='slide cur burst';setTimeout(()=>nw.classList.remove('burst'),950);
  hero.classList.remove('flash');void hero.offsetWidth;hero.classList.add('flash');
- $('#name').classList.add('sw');setTimeout(()=>{$('#name').textContent=TITLE(BOXES[n]);fitTitle();$('#name').classList.remove('sw')},220);
- [...dots.children].forEach((d,i)=>d.classList.toggle('on',i===n));cur=n;theme(BOXES[n]);paintBox();SFX.sw();try{navigator.vibrate&&navigator.vibrate(12)}catch(e){}}
+ [...dots.children].forEach((d,i)=>d.classList.toggle('on',i===n));cur=n;theme(BOXES[n]);paintBox();try{detFx(pb,dir)}catch(e){console.warn('detFx',e)}SFX.sw();try{navigator.vibrate&&navigator.vibrate(12)}catch(e){}}
 $('#prev').onclick=()=>go(cur-1,-1);$('#next').onclick=()=>go(cur+1,1);
 addEventListener('keydown',e=>{if($('#sheet').classList.contains('on')||$('#reveal').classList.contains('on')){if(e.key==='Escape')closeSheet();return}
  if(curView!=='boxes')return;if(e.key==='ArrowRight')go(cur+1,1);if(e.key==='ArrowLeft')go(cur-1,-1)});
