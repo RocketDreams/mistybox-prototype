@@ -634,6 +634,18 @@ html,body{overscroll-behavior:none}
 /* crisp vector background replaces the stretched mockup JPEG */
 .bg{background:#01030a!important}
 .bg canvas#ct{display:block!important;position:absolute;inset:0;width:100%!important;height:100%!important;opacity:1!important;-webkit-mask-image:none!important;mask-image:none!important}
+
+/* WHAT'S INSIDE: endless moving strip (15+ watches), label fixed */
+.inside4:after{display:none!important}
+.inside4 .mq{position:absolute;left:calc(96*var(--U));right:0;top:0;bottom:0;overflow:hidden;
+ -webkit-mask-image:linear-gradient(90deg,transparent,#000 9%,#000 91%,transparent);mask-image:linear-gradient(90deg,transparent,#000 9%,#000 91%,transparent)}
+.inside4 .mqt{display:flex;height:100%;width:max-content;animation:mqRun 40s linear infinite}
+.inside4 .mq:active .mqt{animation-play-state:paused}
+@keyframes mqRun{to{transform:translateX(-50%)}}
+.inside4 .mqt .it{position:relative!important;left:auto!important;top:auto!important;margin:0!important;width:calc(72*var(--U))!important;flex:none!important;
+ display:flex!important;flex-direction:column;align-items:center;justify-content:center;gap:0}
+.inside4 .mqt .it+.it:before{content:"";display:block!important;position:absolute;left:0;top:calc(22*var(--U));height:calc(32*var(--U));width:1px;background:rgba(255,255,255,.35)}
+@media (prefers-reduced-motion:reduce){.inside4 .mqt{animation:none}}
 </style></head>
 <body>
 <div class="stage-glow" id="sg"></div>
@@ -1091,8 +1103,10 @@ const TITLE=b=>(SHORT[b.key]||b.tier).toUpperCase();   // short names, no 'BOX'
 function fitTitle(){const h=$('#name');if(!h)return;h.style.fontSize='';const max=h.parentElement.clientWidth*.9;let fs=parseFloat(getComputedStyle(h).fontSize);
  for(let i=0;i<20&&h.scrollWidth>max&&fs>14;i++){fs*=.94;h.style.setProperty('font-size',fs+'px','important')}}
 function paintBox(){const b=BOXES[cur];$('#name').textContent=TITLE(b);fitTitle();
- {const seen=new Set(),top=[...b.items].sort((x,y)=>y.price-x.price).filter(i=>!seen.has(i.brand)&&seen.add(i.brand)).slice(0,4);
-  $('#inside4').innerHTML='<div class="lab">WHAT’S<br>INSIDE?</div>'+top.map(i=>`<button class="it" data-w="${i.id}" data-b="${cur}"><img src="${i.img}" alt=""><span>${esc(i.brand)}</span><b>${money(i.price)}</b></button>`).join('')}$('#minV').textContent=money(b.min);$('#maxV').textContent=money(b.max);$('#buyT').textContent='BUY FOR '+money(b.price);
+ {const seen=new Set(),list=[...b.items].sort((x,y)=>y.price-x.price).filter(i=>!seen.has(i.id)&&seen.add(i.id));
+  let top=list.slice(0,Math.max(15,Math.min(list.length,20)));while(top.length&&top.length<15)top=top.concat(list).slice(0,15);   // at least 15 in the strip
+  const cell=i=>`<button class="it" data-w="${i.id}" data-b="${cur}"><img src="${i.img}" alt=""><span>${esc(i.brand)}</span><b>${money(i.price)}</b></button>`,run=top.map(cell).join('');
+  $('#inside4').innerHTML='<div class="lab">WHAT’S<br>INSIDE?</div><div class="mq"><div class="mqt" style="animation-duration:'+(top.length*2.6)+'s">'+run+run+'</div></div>'}$('#minV').textContent=money(b.min);$('#maxV').textContent=money(b.max);$('#buyT').textContent='BUY FOR '+money(b.price);
  $('#insideTop').innerHTML=b.items.filter(i=>i.tier==='grail').slice(0,2).concat(b.items.filter(i=>i.tier==='legendary').slice(0,1)).map(rowHTML).join('');
  $$('.bcard').forEach((c,i)=>c.classList.toggle('cur',i===cur));}
 function rowHTML(i){return `<button class="row" data-w="${i.id}" data-b="${i.box}"><img src="${i.img}" alt="" loading="lazy"><div class="n">${esc(i.brand)} ${esc(i.model)}<br>${rar(i.tier)}</div><div class="p">${money(i.price)}</div></button>`}
