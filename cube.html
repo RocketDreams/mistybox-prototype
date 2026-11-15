@@ -14,12 +14,14 @@ button.ghost{background:rgba(255,255,255,.1);color:var(--fg)}
 .ttl{position:fixed;top:20px;left:0;right:0;text-align:center;pointer-events:none}
 .ttl b{display:block;font-size:11px;letter-spacing:4px;color:var(--mut);font-weight:600}
 .ttl span{font-size:20px;font-weight:600}
+.skins{position:fixed;top:104px;left:0;right:0;display:flex;justify-content:center;gap:8px}.skins button{height:34px;padding:0 14px;font-size:11px}.skins button.on{background:linear-gradient(180deg,#f4f5f7,#c9ccd2);color:#141416}
 .hint{position:fixed;top:78px;left:0;right:0;text-align:center;font-size:11px;color:var(--mut);pointer-events:none}
 </style>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"}}</script>
 </head><body>
-<div class="ttl"><b>MISTYBOX · NEW BOX</b><span>Aluminium Cube</span></div>
+<div class="ttl"><b>MISTYBOX · NEW BOX</b><span>The Cube</span></div>
 <div class="hint">Drag to rotate · pinch / scroll to zoom</div>
+<div class="skins"><button class="ghost on" data-skin="alu">ALUMINIUM</button><button class="ghost" data-skin="carbon">BLACK CARBON</button></div>
 <div class="ui"><button id="lid">OPEN LID</button><button class="ghost" id="spin">AUTO-ROTATE</button></div>
 <script type="module">
 import * as THREE from 'three';
@@ -52,15 +54,31 @@ const brush = (() => { const c = document.createElement('canvas'); c.width = 512
 const LOOK = {
   AluPanel: {color: 0xb4b7bd, metalness: 1, roughness: .42}, AluRail: {color: 0xd9dce1, metalness: 1, roughness: .26},
   AluBlock: {color: 0xd4d7dc, metalness: 1, roughness: .3}, BoltSteel: {color: 0x9a9da3, metalness: 1, roughness: .18},
-  InteriorBlack: {color: 0x0b0b0d, metalness: 0, roughness: .95}, HingeSteel: {color: 0xa8abb1, metalness: 1, roughness: .22}};
+  InteriorBlack: {color: 0x0b0b0d, metalness: 0, roughness: .95}, HingeSteel: {color: 0xa8abb1, metalness: 1, roughness: .22},
+  BlackRail: {color: 0x1a1a1d, metalness: 1, roughness: .3}, BlackBlock: {color: 0x1c1c20, metalness: 1, roughness: .32},
+  BoltChrome: {color: 0xe8e9ec, metalness: 1, roughness: .08}, HingeDark: {color: 0x45464a, metalness: 1, roughness: .25}};
+// 2x2 twill carbon weave (matches the Blender shader: 64 tows per metre on the panel UVs)
+const carbonTex = (() => { const n = 8, px = 32, c = document.createElement('canvas'); c.width = c.height = n * px; const g = c.getContext('2d');
+  for(let i = 0; i < n; i++) for(let j = 0; j < n; j++){ const horiz = ((i + j) % 4) < 2, x = i * px, y = j * px;
+    const gr = horiz ? g.createLinearGradient(0, y, 0, y + px) : g.createLinearGradient(x, 0, x + px, 0);
+    const hi = horiz ? 44 : 22; gr.addColorStop(0, '#060607'); gr.addColorStop(.5, `rgb(${hi},${hi},${hi + 3})`); gr.addColorStop(1, '#060607');
+    g.fillStyle = gr; g.fillRect(x, y, px, px) }
+  const t = new THREE.CanvasTexture(c); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(4, 4); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; return t })();
+function makeMat(name){ if(name === 'CarbonPanel') return new THREE.MeshPhysicalMaterial({map: carbonTex, metalness: .1, roughness: .4, clearcoat: .8, clearcoatRoughness: .12});
+  const L = LOOK[name]; return L ? new THREE.MeshStandardMaterial({...L, roughnessMap: /Alu/.test(name) ? brush : null}) : null }
 
-let hinge = null;
-new GLTFLoader().load('assets/3d/cube.glb', g => {
-  const root = g.scene;
-  root.traverse(o => { if(!o.isMesh) return; o.castShadow = true; o.receiveShadow = true;
-    const L = LOOK[o.material.name]; if(L){ o.material = new THREE.MeshStandardMaterial({...L, roughnessMap: /Alu/.test(o.material.name) ? brush : null}) } });
-  hinge = root.getObjectByName('LidHinge'); S.add(root);
-});
+let hinge = null, model = null, lidAngle = 0;
+const cache = {};
+function loadSkin(skin){
+  const url = skin === 'carbon' ? 'assets/3d/cube_carbon.glb' : 'assets/3d/cube.glb';
+  (cache[url] = cache[url] || new Promise(res => new GLTFLoader().load(url, g => {
+    g.scene.traverse(o => { if(!o.isMesh) return; o.castShadow = true; o.receiveShadow = true; const m = makeMat(o.material.name); if(m) o.material = m });
+    res(g.scene) }))).then(root => { if(model) S.remove(model); model = root; hinge = root.getObjectByName('LidHinge'); S.add(root) });
+  document.querySelectorAll('.skins button').forEach(b => b.classList.toggle('on', b.dataset.skin === skin));
+  S.environmentIntensity = skin === 'carbon' ? .45 : .9;
+}
+document.querySelectorAll('.skins button').forEach(b => b.onclick = () => loadSkin(b.dataset.skin));
+loadSkin(new URLSearchParams(location.search).get('skin') || 'alu');
 
 let lidT = 0, lidGoal = 0, spin = false;
 const btn = document.getElementById('lid');
