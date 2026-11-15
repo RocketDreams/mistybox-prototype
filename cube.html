@@ -41,7 +41,7 @@ key.shadow.mapSize.set(2048, 2048); key.shadow.camera.left = key.shadow.camera.b
 const rim = new THREE.DirectionalLight(0xcfd8ff, 1.2); rim.position.set(2.5, 2, -3); S.add(rim);
 const floor = new THREE.Mesh(new THREE.PlaneGeometry(8, 8), new THREE.ShadowMaterial({opacity: .45})); floor.rotation.x = -Math.PI / 2; floor.receiveShadow = true; S.add(floor);
 
-const cam = new THREE.PerspectiveCamera(30, innerWidth / innerHeight, .05, 50);
+const cam = new THREE.PerspectiveCamera(30, innerWidth / innerHeight, .3, 20);
 const ctl = new OrbitControls(cam, R.domElement); ctl.target.set(0, .48, 0); ctl.enableDamping = true; ctl.minDistance = 1.6; ctl.maxDistance = 7;
 ctl.maxPolarAngle = Math.PI * .52;
 function frame(){ const d = innerWidth < innerHeight ? 5.2 : 3.9; cam.position.set(-Math.sin(.62) * d, .48 + d * .42, Math.cos(.62) * d); cam.lookAt(ctl.target) }
