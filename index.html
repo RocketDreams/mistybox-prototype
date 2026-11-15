@@ -657,6 +657,10 @@ html,body{overscroll-behavior:none}
 /* safari: arrows always above the 3D canvases */
 .arrow{z-index:12!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;transform:translateZ(0);-webkit-transform:translateZ(0)}
 .arrow:active{transform:translateZ(0) scale(.9)}
+
+/* no hamburger; logo pinned to the left edge */
+.burger{display:none!important}
+.mklogo,.top .hd img.mklogo{left:calc(var(--ox) + 16*var(--U))!important}
 </style></head>
 <body>
 <div class="stage-glow" id="sg"></div>
