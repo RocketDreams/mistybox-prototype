@@ -21,7 +21,7 @@ button.ghost{background:rgba(255,255,255,.1);color:var(--fg)}
 </head><body>
 <div class="ttl"><b>MISTYBOX · NEW BOX</b><span>The Cube</span></div>
 <div class="hint">Drag to rotate · pinch / scroll to zoom</div>
-<div class="skins"><button class="ghost on" data-skin="alu">ALUMINIUM</button><button class="ghost" data-skin="carbon">BLACK CARBON</button><button class="ghost" data-skin="zebra">ZEBRA</button><button class="ghost" data-skin="zebrafur">ZEBRA FUR</button><button class="ghost" data-skin="hearts">HEARTS</button></div>
+<div class="skins"><button class="ghost on" data-skin="alu">ALUMINIUM</button><button class="ghost" data-skin="carbon">BLACK CARBON</button><button class="ghost" data-skin="zebra">ZEBRA</button><button class="ghost" data-skin="zebrafur">ZEBRA FUR</button><button class="ghost" data-skin="hearts">HEARTS</button><button class="ghost" data-skin="hoops">HOOPS</button></div>
 <div class="ui"><button id="lid">OPEN LID</button><button class="ghost" id="spin">AUTO-ROTATE</button></div>
 <script type="module">
 import * as THREE from 'three';
@@ -91,7 +91,15 @@ const HEARTS = {
   ChromeBlock: () => new THREE.MeshStandardMaterial({color: 0xe2e4e8, metalness: 1, roughness: .2}),
   HingeChrome: () => new THREE.MeshStandardMaterial({color: 0xd8dadf, metalness: 1, roughness: .14}),
   RedVelvet: () => new THREE.MeshPhysicalMaterial({color: 0x3a0308, roughness: .95, metalness: 0, sheen: 1, sheenColor: 0xa01020, sheenRoughness: .6})};
+const HOOPS = {
+  HoopsPanel: src => new THREE.MeshPhysicalMaterial({map: src && src.map, roughness: .55, metalness: 0, clearcoat: .15, clearcoatRoughness: .2}),
+  HoopsBadge: src => new THREE.MeshPhysicalMaterial({map: src && src.map, roughness: .3, metalness: 0, clearcoat: .6, clearcoatRoughness: .08}),
+  HoopsStripes: src => new THREE.MeshPhysicalMaterial({map: src && src.map, roughness: .3, metalness: 0, clearcoat: .5}),
+  RedPost: () => new THREE.MeshPhysicalMaterial({color: 0xc8101e, metalness: .5, roughness: .22, clearcoat: 1, clearcoatRoughness: .04}),
+  RedVelvet: () => new THREE.MeshPhysicalMaterial({color: 0x2a0205, roughness: .95, metalness: 0, sheen: 1, sheenColor: 0x900a18, sheenRoughness: .6})};
 function makeMat(name, src){
+  if(curSkin === 'hoops' && HOOPS[name]) return HOOPS[name](src);
+  if(curSkin === 'hoops' && HEARTS[name]) return HEARTS[name](src);
   if(curSkin === 'hearts' && HEARTS[name]) return HEARTS[name](src);
   if(curSkin === 'zebrafur' && name === 'CarbonPanel') return new THREE.MeshStandardMaterial({map: zebraTex, color: 0x8a8a8a, roughness: .95, metalness: 0});
   if((curSkin === 'zebra' || curSkin === 'zebrafur') && ZEBRA[name]) return ZEBRA[name](); if(name === 'CarbonPanel') return new THREE.MeshPhysicalMaterial({map: carbonTex, metalness: .1, roughness: .4, clearcoat: .8, clearcoatRoughness: .12});
@@ -102,7 +110,7 @@ const cache = {};
 const gltfs = {};
 function loadSkin(skin){
   curSkin = skin;
-  const url = skin === 'alu' ? 'assets/3d/cube.glb' : skin === 'hearts' ? 'assets/3d/cube_hearts.glb' : 'assets/3d/cube_carbon.glb';   // zebra shares the carbon model (same UVs), new materials
+  const url = skin === 'alu' ? 'assets/3d/cube.glb' : skin === 'hearts' ? 'assets/3d/cube_hearts.glb' : skin === 'hoops' ? 'assets/3d/cube_hoops.glb' : 'assets/3d/cube_carbon.glb';   // zebra shares the carbon model (same UVs), new materials
   (gltfs[url] = gltfs[url] || new Promise(res => new GLTFLoader().load(url, g => res(g.scene)))).then(src => {
     if(curSkin !== skin) return;
     const root = src.clone(true);
