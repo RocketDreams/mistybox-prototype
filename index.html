@@ -1672,7 +1672,7 @@ function glowLayer(baseCanvas){
 const loader = new GLTFLoader(), cache = {}, models = {};
 function keyOf(b){const m=/3d\/(\w+)-box/.exec(b.img);return m?m[1]:'agent'}
 // ---- the new cube boxes: one model family, skinned per box (materials ported from cube.html) ----
-const CUBE_GLB = {alu: 'cube.glb', carbon: 'cube_carbon.glb', zebra: 'cube_carbon.glb', zebrafur: 'cube_carbon.glb', hearts: 'cube_hearts.glb', hoops: 'cube_hoops.glb', leather: 'cube_leather.glb', redleather: 'cube_leather.glb'};
+const CUBE_GLB = {alu: 'case.glb', carbon: 'case_carbon.glb', zebra: 'case_carbon.glb', zebrafur: 'case_carbon.glb', hearts: 'case_hearts.glb', hoops: 'case_hoops.glb', leather: 'case_leather.glb', redleather: 'case_leather.glb'};   // v2 case model (Sharon, 2026-11-16)
 const CUBE_SCALE = 1.15, cubeSrc = {}, TL = new THREE.TextureLoader();
 let ROOM = null;   // bright studio reflections for the cube boxes (chrome would read black in the app's dark scene)
 function studioEnv(){   // equirect canvas (works in every renderer: three PMREMs it per context): softboxes on a grey studio
@@ -1730,7 +1730,8 @@ function loadCube(skin){
   return (cubeSrc[url] = cubeSrc[url] || loader.loadAsync(url)).then(g => {
     const root = g.scene.clone(true), furry = [];
     root.traverse(o => { if(!o.isMesh) return; const nm = o.material.name; if(skin === 'zebrafur' && nm === 'CarbonPanel') furry.push(o);
-      const m = cubeMat(skin, nm, o.material); if(m){ ROOM = ROOM || studioEnv(); m.envMap = ROOM; if(m.metalness >= .9) m.envMapIntensity = 1.1; o.material = m } });   // chrome needs bright reflections in the app's dark studio
+      const m = cubeMat(skin, nm, o.material); if(m && o.material.normalMap && !m.normalMap && /Rail|AluPanel/.test(nm)){ m.normalMap = o.material.normalMap; m.normalScale = o.material.normalScale.clone() }   // keep the model's bevel detail
+      if(m){ ROOM = ROOM || studioEnv(); m.envMap = ROOM; if(m.metalness >= .9) m.envMapIntensity = 1.1; o.material = m } });   // chrome needs bright reflections in the app's dark studio
     furry.forEach(furShells);
     root.scale.setScalar(CUBE_SCALE);
     const box = new THREE.Box3().setFromObject(root); root.position.set(-(box.min.x + box.max.x) / 2, -box.min.y, -(box.min.z + box.max.z) / 2);
