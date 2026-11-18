@@ -851,6 +851,31 @@ html,body{overscroll-behavior:none}
 #scr .gline{background:linear-gradient(90deg,rgba(150,150,158,0),rgba(200,200,210,.8) 45%,#fff 50%,rgba(200,200,210,.8) 55%,rgba(150,150,158,0))!important;box-shadow:none!important;height:1px!important}
 #scr .gline::after{background:radial-gradient(closest-side,rgba(255,255,255,.6),transparent)!important}
 #scr .arrow{background:rgba(20,20,24,.85)!important;border:1px solid var(--mb-line-2)!important;box-shadow:none!important;clip-path:none!important;border-radius:50%!important}
+
+#scr .gift{text-transform:none!important;letter-spacing:.3px!important;font-weight:700!important}
+#scr #colSub b{color:#fff}
+#scr .mbx-nf{display:flex;flex-direction:column;align-items:center;text-align:center;padding:4px 20px 26px}
+#scr .mbx-nf .wal{width:132px;height:132px;object-fit:contain;filter:drop-shadow(0 10px 24px rgba(0,0,0,.7))}
+#scr .mbx-nf h3{margin:16px 0 0;font:800 26px/1.1 Montserrat,sans-serif;letter-spacing:-.3px;color:#fff}
+#scr .mbx-nf h2{margin:14px 0 0;font:italic 900 44px/1 Montserrat,sans-serif;letter-spacing:-1px;background:var(--mb-chrome);-webkit-background-clip:text;background-clip:text;color:transparent;padding-right:6px}
+#scr .mbx-nf p{margin:10px 0 18px;font-size:14px;line-height:1.5;color:var(--mb-text-2)}
+#scr .mbx-nf p b{color:var(--mb-gold)}
+#scr .mbx-nf .cta{width:100%}
+#scr .mbx-bc{padding:4px 0 24px}
+#scr .mbx-bchead{display:flex;align-items:center;gap:10px;margin:0 20px 14px;padding:14px 16px;border-radius:20px;background:#111114;border:1px solid var(--mb-line)}
+#scr .mbx-st{flex:1}#scr .mbx-st.r{text-align:right}
+#scr .mbx-st small{display:block;font:600 10px/1 Montserrat,sans-serif;letter-spacing:1.6px;text-transform:uppercase;color:var(--mb-text-3)}
+#scr .mbx-st b{display:block;margin-top:6px;font:italic 900 22px/1 Montserrat,sans-serif;color:#fff}
+#scr .mbx-bcimg{width:92px;flex:none}
+#scr .mbx-trow{display:flex;align-items:center;justify-content:space-between;margin:16px 20px 10px}
+#scr .mbx-trow span:last-child{font-size:12px;color:var(--mb-text-2)}
+#scr .mbx-strip{display:flex;gap:10px;overflow-x:auto;padding:0 20px;scrollbar-width:none}
+#scr .mbx-strip::-webkit-scrollbar{display:none}
+#scr .mbx-mini{flex:none;width:136px;display:flex;flex-direction:column;align-items:flex-start;text-align:left;padding:10px;border-radius:18px;background:#111114;border:1px solid var(--mb-line);color:#fff}
+#scr .mbx-mini .im{width:100%;height:96px;display:grid;place-items:center}
+#scr .mbx-mini img{width:100%;height:96px;object-fit:contain}
+#scr .mbx-mini b{margin-top:8px;font:italic 900 18px/1 Montserrat,sans-serif}
+#scr .mbx-mini span{margin-top:4px;font-size:11px;line-height:1.3;color:var(--mb-text-3);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 /* bottom nav */
 #scr .nav{background:#000!important;border-top:1px solid var(--mb-line)!important;box-shadow:none!important}
 </style></head>
@@ -909,10 +934,10 @@ html,body{overscroll-behavior:none}
    <div class="inside4" id="inside4"></div>
    <div class="gline"></div>
    <div class="t"><h1 id="name">HERITAGE BOX</h1></div>
-   <div class="vals"><div><small>MIN VALUE</small><b id="minV">$20</b></div><span class="sl"></span><div><small>MAX VALUE</small><b id="maxV">$1,175</b></div><button class="odds" id="oddsBtn"><img src="assets/mk/i_star.png" alt="">ODDS</button></div>
+   <div class="vals"><div><small>FLOOR VALUE</small><b id="minV">$20</b></div><span class="sl"></span><div><small>MAX VALUE</small><b id="maxV">$1,175</b></div><button class="odds" id="oddsBtn"><img src="assets/mk/i_star.png" alt="">ODDS</button></div>
    <div class="gline"></div>
-   <button class="cta" id="buy"><span id="buyT">BUY FOR $50</span> <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h16M14 6l6 6-6 6"/></svg></button>
-   <button class="gift" id="giftBtn"><img src="assets/mk/i_gift.png" alt="">SEND AS A GIFT</button>
+   <button class="cta" id="buy"><span id="buyT">OPEN FOR $50</span> <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h16M14 6l6 6-6 6"/></svg></button>
+   <button class="gift" id="giftBtn"><img src="assets/mk/i_gift.png" alt="">Send as a gift</button>
    <div class="sec"><h2>What’s Inside</h2><button class="link" id="viewAll">VIEW ALL <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button></div>
    <div id="insideTop"></div>
    <div class="sec"><h2>All Boxes</h2><span class="link" style="color:var(--dim)">5 TIERS</span></div>
@@ -922,7 +947,7 @@ html,body{overscroll-behavior:none}
 
   <!-- SHOWROOM -->
   <section class="view" id="v-showroom">
-   <div class="pad"><div class="ptitle">Showroom</div><div class="psub">Every watch we currently hold, across every box. Browsing is free and nothing here commits you to an opening.</div></div>
+   <div class="pad"><div class="ptitle">Showroom</div><div class="psub">Every watch across every box</div></div>
    <label class="search"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg><input id="q" placeholder="Search by name or brand" autocomplete="off"></label>
    <div class="chips" id="srChips"></div>
    <div class="grid" id="srGrid"></div>
@@ -930,7 +955,7 @@ html,body{overscroll-behavior:none}
 
   <!-- COLLECTION -->
   <section class="view" id="v-collection">
-   <div class="pad"><div class="ptitle">My Collection</div><div class="psub">Watches you revealed. Keep them in the vault, sell back for 90% of fair market value, or ship them to you.</div></div>
+   <div class="pad"><div class="ptitle">My Vault</div><div class="psub" id="colSub"></div></div>
    <div class="chips" id="colChips"></div>
    <div class="grid" id="colGrid"></div>
   </section>
@@ -1383,7 +1408,7 @@ function paintBox(){const b=BOXES[cur];$('#name').textContent=TITLE(b);fitTitle(
  {const seen=new Set(),list=[...b.items].sort((x,y)=>y.price-x.price).filter(i=>!seen.has(i.id)&&seen.add(i.id));
   let top=list.slice(0,Math.max(15,Math.min(list.length,20)));while(top.length&&top.length<15)top=top.concat(list).slice(0,15);   // at least 15 in the strip
   const cell=i=>`<button class="it" data-w="${i.id}" data-b="${cur}"><img src="${i.img}" alt=""><span>${esc(i.brand)}</span><b>${money(i.price)}</b></button>`,run=top.map(cell).join('');
-  $('#inside4').innerHTML='<div class="lab">WHAT’S<br>INSIDE?</div><div class="mq"><div class="mqt" style="animation-duration:'+(top.length*2.6)+'s">'+run+run+'</div></div>'}$('#minV').textContent=money(b.min);$('#maxV').textContent=money(b.max);$('#buyT').textContent='BUY FOR '+money(b.price);
+  $('#inside4').innerHTML='<div class="lab">WHAT’S<br>INSIDE?</div><div class="mq"><div class="mqt" style="animation-duration:'+(top.length*2.6)+'s">'+run+run+'</div></div>'}$('#minV').textContent=money(b.min);$('#maxV').textContent=money(b.max);$('#buyT').textContent='OPEN FOR '+money(b.price);
  $('#insideTop').innerHTML=b.items.filter(i=>i.tier==='grail').slice(0,2).concat(b.items.filter(i=>i.tier==='legendary').slice(0,1)).map(rowHTML).join('');
  $$('.bcard').forEach((c,i)=>c.classList.toggle('cur',i===cur));}
 function rowHTML(i){return `<button class="row" data-w="${i.id}" data-b="${i.box}"><img src="${i.img}" alt="" loading="lazy"><div class="n">${esc(i.brand)} ${esc(i.model)}<br>${rar(i.tier)}</div><div class="p">${money(i.price)}</div></button>`}
@@ -1393,7 +1418,7 @@ let DFX=0;
 function detFx(pb,dir){const tok=++DFX,b=BOXES[cur],h=$('#name'),RM=matchMedia('(prefers-reduced-motion: reduce)').matches;if(RM||!h)return;
  const roll=(el,from,to,fmt,ms,delay)=>{if(!el||from===to)return;const t0=performance.now()+delay;el.textContent=fmt(from);
   const st=now=>{if(tok!==DFX)return;const k=Math.min(1,Math.max(0,(now-t0)/ms)),e=1-Math.pow(1-k,3),v=from+(to-from)*e;el.textContent=fmt(k<1?Math.round(v):to);if(k<1)requestAnimationFrame(st)};requestAnimationFrame(st)};
- roll($('#minV'),pb.min,b.min,money,700,60);roll($('#maxV'),pb.max,b.max,money,900,120);roll($('#buyT'),pb.price,b.price,v=>'BUY FOR '+money(v),800,180);
+ roll($('#minV'),pb.min,b.min,money,700,60);roll($('#maxV'),pb.max,b.max,money,900,120);roll($('#buyT'),pb.price,b.price,v=>'OPEN FOR '+money(v),800,180);
  const vals=$('.vals'),cta=$('#buy');[vals,cta].forEach(el=>{if(!el)return;el.classList.remove('roll');void el.offsetWidth;el.classList.add('roll')});
  $$('.gline').forEach(g=>{g.style.setProperty('--gf',dir>0?'0%':'100%');g.classList.remove('go');void g.offsetWidth;g.classList.add('go')});
  const T=TITLE(b),G='ABCDEFGHKLMNPRSTUVWXYZ0123456789#$%&@';h.classList.remove('shine','in');h.style.setProperty('--d',dir);
@@ -1441,11 +1466,10 @@ function openOdds(bi){const b=BOXES[bi];
  el=>setTimeout(()=>el.querySelectorAll('.bar i').forEach(i=>i.style.width=i.dataset.w+'%'),60))}
 $('#oddsBtn').onclick=()=>openOdds(cur);
 
-function openInside(bi,filter='all'){const b=BOXES[bi];
- const render=f=>`<div class="chips" style="margin-top:0">${['all',...TIERS].map(t=>`<button class="chip ${t===f?'on':''}" data-f="${t}">${t.toUpperCase()}</button>`).join('')}</div>
- <div class="grid">${b.items.filter(i=>f==='all'||i.tier===f).map(wcHTML).join('')}</div>`;
- openSheet(`What’s Inside · ${b.skin}`,render(filter),el=>{el.onclick=e=>{const c=e.target.closest('[data-f]');if(c){el.innerHTML=render(c.dataset.f);SFX.tap();return}
-  const w=e.target.closest('[data-w]');if(w)openWatch(w.dataset.w,+w.dataset.b)}})}
+function openInside(bi){const b=BOXES[bi],TT=['grail','legendary','epic','rare','uncommon','common'];
+ openSheet(`${b.tier} box`,`<div class="mbx-bc"><div class="mbx-bchead"><div class="mbx-st"><small>Floor value</small><b>${money(b.min)}</b></div><div class="mbx-bcimg">${LBOX(b)}</div><div class="mbx-st r"><small>Max value</small><b>${money(b.max)}</b></div></div>
+ ${TT.map(t=>{const its=b.items.filter(x=>x.tier===t);if(!its.length)return'';return `<div class="mbx-trow">${rar(t)}<span>Chance ${b.odds[t][0]}% · ${b.odds[t][1]}</span></div><div class="mbx-strip">${its.map(x=>`<button class="mbx-mini" data-w="${x.id}" data-b="${bi}"><div class="im"><img src="${x.img}" alt="" loading="lazy"></div><b>${money(x.price)}</b><span>${esc(x.brand)} · ${esc(x.model)}</span></button>`).join('')}</div>`}).join('')}</div>`,
+ el=>{el.onclick=e=>{const w=e.target.closest('[data-w]');if(w)openWatch(w.dataset.w,+w.dataset.b)}})}
 function wcHTML(i,extra=''){return `<button class="wc" data-w="${i.id}" data-b="${i.box}">${extra}<div class="wi"><img src="${i.img}" alt="" loading="lazy"></div>${rar(i.tier)}<div class="br">${esc(i.brand)}</div><div class="md">${esc(i.model)}</div><div class="pr">${money(i.price)}</div></button>`}
 $('#viewAll').onclick=()=>openInside(cur);
 $('#inside4').onclick=e=>{const w=e.target.closest('[data-w]');if(w)openWatch(w.dataset.w,+w.dataset.b)};
@@ -1454,20 +1478,17 @@ $('#burger').onclick=()=>show('account');
 $('#insideTop').onclick=e=>{const w=e.target.closest('[data-w]');if(w)openWatch(w.dataset.w,+w.dataset.b)};
 
 function openWatch(id,bi){const i=item(id),b=BOXES[bi??i.box];
- openSheet('',`<div class="mbx-view"><div class="mb-wcard"><i class="mb-bolt" style="left:10px;top:10px"></i><i class="mb-bolt" style="right:10px;top:10px"></i><i class="mb-bolt" style="left:10px;bottom:10px"></i><i class="mb-bolt" style="right:10px;bottom:10px"></i><div class="in"><img src="${i.img}" alt="${esc(i.brand)} ${esc(i.model)}">${rar(i.tier)}</div></div>
+ openSheet('View watch',`<div class="mbx-view"><div class="mb-wcard"><i class="mb-bolt" style="left:10px;top:10px"></i><i class="mb-bolt" style="right:10px;top:10px"></i><i class="mb-bolt" style="left:10px;bottom:10px"></i><i class="mb-bolt" style="right:10px;bottom:10px"></i><div class="in"><img src="${i.img}" alt="${esc(i.brand)} ${esc(i.model)}">${rar(i.tier)}</div></div>
  <div class="mbx-brand">${esc(i.brand)}</div><div class="mbx-price">${money(i.price)}</div><div class="mbx-model">${esc(i.model)}</div>
- <div class="mbx-found"><span>Found in</span><b>${b.tier} · ${esc(b.skin)}</b></div>
+ <div class="mbx-found"><span>Found in</span><b>${b.tier} box ›</b></div>
  <div class="mbx-acts"><button class="btn" id="wShare">SHARE</button><button class="cta sm" id="wOpen">OPEN · ${money(b.price)}</button></div></div>`,
  el=>{el.querySelector('#wShare').onclick=async()=>{try{await navigator.clipboard.writeText(location.href.split('#')[0]+'#'+id);toast('Link copied')}catch(e){toast('Copy not available here')}};
   el.querySelector('#wOpen').onclick=()=>{closeSheet();if(curView!=='boxes')show('boxes');go(BOXES.indexOf(b));setTimeout(()=>openBuy(BOXES.indexOf(b)),350)}})}
 
 /* ---------- buy + reveal ---------- */
 function openBuy(bi){const b=BOXES[bi];
- if(S.bal<b.price){openDeposit(`You need ${money(b.price-S.bal)} more to open ${b.skin}.`,b.price-S.bal);return}
- openSheet('Open box',`<div class="shead"><div style="width:96px">${LBOX(b)}</div><div><div class="k">${b.tier.toUpperCase()} BOX</div><div style="font-size:18px;font-weight:600;margin-top:2px">${esc(b.skin)}</div><div class="v">${money(b.min)} – ${money(b.max)}</div></div></div>
- <div class="form"><div class="kv" style="margin:0">Price <b>${money(b.price)}</b></div><div class="kv" style="margin:0">Balance after <b>${money(S.bal-b.price)}</b></div><div class="kv" style="margin:0">Leaderboard points <b>+${(b.price*5).toLocaleString()}</b></div>
- <p class="note">You always receive an item. Keep it, ship it, or sell it back for 90% of fair market value.</p>
- <button class="cta sm" id="confirmBuy">OPEN FOR ${money(b.price)}</button></div>`,el=>el.querySelector('#confirmBuy').onclick=()=>{closeSheet();setTimeout(()=>openPicker(bi),250)})}
+ if(S.bal<b.price){openNoFunds(b);return}
+ openPicker(bi)}
 /* pick your box: a ring of identical boxes on a dark stage; drag to turn, the one under the spotlight is yours */
 function openPicker(bi){const b=BOXES[bi],pk=$('#pick');let chosen=false,api=null;
  pk.className='pick';pk.innerHTML=`<div class="curt"></div><div class="pool"></div><div class="vig"></div>
@@ -1637,7 +1658,7 @@ function openBox(bi){const b=BOXES[bi];scr.scrollTop=0;S.bal-=b.price;S.pts+=b.p
    pushTick({who:'You',tier:win.tier,box:b.tier,i:win});
    const close=st=>{done=true;S.col.unshift({id:win.id,st,trk:st==='shipped'?'UPS · 1Z'+Math.random().toString(36).slice(2,9).toUpperCase():undefined});save();rv.classList.remove('on');rv.innerHTML='';scr.classList.remove('rv-on');renderCol();renderLB()};
    info.querySelector('#rKeep').onclick=()=>{close('vault');toast(`${win.model} is in your vault`)};
-   info.querySelector('#rSell').onclick=()=>{S.bal+=win.price*.9;close('sold');paintBal();SFX.coin();toast(`Sold back · ${money(win.price*.9)} added to your wallet`)};
+   info.querySelector('#rSell').onclick=()=>{S.bal+=win.price*.9;close('sold');paintBal();SFX.coin();setTimeout(()=>openSold(win),200)};
    info.querySelector('#rShip').onclick=()=>{close('vault');openShip(S.col[0])};
    info.querySelector('#rAgain').onclick=()=>{close('vault');setTimeout(()=>openBuy(bi),200)};
    },1700)}
@@ -1657,7 +1678,7 @@ $('#giftBtn').onclick=()=>{const b=BOXES[cur];
 /* ---------- wallet ---------- */
 function openDeposit(msg,need){let v=need?Math.max(25,Math.ceil(need/25)*25):500;
  const K=['1','2','3','4','5','6','7','8','9','','0','del'];
- openSheet('Add funds',`<div class="mbx-dep">${msg?`<p class="mbx-msg">${esc(msg)}</p>`:''}<div class="mbx-amt"><span id="dAmt"></span><i></i></div>
+ openSheet('Add funds',`<div class="mbx-dep"><div class="mbx-amt"><span id="dAmt"></span><i></i></div>
  <div class="mbx-quick">${[50,100,500,1000].map(a=>`<button type="button" data-a="${a}">$${a.toLocaleString()}</button>`).join('')}</div>
  <button type="button" class="mbx-pay" id="dPay"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18"/></svg>Apple Pay<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
  <div class="mbx-keys">${K.map(k=>k?`<button type="button" data-k="${k}" aria-label="${k==='del'?'Delete':k}">${k==='del'?'<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 5H9l-6 7 6 7h12z"/><path d="m16 9-5 6M11 9l5 6"/></svg>':k}</button>`:'<span></span>').join('')}</div>
@@ -1668,6 +1689,12 @@ function openDeposit(msg,need){let v=need?Math.max(25,Math.ceil(need/25)*25):500
   el.querySelector('#dPay').onclick=()=>toast('Demo wallet: Apple Pay is the only method here');
   paint();
   el.querySelector('#dGo').onclick=()=>{if(!v)return;S.bal+=v;save();paintBal();closeSheet();SFX.coin();toast(`${money(v)} added to your wallet`)}})}
+
+/* canvas screens: insufficient funds -> add funds; item sold */
+function openNoFunds(b){openSheet('',`<div class="mbx-nf"><img class="wal" src="assets/wallet-plus.png" alt=""><h3>Insufficient funds</h3><p>You need ${money(b.price)} to open ${esc(b.tier)}. Add funds to your wallet and you’re in.</p><button class="cta sm" id="nfGo">ADD FUNDS</button></div>`,
+ el=>el.querySelector('#nfGo').onclick=()=>{closeSheet();setTimeout(()=>openDeposit('',b.price-S.bal),320)})}
+function openSold(i){openSheet('',`<div class="mbx-nf sold"><div class="mbx-ph"><img src="${i.img}" alt="${esc(i.brand)} ${esc(i.model)}"></div><h2>ITEM SOLD!</h2><p>You made <b>${money(i.price*.9)}</b> from the ${esc(i.brand)} ${esc(i.model)}. It’s in your wallet now.</p><button class="cta sm" id="soGo">BACK TO BOXES</button></div>`,
+ el=>el.querySelector('#soGo').onclick=()=>{closeSheet();show('boxes')})}
 $('#walletBtn').onclick=()=>openDeposit();$('#depBtn').onclick=()=>openDeposit();
 $('#wdBtn').onclick=()=>openSheet('Withdraw',`<div class="form"><div class="kv" style="margin:0">Withdrawable <b>${money(S.bal)}</b></div><label for="wA">AMOUNT</label><input class="inp" id="wA" inputmode="numeric" value="${Math.floor(S.bal)}"><div class="err" id="wErr"></div><button class="cta sm" id="wGo">WITHDRAW</button><p class="note">Minimum withdrawal is $100. Funds return to your linked card in 3–5 business days.</p></div>`,
  el=>el.querySelector('#wGo').onclick=()=>{const v=parseInt(el.querySelector('#wA').value)||0,er=el.querySelector('#wErr');if(v<100){er.textContent='The minimum withdrawal is $100.';return}if(v>S.bal){er.textContent=`You can withdraw up to ${money(S.bal)}.`;return}S.bal-=v;save();paintBal();closeSheet();toast(`Withdrawal of ${money(v)} requested`)});
@@ -1684,11 +1711,11 @@ $('#q').oninput=renderSR;$('#srGrid').onclick=e=>{const w=e.target.closest('[dat
 
 /* ---------- collection ---------- */
 let colF='all';const STL={vault:'VAULTED',sold:'SOLD',shipped:'SHIPPED'};
-function renderCol(){const n=f=>S.col.filter(c=>f==='all'||c.st===f).length,LB={all:'All',vault:'Vault',sold:'Sold',shipped:'Shipped'};
+function renderCol(){const n=f=>S.col.filter(c=>f==='all'||c.st===f).length,LB={all:'All',vault:'Vaulted',sold:'Sold',shipped:'Shipped'};
  $('#colChips').innerHTML=['all','vault','sold','shipped'].map(f=>`<button class="chip ${f===colF?'on':''}" data-f="${f}">${LB[f]} <small>${n(f)}</small></button>`).join('');
  const list=S.col.map((c,k)=>({...c,k})).filter(c=>colF==='all'||c.st===colF);
  const tot=list.reduce((a,c)=>a+item(c.id).price,0);
- const SL={vault:'In vault',sold:'Sold',shipped:'In transit'};
+ const SL={vault:'Vaulted',sold:'Sold',shipped:'In transit'};$('#colSub').innerHTML=colF==='shipped'?'Shipped watches travel fully insured in the MistyBox shipper. You’ll get tracking by email.':colF==='sold'?'Watches you sold back. The money is already in your wallet.':'Vaulted watches are <b>sold automatically after 7 days</b> at fair market value, unless you ship them to yourself.';
  $('#colGrid').innerHTML=list.length?`<div class="mbx-sum"><span>${list.length} watch${list.length===1?'':'es'}</span> · <b>${money(tot)}</b></div>`+list.map(c=>{const i=item(c.id);
   return `<button class="mb-icard${c.st==='sold'?' faded':''}" data-k="${c.k}" data-w="${i.id}"><div class="icph"><img src="${i.img}" alt="" loading="lazy"></div><div class="ict"><b>${esc(i.brand)}</b><span>${esc(i.model)}</span><i>${money(i.price)}</i></div><span class="mb-timer ${c.st}">${c.st==='shipped'&&c.trk?'In transit':SL[c.st]}</span></button>`}).join(''):`<div class="empty">Nothing here yet. Open a box to start your collection.</div>`}
 $('#colChips').onclick=e=>{const c=e.target.closest('[data-f]');if(c){colF=c.dataset.f;renderCol();SFX.tap()}};
@@ -1696,7 +1723,7 @@ $('#colGrid').onclick=e=>{const w=e.target.closest('[data-k]');if(!w)return;cons
  if(c.st!=='vault'){openWatch(c.id);return}
  openSheet('Sell item',`<div class="mbx-sell"><div class="mbx-ph"><img src="${i.img}" alt="${esc(i.brand)} ${esc(i.model)}"></div>${rar(i.tier)}<div class="mbx-brand">${esc(i.brand)}</div><div class="mbx-sub">${esc(i.model)} · market value ${money(i.price)}</div>
  <div class="mbx-buy"><span>MistyBox buys it for</span><b>${money(i.price*.9)}</b></div><button class="cta sm" id="cSell">SELL NOW</button><button class="btn" id="cShip">SHIP TO ME</button><p class="note">Vaulted watches are insured and stored for free. By selling you confirm you are over 18 and accept the Terms of Service.</p></div>`,
- el=>{el.querySelector('#cSell').onclick=()=>{c.st='sold';S.bal+=i.price*.9;save();paintBal();renderCol();closeSheet();SFX.coin();toast(`${money(i.price*.9)} added to your wallet`)};
+ el=>{el.querySelector('#cSell').onclick=()=>{c.st='sold';S.bal+=i.price*.9;save();paintBal();renderCol();closeSheet();SFX.coin();setTimeout(()=>openSold(i),320)};
   el.querySelector('#cShip').onclick=()=>{closeSheet();setTimeout(()=>openShip(c),300)}})};
 function openShip(c){const i=item(c.id);
  openSheet('Ship to me',`<form class="form" id="sF" novalidate><p class="note">${esc(i.brand)} ${esc(i.model)} · insured, signature on delivery.</p><label for="sN">FULL NAME</label><input class="inp" id="sN" autocomplete="off"><label for="sA">STREET ADDRESS</label><input class="inp" id="sA" autocomplete="off">
