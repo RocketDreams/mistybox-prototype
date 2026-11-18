@@ -926,6 +926,12 @@ html,body{overscroll-behavior:none}
 .reveal .holo.lock .ht span{color:var(--tc);opacity:1}
 .reveal .rise{position:absolute;z-index:5;width:96px;height:96px;object-fit:contain;transform:translate(-50%,-30%) scale(.3);opacity:0;pointer-events:none;filter:drop-shadow(0 0 18px var(--rc));transition:transform 1.3s cubic-bezier(.2,.9,.25,1),opacity .35s}
 .reveal .rise.up{opacity:1;transform:translate(-50%,-115%) scale(1.25)}
+/* opening + result use the app's moving flame background */
+#scr .reveal{background:transparent!important}
+#scr.rv-on .bg{visibility:visible!important}
+.reveal.holo-on .rv-lbl{display:none!important}
+#scr .rv-detail.mbx-rv{background:radial-gradient(70% 38% at 50% 26%,color-mix(in srgb,var(--rc) 28%,transparent),transparent 72%)!important}
+#scr.rv-on .views,#scr.rv-on .top,#scr.rv-on .nav,#scr.rv-on .navfade,#scr.rv-on .mbx-sellwrap,#scr.rv-on .home{visibility:hidden!important}
 /* bottom nav */
 #scr .nav{background:#000!important;border-top:1px solid var(--mb-line)!important;box-shadow:none!important}
 </style></head>
@@ -1296,7 +1302,7 @@ function startSwoosh(){if(SWON)return;SWON=1;
    const gr=g.createLinearGradient(x0+ox,y0+oy,x1+ox,y1+oy);const pp=.28+.5*(((ts/PER)*.8+k*.37)%1);   // a light sheen travelling along the swoosh
    gr.addColorStop(0,'rgba(150,150,158,0)');gr.addColorStop(.14,`rgba(150,150,158,${al*.6})`);gr.addColorStop(pp-.13,`rgba(160,160,168,${al})`);gr.addColorStop(pp,`rgba(225,225,235,${Math.min(.75,al*2.1)})`);gr.addColorStop(pp+.13,`rgba(170,170,180,${al})`);gr.addColorStop(.93,`rgba(185,185,195,${al*.8})`);gr.addColorStop(1,'rgba(185,185,195,0)');
    g.fillStyle=gr;g.fill();g.beginPath();g.moveTo(T[0][0],T[0][1]);for(const q of T)g.lineTo(q[0],q[1]);g.lineWidth=Math.max(.6,.8*U);g.strokeStyle=gr;g.globalAlpha=.6;g.stroke();g.globalAlpha=1})};
- const step=t=>{requestAnimationFrame(step);if(t-last<33||document.hidden||document.querySelector('.rv-on,.pk-on'))return;last=t;draw(RM?0:t)};
+ const step=t=>{requestAnimationFrame(step);if(t-last<33||document.hidden||document.querySelector('.pk-on'))return;last=t;draw(RM?0:t)};
  draw(0);requestAnimationFrame(step)}
 /* embers: small sparks drifting up (own canvas, cheap) */
 let EMB=null,FIRE_BOT=0;
@@ -1306,7 +1312,7 @@ function startEmbers(){return;if(EMB)return;const c=document.createElement('canv
  const spawn=(y)=>({x:Math.random()*W,y:y??(FIRE_BOT||H)-Math.random()*10,r:.6+Math.random()*1.8,v:.25+Math.random()*.7,ph:Math.random()*6.28,life:1});
  for(let i=0;i<16;i++)P.push(spawn(Math.random()*(FIRE_BOT||H)));
  EMB=1;let last=0;
- const step=t=>{requestAnimationFrame(step);if(t-last<33||document.hidden||document.querySelector('.rv-on,.pk-on'))return;last=t;
+ const step=t=>{requestAnimationFrame(step);if(t-last<33||document.hidden||document.querySelector('.pk-on'))return;last=t;
   g.setTransform(dpr,0,0,dpr,0,0);g.clearRect(0,0,W,H);g.globalCompositeOperation='lighter';
   for(const p of P){if(!RM){p.y-=p.v;p.x+=Math.sin(t/900+p.ph)*.35}const f=Math.max(0,Math.min(1,p.y/(FIRE_BOT||H)));const a=(.25+.6*f)*.45;
    const gr=g.createRadialGradient(p.x,p.y,0,p.x,p.y,p.r*4);gr.addColorStop(0,`rgba(255,220,140,${a})`);gr.addColorStop(.4,`rgba(255,110,20,${a*.6})`);gr.addColorStop(1,'rgba(255,60,0,0)');
@@ -1646,7 +1652,7 @@ function openBox(bi){const b=BOXES[bi];scr.scrollTop=0;S.bal-=b.price;S.pts+=b.p
   // spin: ramp up, keep turning while it strains, then settle facing front at the lock
   if(phase<2){vel+=((t<.4?t/.4:1)*3.4-vel)*Math.min(1,dt*3);spin+=vel*dt;box._rotY=spin;box._strain=Math.min(1,t/.8)}
   else if(phase===2){const tgt=Math.ceil(spin/(Math.PI*2))*Math.PI*2;spin+=(tgt-spin)*Math.min(1,dt*5.5);box._rotY=spin;box._strain=Math.max(0,(box._strain||0)-dt*2)}
-  if(phase===0&&t>=.8){phase=1;beam.classList.add('on');holo.classList.add('on');SFX.charge();$('#rvLbl').style.opacity=0}
+  if(phase===0&&t>=.8){phase=1;beam.classList.add('on');holo.classList.add('on');SFX.charge();rv.classList.add('holo-on')}
   if(phase===1){while(k<seq.length&&t>=seq[k]){show(pool[k%pool.length],false);SFX.tick(.6+.4*(k/seq.length));k++}
    if(t>=T_LOCK){phase=2;show(win,true);SFX.reveal(win.tier);rv.style.setProperty('--rc',RC[win.tier]);try{navigator.vibrate&&navigator.vibrate([20,40,40])}catch(e){}}}
   if(phase===2&&t>=T_OPEN){phase=3;holo.classList.add('sink');beam.classList.remove('on');box._strain=0;box.classList.remove('charge');box.classList.add('lidopen');
