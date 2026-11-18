@@ -756,7 +756,7 @@ html,body{overscroll-behavior:none}
 #scr .mb-icard .icph{width:76px;height:76px;flex:none;border-radius:14px;background:radial-gradient(circle at 50% 40%,#202026,#0a0a0c);display:grid;place-items:center}
 #scr .mb-icard .icph img{width:66px;height:66px;object-fit:contain}
 #scr .mb-icard .ict{flex:1;min-width:0}#scr .mb-icard .ict b{display:block;font-size:15px;font-weight:800}
-#scr .mb-icard .ict span{display:block;font-size:12px;color:var(--mb-text-3);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#scr .mb-icard .ict span{display:block;font-size:13px;line-height:1.3;color:var(--mb-text-3);margin-top:2px}
 #scr .mb-icard .ict i{display:block;font:900 italic 20px/1 Montserrat,sans-serif;margin-top:6px}
 #scr .mb-timer{flex:none;display:inline-flex;align-items:center;height:26px;padding:0 10px;border-radius:999px;background:#1b1b20;border:1px solid var(--mb-line);font-size:11px;font-weight:700;color:var(--mb-text-2)}
 #scr .mb-timer.shipped{color:var(--mb-green);border-color:rgba(63,207,142,.45);background:rgba(63,207,142,.08)}
@@ -876,6 +876,25 @@ html,body{overscroll-behavior:none}
 #scr .mbx-mini img{width:100%;height:96px;object-fit:contain}
 #scr .mbx-mini b{margin-top:8px;font:italic 900 18px/1 Montserrat,sans-serif}
 #scr .mbx-mini span{margin-top:4px;font-size:11px;line-height:1.3;color:var(--mb-text-3);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+
+/* My Vault (canvas) */
+#scr[data-view=collection] .mklogo{opacity:0!important}
+#scr[data-view=collection] .burger{opacity:0;pointer-events:none}
+#scr .mbx-vhead{margin-top:calc(-1*(106*var(--U)) + 8*var(--U))!important;padding-bottom:0!important;min-height:calc(46*var(--U));display:flex;align-items:center;pointer-events:none}
+#scr .mbx-vhead .ptitle{font-size:calc(31*var(--U))!important}
+#scr #colChips{margin-top:calc(26*var(--U))!important}
+#scr #colChips .chip{font-size:16px!important}
+#scr .mbx-vsub{margin:14px 20px 0;font-size:13px;line-height:1.5;color:var(--mb-text-2)}
+#scr .mbx-vsub b{color:#fff;font-weight:700}
+#scr .mbx-vbar{display:flex;align-items:center;justify-content:space-between;margin:14px 20px 12px}
+#scr .mbx-sort{display:inline-flex;align-items:center;gap:8px;height:34px;padding:0 16px;border-radius:999px;background:#141418;border:1px solid var(--mb-line-2);font:700 14px/1 Montserrat,sans-serif;color:#fff}
+#scr .mbx-vsum{font-size:13px;color:var(--mb-text-3)}#scr .mbx-vsum b{color:var(--mb-gold);font-weight:800}
+#scr #colGrid{padding:0 20px 90px!important}
+#scr #colGrid .mbx-sum{display:none}
+#scr .mb-timer{gap:6px;height:30px!important;padding:0 12px!important;font-size:13px!important;font-weight:800!important;color:#fff!important}
+#scr .mb-timer.ok{color:var(--mb-green)!important;border-color:rgba(63,207,142,.45)!important;background:rgba(63,207,142,.08)!important}
+#scr .mbx-sellwrap{position:sticky;bottom:calc(96*var(--U));display:flex;justify-content:center;margin-top:-80px;height:80px;align-items:center;pointer-events:none;z-index:3}
+#scr .mbx-sellall{pointer-events:auto;width:auto!important;min-width:132px;height:48px!important;padding:0 22px!important;display:inline-flex!important;align-items:center;gap:12px;font-size:15px!important;line-height:.95!important;text-align:left;filter:drop-shadow(0 6px 14px rgba(0,0,0,.7))}
 /* bottom nav */
 #scr .nav{background:#000!important;border-top:1px solid var(--mb-line)!important;box-shadow:none!important}
 </style></head>
@@ -955,9 +974,12 @@ html,body{overscroll-behavior:none}
 
   <!-- COLLECTION -->
   <section class="view" id="v-collection">
-   <div class="pad"><div class="ptitle">My Vault</div><div class="psub" id="colSub"></div></div>
+   <div class="pad mbx-vhead"><div class="ptitle">My Vault</div></div>
    <div class="chips" id="colChips"></div>
+   <p class="mbx-vsub" id="colSub"></p>
+   <div class="mbx-vbar"><button type="button" class="mbx-sort" id="colSort"><span id="colSortT">Sort</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button><span class="mbx-vsum" id="colSum"></span></div>
    <div class="grid" id="colGrid"></div>
+   <div class="mbx-sellwrap"><button type="button" class="cta sm mbx-sellall" id="sellAll"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4z"/></svg><span>SELL<br>ALL</span></button></div>
   </section>
 
   <!-- LEADERBOARD -->
@@ -1656,7 +1678,7 @@ function openBox(bi){const b=BOXES[bi];scr.scrollTop=0;S.bal-=b.price;S.pts+=b.p
    di.style.transition='none';di.style.transform=`translate(${fromX}px,${fromY}px) scale(${k})`;void di.offsetWidth;
    we.classList.add('zoom');we.style.transform=`translate(${cx}px,${H*.36}px) scale(6)`;requestAnimationFrame(()=>{info.classList.add('on');di.style.transition='';di.style.transform=''});SFX.swish();
    pushTick({who:'You',tier:win.tier,box:b.tier,i:win});
-   const close=st=>{done=true;S.col.unshift({id:win.id,st,trk:st==='shipped'?'UPS · 1Z'+Math.random().toString(36).slice(2,9).toUpperCase():undefined});save();rv.classList.remove('on');rv.innerHTML='';scr.classList.remove('rv-on');renderCol();renderLB()};
+   const close=st=>{done=true;S.col.unshift({id:win.id,st,t:Date.now(),trk:st==='shipped'?'UPS · 1Z'+Math.random().toString(36).slice(2,9).toUpperCase():undefined});save();rv.classList.remove('on');rv.innerHTML='';scr.classList.remove('rv-on');renderCol();renderLB()};
    info.querySelector('#rKeep').onclick=()=>{close('vault');toast(`${win.model} is in your vault`)};
    info.querySelector('#rSell').onclick=()=>{S.bal+=win.price*.9;close('sold');paintBal();SFX.coin();setTimeout(()=>openSold(win),200)};
    info.querySelector('#rShip').onclick=()=>{close('vault');openShip(S.col[0])};
@@ -1710,14 +1732,33 @@ $('#srChips').onclick=e=>{const c=e.target.closest('[data-f]');if(c){srF=c.datas
 $('#q').oninput=renderSR;$('#srGrid').onclick=e=>{const w=e.target.closest('[data-w]');if(w)openWatch(w.dataset.w)};
 
 /* ---------- collection ---------- */
-let colF='all';const STL={vault:'VAULTED',sold:'SOLD',shipped:'SHIPPED'};
-function renderCol(){const n=f=>S.col.filter(c=>f==='all'||c.st===f).length,LB={all:'All',vault:'Vaulted',sold:'Sold',shipped:'Shipped'};
- $('#colChips').innerHTML=['all','vault','sold','shipped'].map(f=>`<button class="chip ${f===colF?'on':''}" data-f="${f}">${LB[f]} <small>${n(f)}</small></button>`).join('');
- const list=S.col.map((c,k)=>({...c,k})).filter(c=>colF==='all'||c.st===colF);
- const tot=list.reduce((a,c)=>a+item(c.id).price,0);
- const SL={vault:'Vaulted',sold:'Sold',shipped:'In transit'};$('#colSub').innerHTML=colF==='shipped'?'Shipped watches travel fully insured in the MistyBox shipper. You’ll get tracking by email.':colF==='sold'?'Watches you sold back. The money is already in your wallet.':'Vaulted watches are <b>sold automatically after 7 days</b> at fair market value, unless you ship them to yourself.';
- $('#colGrid').innerHTML=list.length?`<div class="mbx-sum"><span>${list.length} watch${list.length===1?'':'es'}</span> · <b>${money(tot)}</b></div>`+list.map(c=>{const i=item(c.id);
-  return `<button class="mb-icard${c.st==='sold'?' faded':''}" data-k="${c.k}" data-w="${i.id}"><div class="icph"><img src="${i.img}" alt="" loading="lazy"></div><div class="ict"><b>${esc(i.brand)}</b><span>${esc(i.model)}</span><i>${money(i.price)}</i></div><span class="mb-timer ${c.st}">${c.st==='shipped'&&c.trk?'In transit':SL[c.st]}</span></button>`}).join(''):`<div class="empty">Nothing here yet. Open a box to start your collection.</div>`}
+let colF='vault',colSort=0;const STL={vault:'VAULTED',sold:'SOLD',shipped:'SHIPPED'};
+const VDAY=864e5,VLIFE=7*VDAY;
+function vaultLeft(c){if(!c.t){c.t=Date.now()-((S.col.indexOf(c)*1.9+.2)%6.6)*VDAY;save()}return c.t+VLIFE-Date.now()}
+function fmtLeft(ms){const h=Math.max(0,Math.floor(ms/36e5)),dd=Math.floor(h/24);return dd?`${dd}d ${h%24}h`:`${h}h`}
+function autoSell(){let got=0;S.col.forEach(c=>{if(c.st==='vault'&&vaultLeft(c)<=0){c.st='sold';got+=item(c.id).price;S.bal+=item(c.id).price}});if(got){save();paintBal()}}
+function renderCol(){autoSell();
+ const LB={vault:'Vaulted',shipped:'Shipped'};
+ $('#colChips').innerHTML=['vault','shipped'].map(f=>`<button class="chip ${f===colF?'on':''}" data-f="${f}">${LB[f]}</button>`).join('');
+ $('#colSub').innerHTML=colF==='shipped'?'Shipped watches travel fully insured in the MistyBox shipper. You’ll get tracking by email.':'Vaulted watches are <b>sold automatically after 7 days</b> at fair market value, unless you ship them to yourself.';
+ const SORTS=['Sort','Value ↓','Value ↑','Ending soon'];$('#colSortT').textContent=SORTS[colSort];
+ let list=S.col.map((c,k)=>({...c,k,c})).filter(x=>x.st===colF);
+ if(colSort===1)list.sort((a,b)=>item(b.id).price-item(a.id).price);if(colSort===2)list.sort((a,b)=>item(a.id).price-item(b.id).price);if(colSort===3&&colF==='vault')list.sort((a,b)=>vaultLeft(a.c)-vaultLeft(b.c));
+ const tot=list.reduce((a,x)=>a+item(x.id).price,0);
+ $('#colSum').innerHTML=list.length?`${list.length} watch${list.length===1?'':'es'} · <b>${money(tot)}</b>`:'';
+ $('#sellAll').parentElement.style.display=colF==='vault'&&list.length?'':'none';
+ const CLK='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>';
+ $('#colGrid').innerHTML=list.length?list.map(x=>{const i=item(x.id);let pill,fade='';
+  if(x.st==='vault'){const l=vaultLeft(x.c);pill=`<span class="mb-timer">${l>=VDAY?CLK:''}${fmtLeft(l)}</span>`;if(l<VDAY)fade=' faded'}
+  else{const ph=x.c.dl?'Delivered':x.trk?'In transit':'Preparing';pill=`<span class="mb-timer ${ph==='Delivered'?'ok':''}">${ph}</span>`}
+  return `<button class="mb-icard${fade}" data-k="${x.k}" data-w="${i.id}"><div class="icph"><img src="${i.img}" alt="" loading="lazy"></div><div class="ict"><b>${esc(i.brand)}</b><span>${esc(i.model)}</span><i>${money(i.price)}</i></div>${pill}</button>`}).join('')
+  :`<div class="empty">${colF==='vault'?'Nothing in your vault yet. Open a box to start your collection.':'No shipments yet.'}</div>`}
+$('#colSort').onclick=()=>{colSort=(colSort+1)%4;renderCol();SFX.tap()};
+$('#sellAll').onclick=()=>{const v=S.col.filter(c=>c.st==='vault');if(!v.length)return;const tot=v.reduce((a,c)=>a+item(c.id).price*.9,0);
+ openSheet('Sell all',`<div class="mbx-sell"><div class="mbx-sub" style="margin:0">${v.length} vaulted watch${v.length===1?'':'es'} · market value ${money(v.reduce((a,c)=>a+item(c.id).price,0))}</div><div class="mbx-buy"><span>MistyBox buys them for</span><b>${money(tot)}</b></div><button class="cta sm" id="saGo">SELL ALL NOW</button><p class="note">By selling you confirm you are over 18 and accept the Terms of Service.</p></div>`,
+  el=>el.querySelector('#saGo').onclick=()=>{v.forEach(c=>c.st='sold');S.bal+=tot;save();paintBal();renderCol();closeSheet();SFX.coin();
+   setTimeout(()=>openSheet('',`<div class="mbx-nf sold"><h2>ITEMS SOLD!</h2><p>You made <b>${money(tot)}</b> from ${v.length} watch${v.length===1?'':'es'}. It’s in your wallet now.</p><button class="cta sm" id="soGo">BACK TO BOXES</button></div>`,e2=>e2.querySelector('#soGo').onclick=()=>{closeSheet();show('boxes')}),320)})};
+setInterval(()=>{if(curView==='collection')renderCol()},60000);
 $('#colChips').onclick=e=>{const c=e.target.closest('[data-f]');if(c){colF=c.dataset.f;renderCol();SFX.tap()}};
 $('#colGrid').onclick=e=>{const w=e.target.closest('[data-k]');if(!w)return;const c=S.col[+w.dataset.k],i=item(c.id);
  if(c.st!=='vault'){openWatch(c.id);return}
