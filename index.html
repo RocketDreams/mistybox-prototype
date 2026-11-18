@@ -1002,6 +1002,30 @@ html,body{overscroll-behavior:none}
 .reveal .holo .hlay .hi{position:relative}
 .reveal .holo .hlay .hi .sp{position:absolute;left:0;right:0;bottom:-4px;text-align:center;font:900 italic 16px/1 Montserrat;color:#c8f8ff;text-shadow:0 0 8px rgba(127,233,255,.8);opacity:calc(1 - var(--tx,1))}
 .reveal .holo .hlay .ht em{opacity:var(--tx,1)!important}
+/* hologram watches, larger again */
+.reveal .holo .hlay,.reveal .holo .hlay.cur,.reveal .holo .hlay.out{width:210px!important;margin-left:-105px!important}
+.reveal .holo .hi{height:172px!important}
+.reveal .holo .hi img{max-width:164px!important;max-height:172px!important}
+.reveal .holo .hc{height:262px!important;width:330px!important}
+.reveal .holo-beam{width:440px!important;height:480px!important}
+/* background colour (Preferences) */
+#scr .mbx-bgs{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:6px}
+#scr .mbx-bgs button{display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 4px;border-radius:14px;background:#141418;border:1px solid var(--mb-line);color:#fff;font:700 12px Montserrat,sans-serif}
+#scr .mbx-bgs button i{width:34px;height:34px;border-radius:50%;border:1px solid rgba(255,255,255,.35);box-shadow:inset 0 0 0 3px rgba(0,0,0,.25)}
+#scr .mbx-bgs button.on{border-color:#fff;box-shadow:0 0 0 1px #fff inset}
+#scr:not([data-bg=black]) .bg{background:radial-gradient(120% 70% at 50% 28%,color-mix(in srgb,var(--bgc) 82%,#fff),var(--bgc) 55%,color-mix(in srgb,var(--bgc) 72%,#000))!important}
+#scr:not([data-bg=black]) #ct,#scr:not([data-bg=black]) .bg .wisps{opacity:0!important}
+#scr[data-bg=white] #swc{filter:invert(1) brightness(.12) contrast(1.6);opacity:1}
+#scr[data-bg=white] .mklogo,#scr[data-bg=white] .top .hd img.mklogo{filter:invert(1)!important;mix-blend-mode:multiply!important}
+#scr[data-bg=white] .bg{background:radial-gradient(120% 70% at 50% 28%,#ffffff,#f3f3f5 55%,#dcdce2)!important}
+/* white: dark text where it sits straight on the background */
+#scr[data-bg=white] .ptitle,#scr[data-bg=white] #name,#scr[data-bg=white] .mbx-price,#scr[data-bg=white] .mbx-nf h2{background:linear-gradient(180deg,#4a4e57 0%,#0b0c0f 55%,#6a6e77 100%)!important;-webkit-background-clip:text!important;background-clip:text!important;color:transparent!important;-webkit-text-fill-color:transparent}
+#scr[data-bg=white] .psub,#scr[data-bg=white] .mbx-vsub,#scr[data-bg=white] .mbx-vsum,#scr[data-bg=white] .vals small,#scr[data-bg=white] .vals b,#scr[data-bg=white] .inside4,#scr[data-bg=white] .inside4 *,#scr[data-bg=white] .gift,
+#scr[data-bg=white] .sec h2,#scr[data-bg=white] .foot,#scr[data-bg=white] .reset,#scr[data-bg=white] .mbx-brand,#scr[data-bg=white] .mbx-model,#scr[data-bg=white] .dfrom,#scr[data-bg=white] .lnk,#scr[data-bg=white] .rv-lbl,#scr[data-bg=white] .rv-skip,#scr[data-bg=white] .mb-cat{color:#17181c!important;text-shadow:none!important}
+#scr[data-bg=white] .mbx-vsub b{color:#000!important}
+#scr[data-bg=white] .gift img,#scr[data-bg=white] .mb-drawer-tab .chev{filter:invert(1)}
+#scr[data-bg=white] .mb-drawer-tab{filter:drop-shadow(0 2px 4px rgba(0,0,0,.35))!important}
+#scr[data-bg=white] .gline{background:linear-gradient(90deg,transparent,#555 45%,#000 50%,#555 55%,transparent)!important}
 /* bottom nav */
 #scr .nav{background:#000!important;border-top:1px solid var(--mb-line)!important;box-shadow:none!important}
 </style></head>
@@ -1297,6 +1321,8 @@ const DEF={bal:246,gp:1870,pts:0,col:[
 let S;try{S=JSON.parse(localStorage.getItem('mb-app'))}catch(e){}
 if(!S||!S.col)S=JSON.parse(JSON.stringify(DEF));
 const save=()=>{try{localStorage.setItem('mb-app',JSON.stringify(S))}catch(e){}};
+const BGC={black:{n:'Black',c:'#000000'},purple:{n:'Dark purple',c:'#1d0b33'},green:{n:'Green',c:'#0d3320'},orange:{n:'Orange',c:'#b4520f'},brown:{n:'Brown',c:'#3d2615'},white:{n:'White',c:'#f3f3f5'}};
+function applyBg(){const k=BGC[S.bgc]?S.bgc:'black';const sc=document.getElementById('scr');sc.dataset.bg=k;sc.style.setProperty('--bgc',BGC[k].c)}
 const item=id=>ALL.find(i=>i.id===id);
 
 /* ---------- theme + waves ---------- */
@@ -1454,6 +1480,14 @@ const SFX={
   osc('sine',120,40,t,1.6,.5,.004);nz(t,.9,'lowpass',2600,300,.5,.22,.003,true);
   [110,164.8,220,246.9,329.6].forEach((f,i)=>{osc('triangle',f,f,t+.02,3.6,.035+k*.006,.35,true);osc('sine',f*1.003,f*1.003,t+.02,3.6,.03,.4,true)});
   if(k>=4)nz(t+.1,3,'bandpass',5200,7800,1.2,.05,.4,true)},
+ // very tense riser for the hologram run: detuned saws climbing through an opening filter, a rising noise wash, and a sub pulse that speeds up
+ tension(dur){if(!S.sound||!ac())return{cut(){}};const t=AC.currentTime,end=t+Math.max(1,dur),out2=AC.createGain();out2.gain.setValueAtTime(0,t);out2.gain.linearRampToValueAtTime(.16,t+.6);out2.gain.linearRampToValueAtTime(.3,end);out2.connect(MST);
+  const f=AC.createBiquadFilter();f.type='lowpass';f.Q.value=6;f.frequency.setValueAtTime(260,t);f.frequency.exponentialRampToValueAtTime(3800,end);f.connect(out2);
+  const os=[0,7,-6,12.05].map((dt,i)=>{const o=AC.createOscillator();o.type=i===3?'square':'sawtooth';o.frequency.setValueAtTime(73.4,t);o.frequency.exponentialRampToValueAtTime(146.8*1.5,end);o.detune.value=dt*(i===3?100:1);const g=AC.createGain();g.gain.value=i===3?.05:.12;o.connect(g).connect(f);o.start(t);o.stop(end+.2);return o});
+  const len=Math.floor(AC.sampleRate*(dur+.5)),buf=AC.createBuffer(1,len,AC.sampleRate),d=buf.getChannelData(0);for(let i=0;i<len;i++)d[i]=Math.random()*2-1;
+  const n=AC.createBufferSource();n.buffer=buf;const nf=AC.createBiquadFilter();nf.type='bandpass';nf.Q.value=1.4;nf.frequency.setValueAtTime(500,t);nf.frequency.exponentialRampToValueAtTime(7000,end);const ng=AC.createGain();ng.gain.setValueAtTime(0,t);ng.gain.linearRampToValueAtTime(.09,end);n.connect(nf).connect(ng).connect(out2);n.start(t);n.stop(end+.2);
+  let pt=t+.15,gap=.55;const pulses=[];while(pt<end-.05){pulses.push(osc('sine',58,40,pt,.22,.38,.004));pt+=gap;gap=Math.max(.12,gap*.86)}
+  return{cut(){const c=AC.currentTime;out2.gain.cancelScheduledValues(c);out2.gain.setValueAtTime(out2.gain.value,c);out2.gain.linearRampToValueAtTime(0,c+.04);os.forEach(o=>{try{o.stop(c+.06)}catch(e){}});try{n.stop(c+.06)}catch(e){}pulses.forEach(o=>{try{o.stop(c+.01)}catch(e){}})}}},
  coin(){if(!S.sound||!ac())return;const t=AC.currentTime;nz(t,.06,'bandpass',2600,2600,3,.08,.002,true);nz(t+.07,.08,'bandpass',3400,3400,3,.06,.002,true);osc('sine',196,196,t,.35,.08,.01,true)}
 };
 function paintSnd(){$('#sndt').textContent=S.sound?'Sound on':'Sound off';$('#sndw').style.display=S.sound?'':'none';$('#prefS').textContent=(S.sound?'Sound on':'Sound off')+' ›'}
@@ -1716,11 +1750,11 @@ function openBox(bi){const b=BOXES[bi];scr.scrollTop=0;S.bal-=b.price;S.pts+=b.p
  rv.classList.add('on');scr.classList.add('rv-on');
  const box=$('#rvBox'),holo=$('#holo'),beam=$('#hBeam'),rise=$('#rise');
  try{window.MB3D&&window.MB3D.reveal(box,b)}catch(e){console.warn('3D reveal off',e)}
- let HB=0;const CBW=400,CBH=430,CWB=CBW*.16,HCW=300,HCH=230,hb=BH*.58+4,hw=h=>CWB/2+(CBW/2-CWB/2)*h/CBH;
+ let HB=0;const CBW=440,CBH=480,CWB=CBW*.16,HCW=330,HCH=262,hb=BH*.58+4,hw=h=>CWB/2+(CBW/2-CWB/2)*h/CBH;
  $('#holo .hc').style.clipPath=`polygon(${HCW/2-hw(hb+HCH)}px 0,${HCW/2+hw(hb+HCH)}px 0,${HCW/2+hw(hb)}px 100%,${HCW/2-hw(hb)}px 100%)`;
  const STRIP=[];for(let q=0;q<NSTRIP;q++)STRIP.push(pool[q%pool.length]);const WI=STRIP.length;STRIP.push(win);for(let q=0;q<3;q++)STRIP.push(pool[(NSTRIP+q)%pool.length]);
  $('#hStrip').innerHTML=STRIP.map((x,q)=>`<div class="hlay" data-q="${q}"><div class="hi"><img src="${x.img}" alt=""><em class="sp">${money(x.price)}</em></div><div class="ht"><span>${x.tier.toUpperCase()}</span><b>${esc(x.brand)}</b><i>${esc(x.model)}</i><em>${money(x.price)}</em></div></div>`).join('');
- const LY=[...holo.querySelectorAll('.hlay')];let cur=0;const SP=112,P0=1.4;let lastC=-1;
+ const LY=[...holo.querySelectorAll('.hlay')];let cur=0;const SP=128,P0=1.4;let lastC=-1;
  // position along the strip (in watches): eases out so it starts at a steady pace and glides to a stop on the winner
  const stripAt=t=>{const u=Math.max(0,Math.min(1,(t-T_HOLO-.35)/RUN));const e=1-Math.pow(1-u,2.2);return P0+(WI-P0)*e};
  const layStrip=p=>{for(let q=0;q<LY.length;q++){const d=q-p,a=Math.abs(d);if(a>1.7){LY[q].style.visibility='hidden';continue}LY[q].style.visibility='';
@@ -1734,7 +1768,7 @@ function openBox(bi){const b=BOXES[bi];scr.scrollTop=0;S.bal-=b.price;S.pts+=b.p
   o.classList.remove('cur');n.classList.add('cur');if(final){holo.classList.add('lock');holo.style.setProperty('--tc',RC[x.tier])}};
  // decode every hologram image up front so swaps never stall
  const PRE=[win,...pool.slice(0,40)].map(x=>{const im=new Image();im.src=x.img;return im.decode?im.decode().catch(()=>{}):Promise.resolve()});
- const MUS=startMusic(T_OPEN);let t0=performance.now(),k=0,phase=0,done=false,spin=0,vel=0,last=t0;
+ const MUS={stop(){},cut(){}};let TEN=null;let t0=performance.now(),k=0,phase=0,done=false,spin=0,vel=0,last=t0;
  const pc=$('#hPt'),pg=pc.getContext('2d'),pcB=$('#hPtB'),pgB=pcB.getContext('2d'),PT=[];let emit=0,acc=0,burst=0;
  // geometry of the open box on screen (from the 3D render): centre, front-wall top edge, depth of the inside
  const geo=()=>{const r=window.MB3D&&window.MB3D.lastReveal;return r&&r.w>20?{cx:r.cx,edge:r.y0+r.h*.3,depth:r.h*.34,iw:r.w*.6}:{cx:cx,edge:hY,depth:BH*.32,iw:BW*.55}};
@@ -1761,15 +1795,15 @@ function openBox(bi){const b=BOXES[bi];scr.scrollTop=0;S.bal-=b.price;S.pts+=b.p
   // 3) it opens, light pours out, particles start rising
   if(phase===1&&t>=T_OPEN){phase=2;spin=box._tgt;box._rotY=spin;centre();box.classList.remove('tremble','charge');box.classList.add('lidopen');$('#hPad').classList.add('on');beam.classList.add('on');$('#hBeamB').classList.add('on');emit=2.2;rv.classList.add('holo-on');$('#hGlow').classList.add('on');SFX.open()}
   // 4) holograms project out of the open box and cycle
-  if(phase===2&&t>=T_HOLO){phase=3;layStrip(stripAt(t));holo.classList.add('on')}
+  if(phase===2&&t>=T_HOLO){phase=3;TEN=SFX.tension(T_LOCK-t);layStrip(stripAt(t));holo.classList.add('on')}
   if(phase===3){layStrip(stripAt(t));
-   if(t>=T_LOCK){phase=4;layStrip(WI);show(win,true);SFX.reveal(win.tier);rv.style.setProperty('--rc',RC[win.tier]);emit=4;try{navigator.vibrate&&navigator.vibrate([20,40,40])}catch(e){}}}
+   if(t>=T_LOCK){phase=4;TEN&&TEN.cut();TEN=null;layStrip(WI);show(win,true);SFX.reveal(win.tier);rv.style.setProperty('--rc',RC[win.tier]);emit=4;try{navigator.vibrate&&navigator.vibrate([20,40,40])}catch(e){}}}
   // 5) the chosen watch: transition to its screen
   if(phase===4&&t>=T_CLOSE){phase=5;closeup()}
   if(phase===5&&t>=T_DONE){phase=6;emit=0;finish();return}
   motes(dt);requestAnimationFrame(frame)}
  requestAnimationFrame(frame);
- rv.onclick=e=>{if(phase<4&&!e.target.closest('.rv-detail')){if(phase<2){box.classList.remove('tremble','charge');box.classList.add('lidopen');$('#hPad').classList.add('on');beam.classList.add('on');$('#hBeamB').classList.add('on');emit=2.2;rv.classList.add('holo-on');holo.classList.add('on');phase=3}box._tgt=Math.round(spin/(Math.PI*2))*Math.PI*2-10*Math.PI/180;spin=box._tgt;box._rotY=spin;t0=performance.now()-T_LOCK*1000;k=seq.length;MUS.cut&&MUS.cut()}};
+ rv.onclick=e=>{if(phase<4&&!e.target.closest('.rv-detail')){if(phase<2){box.classList.remove('tremble','charge');box.classList.add('lidopen');$('#hPad').classList.add('on');beam.classList.add('on');$('#hBeamB').classList.add('on');emit=2.2;rv.classList.add('holo-on');holo.classList.add('on');phase=3}box._tgt=Math.round(spin/(Math.PI*2))*Math.PI*2-10*Math.PI/180;spin=box._tgt;box._rotY=spin;t0=performance.now()-T_LOCK*1000;k=seq.length;TEN&&TEN.cut();TEN=null}};
  let CU=null,INFO=null;
  // one continuous move: the chosen watch flies from the hologram straight to its place on the watch page, then the page text fades in
  function closeup(){const im=holo.querySelector('.hlay.cur img'),r=im.getBoundingClientRect(),sr=rv.getBoundingClientRect();
@@ -1787,7 +1821,7 @@ function openBox(bi){const b=BOXES[bi];scr.scrollTop=0;S.bal-=b.price;S.pts+=b.p
   void CU.offsetWidth;const E='1.15s cubic-bezier(.45,0,.2,1)';
   CU.style.transition=`left ${E},top ${E},width ${E},height ${E}`;
   CU.style.left=(fr.left-sr.left)+'px';CU.style.top=(fr.top-sr.top)+'px';CU.style.width=fr.width+'px';CU.style.height=fr.height+'px';SFX.swish()}
- function finish(){$('#rvSkip').style.opacity=0;MUS.stop();box._rotY=null;const info=INFO;
+ function finish(){$('#rvSkip').style.opacity=0;MUS.stop();TEN&&TEN.cut();box._rotY=null;const info=INFO;
    const di=info.querySelector('#dImg');di.style.visibility='';if(CU){CU.remove();CU=null}
    requestAnimationFrame(()=>info.classList.remove('pre'));
    pushTick({who:'You',tier:win.tier,box:b.tier,i:win});
@@ -2015,7 +2049,9 @@ if(S.promo)$('#promos').textContent=S.promo+' · applied.';
 const HOW=`<div class="steps"><div><b>1. Choose a box</b>Every box shows its price, every watch it can hold, each watch’s fair market value and your odds.</div><div><b>2. Open it</b>A provably-fair draw picks your watch. You always receive an item.</div><div><b>3. Decide</b>Keep it in your insured vault, ship it to your door, or sell it back instantly for 90% of fair market value.</div><div><b>4. Climb</b>Each open earns leaderboard points and Gift Points.</div></div>`;
 $('.menu').onclick=e=>{const b=e.target.closest('[data-m]');if(!b)return;const m=b.dataset.m;
  if(m==='how')openSheet('How it works',HOW);
- if(m==='prefs')openSheet('Preferences',`<div class="form"><button class="btn" id="pSnd">${S.sound?'Turn sound off':'Turn sound on'}</button><p class="note">Sound plays when you switch boxes, open a box and reveal a watch.</p></div>`,el=>el.querySelector('#pSnd').onclick=()=>{S.sound=!S.sound;save();paintSnd();closeSheet();toast(S.sound?'Sound on':'Sound off')});
+ if(m==='prefs')openSheet('Preferences',`<div class="form"><label>BACKGROUND COLOUR</label><div class="mbx-bgs">${Object.entries(BGC).map(([k,v])=>`<button type="button" data-bg="${k}" class="${(S.bgc||'black')===k?'on':''}" aria-label="${v.n}"><i style="background:${v.c}"></i><span>${v.n}</span></button>`).join('')}</div>
+ <button class="btn" id="pSnd">${S.sound?'Turn sound off':'Turn sound on'}</button><p class="note">Sound plays when you switch boxes, open a box and reveal a watch.</p></div>`,el=>{el.querySelector('#pSnd').onclick=()=>{S.sound=!S.sound;save();paintSnd();closeSheet();toast(S.sound?'Sound on':'Sound off')};
+ el.querySelector('.mbx-bgs').onclick=e=>{const b=e.target.closest('[data-bg]');if(!b)return;S.bgc=b.dataset.bg;save();applyBg();el.querySelectorAll('[data-bg]').forEach(x=>x.classList.toggle('on',x===b));SFX.tap()}});
  if(m==='country')openSheet('Shipping country',`<div class="form"><button class="btn w">🇺🇸 United States</button><p class="note">MistyBox ships to the United States only right now.</p></div>`);
  if(m==='gifts')openSheet('Gifts',`<div class="form"><p class="note">You’ve sent ${S.gifts} gift${S.gifts===1?'':'s'}.</p><button class="cta sm" id="gNew">SEND A GIFT</button></div>`,el=>el.querySelector('#gNew').onclick=()=>{closeSheet();show('boxes');setTimeout(()=>$('#giftBtn').click(),350)});
  if(m==='billing')openSheet('Billing & wallet',`<div class="form"><div class="kv" style="margin:0">Balance <b>${money(S.bal)}</b></div><div class="kv" style="margin:0">Card <b>•••• 4242 (demo)</b></div><button class="cta sm" id="bDep">ADD FUNDS</button></div>`,el=>el.querySelector('#bDep').onclick=()=>{closeSheet();setTimeout(openDeposit,300)});
@@ -2042,7 +2078,7 @@ function fit(){if(innerWidth<=500){$('#phone').style.transform='';return}const s
 addEventListener('resize',fit);fit();
 
 /* boot */
-[...dots.children][0].classList.add('on');theme(BOXES[0]);paintBox();paintBal();paintSnd();renderSR();renderCol();renderLB();tickReset();
+applyBg();[...dots.children][0].classList.add('on');theme(BOXES[0]);paintBox();paintBal();paintSnd();renderSR();renderCol();renderLB();tickReset();
 const h=location.hash.slice(1);if(['showroom','collection','leaderboard','account'].includes(h))show(h);
 </script>
 
