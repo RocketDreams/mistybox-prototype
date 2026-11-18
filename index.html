@@ -1695,11 +1695,11 @@ function openBox(bi){const b=BOXES[bi];scr.scrollTop=0;S.bal-=b.price;S.pts+=b.p
  try{window.MB3D&&window.MB3D.reveal(box,b)}catch(e){console.warn('3D reveal off',e)}
  const STRIP=[];for(let q=0;q<NSTRIP;q++)STRIP.push(pool[q%pool.length]);const WI=STRIP.length;STRIP.push(win);for(let q=0;q<3;q++)STRIP.push(pool[(NSTRIP+q)%pool.length]);
  $('#hStrip').innerHTML=STRIP.map((x,q)=>`<div class="hlay" data-q="${q}"><div class="hi"><img src="${x.img}" alt=""></div><div class="ht"><span>${x.tier.toUpperCase()}</span><b>${esc(x.brand)}</b><i>${esc(x.model)}</i><em>${money(x.price)}</em></div></div>`).join('');
- const LY=[...holo.querySelectorAll('.hlay')];let cur=0;const SP=150,P0=1.4;let lastC=-1;
+ const LY=[...holo.querySelectorAll('.hlay')];let cur=0;const SP=92,P0=1.4;let lastC=-1;
  // position along the strip (in watches): eases out so it starts at a steady pace and glides to a stop on the winner
  const stripAt=t=>{const u=Math.max(0,Math.min(1,(t-T_HOLO-.35)/RUN));const e=1-Math.pow(1-u,2.2);return P0+(WI-P0)*e};
- const layStrip=p=>{for(let q=0;q<LY.length;q++){const d=q-p,a=Math.abs(d);if(a>2.6){LY[q].style.visibility='hidden';continue}LY[q].style.visibility='';
-   LY[q].style.transform=`translateX(${d*SP}px) scale(${1-Math.min(.42,a*.3)})`;LY[q].style.opacity=String(Math.max(0,1-a*.55));LY[q].querySelector('.ht').style.opacity=String(Math.max(0,1-a*1.6))}
+ const layStrip=p=>{for(let q=0;q<LY.length;q++){const d=q-p,a=Math.abs(d);if(a>3.2){LY[q].style.visibility='hidden';continue}LY[q].style.visibility='';
+   LY[q].style.transform=`translateX(${d*SP}px) scale(${1-Math.min(.45,a*.22)})`;LY[q].style.opacity=String(Math.max(0,1-a*.32));LY[q].style.zIndex=String(100-Math.round(a*10));LY[q].querySelector('.ht').style.opacity=String(Math.max(0,1-a*1.6))}
   const c=Math.round(p);if(c!==lastC){if(lastC>=0&&LY[lastC])LY[lastC].classList.remove('cur');LY[c]&&LY[c].classList.add('cur');if(lastC>=0)SFX.tick(.7);lastC=c}};
  // carousel: the new watch slides in from the right, the current one slides out to the left (inside the cone)
  const show=(x,final,dur)=>{if(final){holo.classList.add('lock');holo.style.setProperty('--tc',RC[x.tier])}return;const o=LY[cur];cur=(cur+1)%LY.length;const n=LY[cur];const d=Math.max(.12,Math.min(.42,dur||.3));
