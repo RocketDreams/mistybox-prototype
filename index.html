@@ -899,30 +899,36 @@ html,body{overscroll-behavior:none}
 #scr .mbx-sellall{pointer-events:auto;width:auto!important;min-width:132px;height:48px!important;padding:0 22px!important;display:inline-flex!important;align-items:center;gap:12px;font-size:15px!important;line-height:.95!important;text-align:left;filter:drop-shadow(0 6px 14px rgba(0,0,0,.7))}
 
 /* hologram opening */
-.reveal .holo-beam{position:absolute;width:220px;height:300px;transform:translate(-50%,-100%);z-index:2;opacity:0;transition:opacity .5s;pointer-events:none;
- clip-path:polygon(44% 100%,56% 100%,100% 0,0 0);background:linear-gradient(0deg,rgba(127,233,255,.55),rgba(127,233,255,.14) 55%,rgba(127,233,255,0));filter:blur(1px);mix-blend-mode:screen}
-.reveal .holo-beam.on{opacity:1;animation:hbeam 1.1s ease-in-out infinite alternate}
-@keyframes hbeam{from{opacity:.75}to{opacity:1}}
-.reveal .holo{position:absolute;z-index:4;transform:translate(-50%,-100%) scale(.6);opacity:0;transition:opacity .4s,transform .6s cubic-bezier(.2,.9,.25,1);pointer-events:none;--tc:#7fe9ff}
-.reveal .holo.on{opacity:1;transform:translate(-50%,-100%) scale(1)}
-.reveal .holo.sink{opacity:0;transform:translate(-50%,-40%) scale(.3);transition:opacity .45s,transform .5s ease-in}
-.reveal .holo .hc{position:relative;width:210px;padding:12px 12px 12px;border-radius:16px;border:1px solid rgba(127,233,255,.6);background:linear-gradient(180deg,rgba(127,233,255,.16),rgba(127,233,255,.05));
- box-shadow:0 0 24px rgba(127,233,255,.35),inset 0 0 18px rgba(127,233,255,.18);color:#bff6ff;text-align:center;overflow:hidden;font-family:Montserrat,sans-serif}
-.reveal .holo .hc::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(127,233,255,.13) 0 1px,transparent 1px 3px);animation:hscan 2.4s linear infinite;pointer-events:none}
-@keyframes hscan{to{background-position:0 60px}}
-.reveal .holo .hi{height:118px;display:grid;place-items:center}
-.reveal .holo .hi img{max-width:110px;max-height:118px;object-fit:contain;filter:grayscale(1) brightness(1.35) sepia(1) hue-rotate(150deg) saturate(3.2) drop-shadow(0 0 8px rgba(127,233,255,.8));opacity:.9;mix-blend-mode:screen}
+.reveal .holo-beam{position:absolute;width:250px;height:250px;transform:translate(-50%,-100%);z-index:2;opacity:0;transition:opacity .7s ease;pointer-events:none;
+ -webkit-mask-image:linear-gradient(0deg,#000 0%,rgba(0,0,0,.7) 45%,transparent 100%);mask-image:linear-gradient(0deg,#000 0%,rgba(0,0,0,.7) 45%,transparent 100%)}
+.reveal .holo-beam::before{content:"";position:absolute;inset:0;background:radial-gradient(60% 100% at 50% 100%,rgba(127,233,255,.42),rgba(127,233,255,.12) 45%,transparent 72%);
+ clip-path:polygon(40% 100%,60% 100%,96% 0,4% 0)}
+.reveal .holo-beam i{position:absolute;inset:0;clip-path:polygon(40% 100%,60% 100%,96% 0,4% 0);
+ background:repeating-linear-gradient(90deg,transparent 0 9px,rgba(160,240,255,.10) 9px 11px,transparent 11px 22px);background-size:44px 100%;animation:hrays 3.2s linear infinite;will-change:background-position}
+@keyframes hrays{to{background-position:44px 0}}
+.reveal .holo-beam.on{opacity:1}
+.reveal .holo-pad{position:absolute;width:150px;height:26px;transform:translate(-50%,-50%);z-index:3;border-radius:50%;opacity:0;transition:opacity .6s;pointer-events:none;
+ background:radial-gradient(closest-side,rgba(190,248,255,.85),rgba(127,233,255,.35) 45%,transparent);filter:blur(2px)}
+.reveal .holo-pad.on{opacity:1}
+.reveal .holo{position:absolute;z-index:4;transform:translate(-50%,-100%) translateY(20px) scale(.82);opacity:0;transition:opacity .6s ease,transform .8s cubic-bezier(.2,.9,.25,1);pointer-events:none;--tc:#7fe9ff;will-change:transform,opacity}
+.reveal .holo.on{opacity:1;transform:translate(-50%,-100%)}
+.reveal .holo.on .hc{animation:hfloat 3.2s ease-in-out infinite}
+@keyframes hfloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+.reveal .holo.sink{opacity:0;transform:translate(-50%,-100%) translateY(70px) scale(.25);transition:opacity .5s ease-in,transform .6s ease-in}
+.reveal .holo .hc{position:relative;width:206px;height:206px;border-radius:16px;border:1px solid rgba(127,233,255,.5);background:linear-gradient(180deg,rgba(127,233,255,.13),rgba(127,233,255,.04));
+ box-shadow:0 0 26px rgba(127,233,255,.28),inset 0 0 16px rgba(127,233,255,.14);color:#c8f8ff;text-align:center;overflow:hidden;font-family:Montserrat,sans-serif;will-change:transform}
+.reveal .holo .hc::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(127,233,255,.10) 0 1px,transparent 1px 3px);pointer-events:none}
+.reveal .holo .hlay{position:absolute;inset:0;padding:12px;opacity:0;transform:translateY(6px);transition:opacity .16s ease,transform .22s ease;will-change:opacity,transform}
+.reveal .holo .hlay.cur{opacity:1;transform:none}
+.reveal .holo .hi{height:110px;display:grid;place-items:center}
+.reveal .holo .hi img{max-width:104px;max-height:110px;object-fit:contain;filter:grayscale(1) sepia(1) hue-rotate(150deg) saturate(2.6) brightness(1.15);opacity:.88}
 .reveal .holo .ht{display:flex;flex-direction:column;align-items:center;gap:3px;margin-top:6px}
 .reveal .holo .ht span{font:900 italic 9px/1 Montserrat;letter-spacing:1.6px;opacity:.8}
 .reveal .holo .ht b{font:800 13px/1.1 Montserrat;letter-spacing:2px;text-transform:uppercase}
 .reveal .holo .ht i{font:500 11px/1.2 Montserrat;opacity:.85;max-width:180px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.reveal .holo .ht em{font:900 italic 20px/1 Montserrat;margin-top:2px;text-shadow:0 0 10px rgba(127,233,255,.8)}
-.reveal .holo.swap .hc{animation:hswap .16s steps(2)}
-@keyframes hswap{0%{opacity:.35;transform:translateX(-3px) skewX(-6deg)}50%{opacity:1;transform:translateX(3px)}100%{opacity:1;transform:none}}
-.reveal .holo.on:not(.lock) .hc{animation:hflick 3s infinite}
-@keyframes hflick{0%,92%,100%{opacity:1}93%{opacity:.55}95%{opacity:.95}97%{opacity:.6}}
-.reveal .holo.lock .hc{border-color:var(--tc);box-shadow:0 0 34px color-mix(in srgb,var(--tc) 70%,transparent),inset 0 0 22px color-mix(in srgb,var(--tc) 30%,transparent);color:#fff;transform:scale(1.08);transition:transform .35s cubic-bezier(.2,1.6,.4,1)}
-.reveal .holo.lock .hi img{filter:drop-shadow(0 0 14px color-mix(in srgb,var(--tc) 80%,transparent));mix-blend-mode:normal;opacity:1}
+.reveal .holo .ht em{font:900 italic 20px/1 Montserrat;margin-top:2px}
+.reveal .holo.lock .hc{border-color:var(--tc);box-shadow:0 0 34px color-mix(in srgb,var(--tc) 60%,transparent),inset 0 0 20px color-mix(in srgb,var(--tc) 25%,transparent);color:#fff}
+.reveal .holo.lock .hlay.cur .hi img{filter:none;opacity:1;transition:filter .4s}
 .reveal .holo.lock .ht span{color:var(--tc);opacity:1}
 .reveal .rise{position:absolute;z-index:5;width:96px;height:96px;object-fit:contain;transform:translate(-50%,-30%) scale(.3);opacity:0;pointer-events:none;filter:drop-shadow(0 0 18px var(--rc));transition:transform 1.3s cubic-bezier(.2,.9,.25,1),opacity .35s}
 .reveal .rise.up{opacity:1;transform:translate(-50%,-115%) scale(1.25)}
@@ -1637,25 +1643,29 @@ function openBox(bi){const b=BOXES[bi];scr.scrollTop=0;S.bal-=b.price;S.pts+=b.p
  // swap schedule: fast flicker that slows down, ends on the winner
  const seq=[];let tt=.95,gap=.085;while(tt<4.9){seq.push(tt);tt+=gap;gap=Math.min(.62,gap*1.11)}const T_LOCK=tt,T_OPEN=T_LOCK+.95,T_DONE=T_OPEN+1.9;
  rv.innerHTML=`<div class="rv-amb"></div><div class="rv-floor" style="top:${boxY+70}px"></div>
-  <div class="holo-beam" id="hBeam" style="left:${hX}px;top:${hY}px"></div>
-  <div class="holo" id="holo" style="left:${cx}px;top:${hY-22}px"><div class="hc"><div class="hi"><img id="hImg" alt=""></div><div class="ht"><span id="hTier"></span><b id="hBrand"></b><i id="hModel"></i><em id="hPrice"></em></div></div></div>
+  <div class="holo-beam" id="hBeam" style="left:${cx}px;top:${boxY-BH*.36}px"><i></i></div><div class="holo-pad" id="hPad" style="left:${cx}px;top:${boxY-BH*.36}px"></div>
+  <div class="holo" id="holo" style="left:${cx}px;top:${boxY-BH*.36-26}px"><div class="hc">${[0,1].map(n=>`<div class="hlay" data-l="${n}"><div class="hi"><img alt=""></div><div class="ht"><span></span><b></b><i></i><em></em></div></div>`).join('')}</div></div>
   <div class="rv-box charge" id="rvBox" style="top:${boxY}px;width:${BW}px">${OB.html}</div>
   <img class="rise" id="rise" src="${win.img}" alt="" style="left:${hX}px;top:${hY}px">
   <div class="rv-lbl" id="rvLbl">OPENING ${esc(b.skin.toUpperCase())}</div><div class="flash" id="flash"></div><div class="rv-skip" id="rvSkip">TAP TO SKIP</div>`;
  rv.classList.add('on');scr.classList.add('rv-on');
  const box=$('#rvBox'),holo=$('#holo'),beam=$('#hBeam'),rise=$('#rise');
  try{window.MB3D&&window.MB3D.reveal(box,b)}catch(e){console.warn('3D reveal off',e)}
- const show=(x,final)=>{$('#hImg').src=x.img;$('#hTier').textContent=x.tier.toUpperCase();$('#hBrand').textContent=x.brand;$('#hModel').textContent=x.model;$('#hPrice').textContent=money(x.price);
-  holo.classList.remove('swap');void holo.offsetWidth;holo.classList.add('swap');if(final){holo.classList.add('lock');holo.style.setProperty('--tc',RC[x.tier])}};
+ const LY=[...holo.querySelectorAll('.hlay')];let cur=0;
+ const show=(x,final)=>{const n=LY[cur^1],o=LY[cur];cur^=1;const im=n.querySelector('img');im.src=x.img;
+  n.querySelector('span').textContent=x.tier.toUpperCase();n.querySelector('b').textContent=x.brand;n.querySelector('i').textContent=x.model;n.querySelector('em').textContent=money(x.price);
+  o.classList.remove('cur');n.classList.add('cur');if(final){holo.classList.add('lock');holo.style.setProperty('--tc',RC[x.tier])}};
+ // decode every hologram image up front so swaps never stall
+ const PRE=[win,...pool.slice(0,40)].map(x=>{const im=new Image();im.src=x.img;return im.decode?im.decode().catch(()=>{}):Promise.resolve()});
  const MUS=startMusic(T_OPEN);let t0=performance.now(),k=0,phase=0,done=false,spin=0,vel=0,last=t0,skipAt=null;
  function frame(now){if(done)return;const dt=Math.min(.05,(now-last)/1000);last=now;let t=(now-t0)/1000;
   // spin: ramp up, keep turning while it strains, then settle facing front at the lock
-  if(phase<2){vel+=((t<.4?t/.4:1)*3.4-vel)*Math.min(1,dt*3);spin+=vel*dt;box._rotY=spin;box._strain=Math.min(1,t/.8)}
-  else if(phase===2){const tgt=Math.ceil(spin/(Math.PI*2))*Math.PI*2;spin+=(tgt-spin)*Math.min(1,dt*5.5);box._rotY=spin;box._strain=Math.max(0,(box._strain||0)-dt*2)}
-  if(phase===0&&t>=.8){phase=1;beam.classList.add('on');holo.classList.add('on');SFX.charge();rv.classList.add('holo-on')}
+  if(phase<2){vel+=((t<.6?t/.6:1)*1.9-vel)*Math.min(1,dt*2.5);spin+=vel*dt;box._rotY=spin;box._strain=0}
+  else if(phase===2){const tgt=Math.ceil(spin/(Math.PI*2))*Math.PI*2;spin+=(tgt-spin)*Math.min(1,dt*3.2);box._rotY=spin;box._strain=0}
+  if(phase===0&&t>=.8){phase=1;$('#hPad').classList.add('on');beam.classList.add('on');holo.classList.add('on');SFX.charge();rv.classList.add('holo-on')}
   if(phase===1){while(k<seq.length&&t>=seq[k]){show(pool[k%pool.length],false);SFX.tick(.6+.4*(k/seq.length));k++}
    if(t>=T_LOCK){phase=2;show(win,true);SFX.reveal(win.tier);rv.style.setProperty('--rc',RC[win.tier]);try{navigator.vibrate&&navigator.vibrate([20,40,40])}catch(e){}}}
-  if(phase===2&&t>=T_OPEN){phase=3;holo.classList.add('sink');beam.classList.remove('on');box._strain=0;box.classList.remove('charge');box.classList.add('lidopen');
+  if(phase===2&&t>=T_OPEN){phase=3;holo.classList.add('sink');beam.classList.remove('on');$('#hPad').classList.remove('on');box._strain=0;box.classList.remove('charge');box.classList.add('lidopen');
    const f=$('#flash');f.classList.remove('go');void f.offsetWidth;f.classList.add('go');SFX.open();setTimeout(()=>rise.classList.add('up'),260);$('#rvLbl').style.opacity=0}
   if(phase===3&&t>=T_DONE){phase=4;finish();return}
   requestAnimationFrame(frame)}
