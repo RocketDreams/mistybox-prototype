@@ -973,6 +973,12 @@ html,body{overscroll-behavior:none}
 .reveal .holo .hlay{opacity:0;transform:translateX(120px) scale(.86)}
 .reveal .holo .hlay.cur{opacity:1;transform:none}
 .reveal .holo .hlay.out{opacity:0;transform:translateX(-120px) scale(.86)}
+/* hologram strip carousel */
+.reveal .holo .hc{width:300px!important}
+.reveal .holo .hstrip{position:absolute;inset:0}
+.reveal .holo .hlay,.reveal .holo .hlay.cur,.reveal .holo .hlay.out{position:absolute;left:50%;top:0;width:160px;margin-left:-80px;padding:0!important;inset:auto;transition:none!important;will-change:transform,opacity}
+.reveal .holo .hlay .ht{white-space:nowrap}
+.reveal .holo .hc{-webkit-mask-image:linear-gradient(90deg,transparent 0%,#000 30%,#000 70%,transparent 100%)!important;mask-image:linear-gradient(90deg,transparent 0%,#000 30%,#000 70%,transparent 100%)!important}
 /* bottom nav */
 #scr .nav{background:#000!important;border-top:1px solid var(--mb-line)!important;box-shadow:none!important}
 </style></head>
@@ -1676,20 +1682,27 @@ function openBox(bi){const b=BOXES[bi];scr.scrollTop=0;S.bal-=b.price;S.pts+=b.p
  rv.style.setProperty('--rc',b.accent);rv.style.setProperty('--hc','#7fe9ff');
  const pool=[...new Map(b.items.map(x=>[x.id,x])).values()].filter(x=>x.id!==win.id).sort(()=>Math.random()-.5);
  // swap schedule: fast flicker that slows down, ends on the winner
- const T_SHAKE=3.4,T_OPEN=4.05,T_HOLO=4.5;const seq=[];let tt=T_HOLO+.1,gap=.065;while(tt<T_HOLO+5.4){seq.push(tt);tt+=gap;gap=Math.min(.55,gap*1.055)}const T_LOCK=tt,T_CLOSE=T_LOCK+.55,T_DONE=T_CLOSE+1.25;
+ const T_SHAKE=3.4,T_OPEN=4.05,T_HOLO=4.5,RUN=6.2,NSTRIP=14;const seq=[];const T_LOCK=T_HOLO+.35+RUN,T_CLOSE=T_LOCK+.6,T_DONE=T_CLOSE+1.25;
  rv.innerHTML=`<div class="rv-amb"></div><div class="rv-floor" style="top:${boxY+70}px"></div>
   <div class="holo-beam" id="hBeam" style="left:${hX}px;top:${hY+4}px"><i></i></div><div class="holo-pad" id="hPad" style="left:${hX}px;top:${hY+2}px"></div>
   <div class="holo-glow" id="hGlow" style="left:${hX}px;top:${hY}px"></div><canvas class="holo-pt" id="hPt" width="${W}" height="${H}"></canvas>
-  <div class="holo" id="holo" style="left:${hX}px;top:${hY-BH*.58}px"><div class="hc">${[0,1,2,3].map(n=>`<div class="hlay" data-l="${n}"><div class="hi"><img alt=""></div><div class="ht"><span></span><b></b><i></i><em></em></div></div>`).join('')}</div></div>
+  <div class="holo" id="holo" style="left:${hX}px;top:${hY-BH*.58}px"><div class="hc"><div class="hstrip" id="hStrip"></div></div></div>
   <div class="rv-box charge" id="rvBox" style="top:${boxY}px;width:${BW}px">${OB.html}</div>
   <img class="rise" id="rise" src="${win.img}" alt="" style="left:${hX}px;top:${hY}px">
   <div class="rv-lbl" id="rvLbl">OPENING ${esc(b.skin.toUpperCase())}</div><div class="flash" id="flash"></div><div class="rv-skip" id="rvSkip">TAP TO SKIP</div>`;
  rv.classList.add('on');scr.classList.add('rv-on');
  const box=$('#rvBox'),holo=$('#holo'),beam=$('#hBeam'),rise=$('#rise');
  try{window.MB3D&&window.MB3D.reveal(box,b)}catch(e){console.warn('3D reveal off',e)}
- const LY=[...holo.querySelectorAll('.hlay')];let cur=0;
+ const STRIP=[];for(let q=0;q<NSTRIP;q++)STRIP.push(pool[q%pool.length]);const WI=STRIP.length;STRIP.push(win);for(let q=0;q<3;q++)STRIP.push(pool[(NSTRIP+q)%pool.length]);
+ $('#hStrip').innerHTML=STRIP.map((x,q)=>`<div class="hlay" data-q="${q}"><div class="hi"><img src="${x.img}" alt=""></div><div class="ht"><span>${x.tier.toUpperCase()}</span><b>${esc(x.brand)}</b><i>${esc(x.model)}</i><em>${money(x.price)}</em></div></div>`).join('');
+ const LY=[...holo.querySelectorAll('.hlay')];let cur=0;const SP=150,P0=1.4;let lastC=-1;
+ // position along the strip (in watches): eases out so it starts at a steady pace and glides to a stop on the winner
+ const stripAt=t=>{const u=Math.max(0,Math.min(1,(t-T_HOLO-.35)/RUN));const e=1-Math.pow(1-u,2.2);return P0+(WI-P0)*e};
+ const layStrip=p=>{for(let q=0;q<LY.length;q++){const d=q-p,a=Math.abs(d);if(a>2.6){LY[q].style.visibility='hidden';continue}LY[q].style.visibility='';
+   LY[q].style.transform=`translateX(${d*SP}px) scale(${1-Math.min(.42,a*.3)})`;LY[q].style.opacity=String(Math.max(0,1-a*.55));LY[q].querySelector('.ht').style.opacity=String(Math.max(0,1-a*1.6))}
+  const c=Math.round(p);if(c!==lastC){if(lastC>=0&&LY[lastC])LY[lastC].classList.remove('cur');LY[c]&&LY[c].classList.add('cur');if(lastC>=0)SFX.tick(.7);lastC=c}};
  // carousel: the new watch slides in from the right, the current one slides out to the left (inside the cone)
- const show=(x,final,dur)=>{const o=LY[cur];cur=(cur+1)%LY.length;const n=LY[cur];const d=Math.max(.12,Math.min(.42,dur||.3));
+ const show=(x,final,dur)=>{if(final){holo.classList.add('lock');holo.style.setProperty('--tc',RC[x.tier])}return;const o=LY[cur];cur=(cur+1)%LY.length;const n=LY[cur];const d=Math.max(.12,Math.min(.42,dur||.3));
   n.style.transition='none';n.classList.remove('cur','out');void n.offsetWidth;n.style.transition='';holo.style.setProperty('--sd',d+'s');
   o.classList.remove('cur');o.classList.add('out');const im=n.querySelector('img');im.src=x.img;
   n.querySelector('span').textContent=x.tier.toUpperCase();n.querySelector('b').textContent=x.brand;n.querySelector('i').textContent=x.model;n.querySelector('em').textContent=money(x.price);
@@ -1710,9 +1723,9 @@ function openBox(bi){const b=BOXES[bi];scr.scrollTop=0;S.bal-=b.price;S.pts+=b.p
   // 3) it opens, light pours out, particles start rising
   if(phase===1&&t>=T_OPEN){phase=2;spin=box._tgt;box._rotY=spin;box.classList.remove('tremble','charge');box.classList.add('lidopen');$('#hPad').classList.add('on');beam.classList.add('on');emit=2.2;rv.classList.add('holo-on');$('#hGlow').classList.add('on');SFX.open()}
   // 4) holograms project out of the open box and cycle
-  if(phase===2&&t>=T_HOLO){phase=3;holo.classList.add('on')}
-  if(phase===3){while(k<seq.length&&t>=seq[k]){show(pool[k%pool.length],false,(seq[k+1]||T_LOCK)-seq[k]);SFX.tick(.6+.4*(k/seq.length));k++}
-   if(t>=T_LOCK){phase=4;show(win,true,.42);SFX.reveal(win.tier);rv.style.setProperty('--rc',RC[win.tier]);emit=4;try{navigator.vibrate&&navigator.vibrate([20,40,40])}catch(e){}}}
+  if(phase===2&&t>=T_HOLO){phase=3;layStrip(stripAt(t));holo.classList.add('on')}
+  if(phase===3){layStrip(stripAt(t));
+   if(t>=T_LOCK){phase=4;layStrip(WI);show(win,true);SFX.reveal(win.tier);rv.style.setProperty('--rc',RC[win.tier]);emit=4;try{navigator.vibrate&&navigator.vibrate([20,40,40])}catch(e){}}}
   // 5) the chosen watch: transition to its screen
   if(phase===4&&t>=T_CLOSE){phase=5;closeup()}
   if(phase===5&&t>=T_DONE){phase=6;emit=0;finish();return}
