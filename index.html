@@ -963,6 +963,10 @@ html,body{overscroll-behavior:none}
 .reveal .holo.lock .ht{text-shadow:0 0 10px color-mix(in srgb,var(--tc) 70%,transparent)}
 .reveal .holo .hlay{transition:opacity .07s linear,transform .2s ease!important}
 .reveal .holo .hlay.cur{transition:opacity .16s ease .06s,transform .22s ease .06s!important}
+
+.reveal .rv-close{position:absolute;z-index:6;object-fit:contain;pointer-events:none;filter:drop-shadow(0 0 28px color-mix(in srgb,var(--rc) 70%,transparent)) drop-shadow(0 18px 30px rgba(0,0,0,.7))}
+#scr .mbx-rv .mbx-big{width:100%;height:min(46vh,380px);display:grid;place-items:center;margin-bottom:6px}
+#scr .mbx-rv .mbx-big img{width:auto!important;height:100%!important;max-width:92%;object-fit:contain;filter:drop-shadow(0 0 26px color-mix(in srgb,var(--rc) 55%,transparent)) drop-shadow(0 20px 34px rgba(0,0,0,.75))}
 /* bottom nav */
 #scr .nav{background:#000!important;border-top:1px solid var(--mb-line)!important;box-shadow:none!important}
 </style></head>
@@ -1666,7 +1670,7 @@ function openBox(bi){const b=BOXES[bi];scr.scrollTop=0;S.bal-=b.price;S.pts+=b.p
  rv.style.setProperty('--rc',b.accent);rv.style.setProperty('--hc','#7fe9ff');
  const pool=[...new Map(b.items.map(x=>[x.id,x])).values()].filter(x=>x.id!==win.id).sort(()=>Math.random()-.5);
  // swap schedule: fast flicker that slows down, ends on the winner
- const T_SHAKE=1.7,T_OPEN=2.35,T_HOLO=2.85;const seq=[];let tt=T_HOLO+.1,gap=.09;while(tt<T_HOLO+3.7){seq.push(tt);tt+=gap;gap=Math.min(.6,gap*1.11)}const T_LOCK=tt,T_DONE=T_LOCK+1.05;
+ const T_SHAKE=3.4,T_OPEN=4.05,T_HOLO=4.5;const seq=[];let tt=T_HOLO+.1,gap=.065;while(tt<T_HOLO+5.4){seq.push(tt);tt+=gap;gap=Math.min(.55,gap*1.055)}const T_LOCK=tt,T_CLOSE=T_LOCK+.55,T_DONE=T_CLOSE+1.25;
  rv.innerHTML=`<div class="rv-amb"></div><div class="rv-floor" style="top:${boxY+70}px"></div>
   <div class="holo-beam" id="hBeam" style="left:${hX}px;top:${hY+4}px"><i></i></div><div class="holo-pad" id="hPad" style="left:${hX}px;top:${hY+2}px"></div>
   <div class="holo-glow" id="hGlow" style="left:${hX}px;top:${hY}px"></div><canvas class="holo-pt" id="hPt" width="${W}" height="${H}"></canvas>
@@ -1690,33 +1694,43 @@ function openBox(bi){const b=BOXES[bi];scr.scrollTop=0;S.bal-=b.price;S.pts+=b.p
   for(let q=PT.length-1;q>=0;q--)if(PT[q].l<=0)PT.splice(q,1);pg.globalAlpha=1};
  function frame(now){if(done)return;const dt=Math.min(.05,(now-last)/1000);last=now;let t=(now-t0)/1000;
   // 1) closed box spins, then settles facing front
-  if(t<T_SHAKE-.55){vel+=((t<.5?t/.5:1)*2.6-vel)*Math.min(1,dt*3);spin+=vel*dt;box._rotY=spin}
-  else{const tgt=Math.ceil(spin/(Math.PI*2))*Math.PI*2;spin+=(tgt-spin)*Math.min(1,dt*4.5);box._rotY=spin}
+  if(t<T_SHAKE-.9){vel+=((t<.6?t/.6:1)*2.4-vel)*Math.min(1,dt*3);spin+=vel*dt;box._rotY=spin}
+  else{const FR=-20*Math.PI/180;if(box._tgt==null)box._tgt=Math.ceil((spin+.6-FR)/(Math.PI*2))*Math.PI*2+FR;spin+=(box._tgt-spin)*Math.min(1,dt*5);if(Math.abs(box._tgt-spin)<.002)spin=box._tgt;box._rotY=spin;box._front=t>=T_SHAKE}
   // 2) a small tremble
   if(phase===0&&t>=T_SHAKE){phase=1;box.classList.add('tremble');SFX.charge()}
   // 3) it opens, light pours out, particles start rising
-  if(phase===1&&t>=T_OPEN){phase=2;box.classList.remove('tremble','charge');box.classList.add('lidopen');$('#hPad').classList.add('on');beam.classList.add('on');emit=2.2;rv.classList.add('holo-on');$('#hGlow').classList.add('on');SFX.open()}
+  if(phase===1&&t>=T_OPEN){phase=2;spin=box._tgt;box._rotY=spin;box.classList.remove('tremble','charge');box.classList.add('lidopen');$('#hPad').classList.add('on');beam.classList.add('on');emit=2.2;rv.classList.add('holo-on');$('#hGlow').classList.add('on');SFX.open()}
   // 4) holograms project out of the open box and cycle
   if(phase===2&&t>=T_HOLO){phase=3;holo.classList.add('on')}
   if(phase===3){while(k<seq.length&&t>=seq[k]){show(pool[k%pool.length],false);SFX.tick(.6+.4*(k/seq.length));k++}
    if(t>=T_LOCK){phase=4;show(win,true);SFX.reveal(win.tier);rv.style.setProperty('--rc',RC[win.tier]);emit=4;try{navigator.vibrate&&navigator.vibrate([20,40,40])}catch(e){}}}
   // 5) the chosen watch: transition to its screen
-  if(phase===4&&t>=T_DONE){phase=5;emit=0;finish();return}
+  if(phase===4&&t>=T_CLOSE){phase=5;closeup()}
+  if(phase===5&&t>=T_DONE){phase=6;emit=0;finish();return}
   motes(dt);requestAnimationFrame(frame)}
  requestAnimationFrame(frame);
- rv.onclick=e=>{if(phase<4&&!e.target.closest('.rv-detail')){if(phase<2){box.classList.remove('tremble','charge');box.classList.add('lidopen');$('#hPad').classList.add('on');beam.classList.add('on');emit=2.2;rv.classList.add('holo-on');holo.classList.add('on');phase=3}t0=performance.now()-T_LOCK*1000;k=seq.length;MUS.cut&&MUS.cut()}};
+ rv.onclick=e=>{if(phase<4&&!e.target.closest('.rv-detail')){if(phase<2){box.classList.remove('tremble','charge');box.classList.add('lidopen');$('#hPad').classList.add('on');beam.classList.add('on');emit=2.2;rv.classList.add('holo-on');holo.classList.add('on');phase=3}box._tgt=Math.round(spin/(Math.PI*2))*Math.PI*2-20*Math.PI/180;spin=box._tgt;box._rotY=spin;t0=performance.now()-T_LOCK*1000;k=seq.length;MUS.cut&&MUS.cut()}};
+ let CU=null;
+ function closeup(){const im=holo.querySelector('.hlay.cur img'),r=im.getBoundingClientRect(),sr=rv.getBoundingClientRect();
+  CU=document.createElement('img');CU.className='rv-close';CU.src=win.img;CU.alt='';
+  CU.style.cssText=`left:${r.left-sr.left}px;top:${r.top-sr.top}px;width:${r.width}px;height:${r.height}px`;rv.appendChild(CU);
+  holo.classList.add('gone');beam.classList.remove('on');$('#hPad').classList.remove('on');$('#hGlow').classList.remove('on');emit=0;
+  box.style.transition='opacity .6s, transform .9s';box.style.opacity=0;pc.style.transition='opacity .6s';pc.style.opacity=0;
+  const sz=Math.min(W*.9,H*.52);void CU.offsetWidth;
+  CU.style.transition='left 1s cubic-bezier(.2,.9,.25,1),top 1s cubic-bezier(.2,.9,.25,1),width 1s cubic-bezier(.2,.9,.25,1),height 1s cubic-bezier(.2,.9,.25,1)';
+  CU.style.left=(W-sz)/2+'px';CU.style.top=(H-sz)/2-30+'px';CU.style.width=sz+'px';CU.style.height=sz+'px';SFX.swish()}
  function finish(){$('#rvSkip').style.opacity=0;MUS.stop();box._rotY=null;
    pushTick&&0;
    const info=document.createElement('div');info.className='rv-detail';info.style.setProperty('--rc',RC[win.tier]);
-   info.classList.add('mbx-rv');info.innerHTML=`<div class="mb-wcard"><i class="mb-bolt" style="left:10px;top:10px"></i><i class="mb-bolt" style="right:10px;top:10px"></i><i class="mb-bolt" style="left:10px;bottom:10px"></i><i class="mb-bolt" style="right:10px;bottom:10px"></i><div class="in"><img class="dimg" id="dImg" src="${win.img}" alt="${esc(win.brand)} ${esc(win.model)}"></div></div>
+   info.classList.add('mbx-rv');info.innerHTML=`<div class="mbx-big"><img class="dimg" id="dImg" src="${win.img}" alt="${esc(win.brand)} ${esc(win.model)}"></div>
     ${rar(win.tier)}<div class="mbx-brand">${esc(win.brand)}</div><div class="mbx-price">${money(win.price)}</div><div class="mbx-model">${esc(win.model)}</div>
     <p class="dfrom">Revealed from ${esc(b.skin)} · ${b.tier} box · authenticated &amp; insured</p>
     <div class="acts"><div class="mbx-acts"><button class="cta sm" id="rSell">SELL ${money(win.price*.9)}</button><button class="btn" id="rKeep">VAULT</button></div><div class="mbx-links"><button type="button" class="lnk" id="rShip">Ship to me</button><button type="button" class="lnk" id="rAgain">Open another · ${money(b.price)}</button></div></div>`;
    rv.appendChild(info);
    const di=info.querySelector('#dImg'),fr=di.getBoundingClientRect(),sr=rv.getBoundingClientRect(),cw=170,ch=170;
-   const hImg=holo.querySelector('.hlay.cur img'),wr=(hImg||rise).getBoundingClientRect(),fromX=(wr.left+wr.width/2)-(fr.left+fr.width/2),fromY=(wr.top+wr.height/2)-(fr.top+fr.height/2),k=wr.width/fr.width;
+   const hImg=CU||holo.querySelector('.hlay.cur img'),wr=(hImg||rise).getBoundingClientRect(),fromX=(wr.left+wr.width/2)-(fr.left+fr.width/2),fromY=(wr.top+wr.height/2)-(fr.top+fr.height/2),k=wr.width/fr.width;
    di.style.transition='none';di.style.transform=`translate(${fromX}px,${fromY}px) scale(${k})`;void di.offsetWidth;
-   holo.classList.add('gone');beam.classList.remove('on');$('#hGlow').classList.remove('on');$('#hPad').classList.remove('on');pc.style.transition='opacity .5s';pc.style.opacity=0;box.style.transition='opacity .5s';box.style.opacity=0;requestAnimationFrame(()=>{info.classList.add('on');di.style.transition='';di.style.transform=''});SFX.swish();
+   if(CU)CU.style.opacity=0;holo.classList.add('gone');beam.classList.remove('on');$('#hGlow').classList.remove('on');$('#hPad').classList.remove('on');pc.style.opacity=0;box.style.opacity=0;requestAnimationFrame(()=>{info.classList.add('on');di.style.transition='';di.style.transform=''});SFX.swish();
    pushTick({who:'You',tier:win.tier,box:b.tier,i:win});
    const close=st=>{done=true;S.col.unshift({id:win.id,st,t:Date.now(),trk:st==='shipped'?'UPS · 1Z'+Math.random().toString(36).slice(2,9).toUpperCase():undefined});save();rv.classList.remove('on');rv.innerHTML='';scr.classList.remove('rv-on');renderCol();renderLB()};
    info.querySelector('#rKeep').onclick=()=>{close('vault');toast(`${win.model} is in your vault`)};
@@ -2245,8 +2259,8 @@ window.MB3D.reveal = function(boxEl, b){
       leds.forEach((m, i) => m.emissiveIntensity = base[i] * charge);
       spill.intensity = openAt ? Math.min(2, to * 5) : 0;
       GY.sx += (GY.x - GY.sx) * .12; GY.sy += (GY.y - GY.sy) * .12;
-      holder.rotation.y = (boxEl._rotY != null ? boxEl._rotY : (openAt ? 0 : .05 * Math.sin(t * 1.3))) + GY.sx * .35; holder.rotation.x = GY.sy * .12;
-      R2.render(S2, C2); gl2.render(S2, C2, .35); if(!openAt) window.MB3D.lastReveal = window.MB3D.screenRect(holder, C2, cv2);
+      holder.rotation.y = (boxEl._rotY != null ? boxEl._rotY : (openAt ? 0 : .05 * Math.sin(t * 1.3))) + (boxEl._front ? 0 : GY.sx * .35); holder.rotation.x = GY.sy * .12;
+      R2.render(S2, C2); gl2.render(S2, C2, .35); if(!openAt) window.MB3D.lastReveal = window.MB3D.screenRect(holder, C2, cv2); boxEl._measure = y => { const o2 = holder.rotation.y; holder.rotation.y = y; holder.updateMatrixWorld(true); const r = window.MB3D.screenRect(holder, C2, cv2); holder.rotation.y = o2; holder.updateMatrixWorld(true); return r.w };
     };
     requestAnimationFrame(step);
   }).catch(err => console.warn('3D reveal off:', err));
