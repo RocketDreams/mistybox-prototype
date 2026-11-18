@@ -1007,7 +1007,7 @@ html,body{overscroll-behavior:none}
 .reveal .holo .hi{height:172px!important}
 .reveal .holo .hi img{max-width:164px!important;max-height:172px!important}
 .reveal .holo .hc{height:262px!important;width:330px!important}
-.reveal .holo-beam{width:440px!important;height:480px!important}
+.reveal .holo-beam{width:460px!important;height:540px!important}
 /* background colour (Preferences) */
 #scr .mbx-bgs{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:6px}
 #scr .mbx-bgs button{display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 4px;border-radius:14px;background:#141418;border:1px solid var(--mb-line);color:#fff;font:700 12px Montserrat,sans-serif}
@@ -1772,7 +1772,7 @@ function openBox(bi){const b=BOXES[bi];scr.scrollTop=0;S.bal-=b.price;S.pts+=b.p
  rv.classList.add('on');scr.classList.add('rv-on');
  const box=$('#rvBox'),holo=$('#holo'),beam=$('#hBeam'),rise=$('#rise');
  try{window.MB3D&&window.MB3D.reveal(box,b)}catch(e){console.warn('3D reveal off',e)}
- let HB=0;const CBW=440,CBH=480,CWB=CBW*.16,HCW=330,HCH=262,hb=BH*.58+4,hw=h=>CWB/2+(CBW/2-CWB/2)*h/CBH;
+ let HB=0;const CBW=460,CBH=540,CWB=CBW*.16,HCW=330,HCH=262,hb=BH*.58+4,hw=h=>CWB/2+(CBW/2-CWB/2)*h/CBH;
  $('#holo .hc').style.clipPath=`polygon(${HCW/2-hw(hb+HCH)}px 0,${HCW/2+hw(hb+HCH)}px 0,${HCW/2+hw(hb)}px 100%,${HCW/2-hw(hb)}px 100%)`;
  const STRIP=[];for(let q=0;q<NSTRIP;q++)STRIP.push(pool[q%pool.length]);const WI=STRIP.length;STRIP.push(win);for(let q=0;q<3;q++)STRIP.push(pool[(NSTRIP+q)%pool.length]);
  $('#hStrip').innerHTML=STRIP.map((x,q)=>`<div class="hlay" data-q="${q}"><div class="hi"><img src="${x.img}" alt=""><em class="sp">${money(x.price)}</em></div><div class="ht"><span>${x.tier.toUpperCase()}</span><b>${esc(x.brand)}</b><i>${esc(x.model)}</i><em>${money(x.price)}</em></div></div>`).join('');
@@ -1794,7 +1794,8 @@ function openBox(bi){const b=BOXES[bi];scr.scrollTop=0;S.bal-=b.price;S.pts+=b.p
  const MUS={stop(){},cut(){}};let TEN=null;let t0=performance.now(),k=0,phase=0,done=false,spin=0,vel=0,last=t0;
  const pc=$('#hPt'),pg=pc.getContext('2d'),pcB=$('#hPtB'),pgB=pcB.getContext('2d'),PT=[];let emit=0,acc=0,burst=0;
  // geometry of the open box on screen (from the 3D render): centre, front-wall top edge, depth of the inside
- let GEO=null;const geo=()=>{if(GEO)return GEO;const r=window.MB3D&&window.MB3D.lastReveal;return r&&r.w>20?{cx:r.cx,edge:r.y0+r.h*.3,depth:r.h*.34,iw:r.w*.6}:{cx:cx,edge:hY,depth:BH*.32,iw:BW*.55}};
+ let GEO=null;const L=()=>{const q=rv.getBoundingClientRect(),k=q.width/rv.offsetWidth||1;return{x:v=>(v-q.left)/k,y:v=>(v-q.top)/k,s:v=>v/k}};
+ const geo=()=>{if(GEO)return GEO;const r=window.MB3D&&window.MB3D.lastReveal,c=L();return r&&r.w>20?{cx:c.x(r.cx),edge:c.y(r.y0+r.h*.3),depth:c.s(r.h*.34),iw:c.s(r.w*.6)}:{cx:cx,edge:hY,depth:BH*.32,iw:BW*.55}};
  const motes=dt=>{pg.clearRect(0,0,W,H);pgB.clearRect(0,0,W,H);const G=geo(),R0=G.iw*.5;
   if(emit>0){burst=Math.max(0,burst-dt);if(Math.random()<dt*1.2)burst=.2+Math.random()*.4;
    acc+=emit*60*dt*(.4+Math.random()*1.2)*(burst>0?2.2:1);while(acc>=1){acc--;
@@ -1807,8 +1808,9 @@ function openBox(bi){const b=BOXES[bi];scr.scrollTop=0;S.bal-=b.price;S.pts+=b.p
    ctx.globalAlpha=Math.min(1,p.l*1.3)*p.a*(front?1:.65);ctx.fillStyle=p.c<.25?'#efe2ff':(p.c<.65?'#b98cff':'#8a5cff');ctx.beginPath();ctx.arc(x,y,sz,0,7);ctx.fill()}
   for(let q=PT.length-1;q>=0;q--)if(PT[q].l<=0)PT.splice(q,1);pg.globalAlpha=1;pgB.globalAlpha=1};
  // centre beam, light and hologram on the box itself
- const centre=()=>{try{const m=box._inside&&box._inside(),r=window.MB3D.lastReveal;if(m&&m.floor>m.rim)GEO={cx:m.cx,edge:m.rim,depth:m.floor-m.rim,iw:(r&&r.w>20?r.w:BW)*.6}}catch(e){}const G=geo(),base=G.edge+G.depth;for(const id of ['#hBeam','#hBeamB','#hPad','#hGlow','#holo'])$(id).style.left=G.cx+'px';$('#hBeam').style.top=base+'px';$('#hBeamB').style.top=base+'px';
-  $('#hBeam').style.clipPath=`inset(0 0 ${base-G.edge}px 0)`;$('#hPad').style.top=base+'px';$('#hGlow').style.top=G.edge+'px';$('#holo').style.top=(G.edge-BH*.58)+'px';HB=base-G.edge};
+ const centre=()=>{try{const m=box._inside&&box._inside(),r=window.MB3D.lastReveal,c=L();if(m&&m.floor>m.rim)GEO={cx:c.x(m.cx),edge:c.y(m.rim),depth:c.s(m.floor-m.rim),iw:c.s((r&&r.w>20?r.w:BW)*.6),back:c.y(m.back)}}catch(e){}const G=geo(),base=G.edge+G.depth;for(const id of ['#hBeam','#hBeamB','#hPad','#hGlow','#holo'])$(id).style.left=G.cx+'px';$('#hBeam').style.top=base+'px';$('#hBeamB').style.top=base+'px';
+  $('#hBeam').style.clipPath=`inset(0 0 ${base-G.edge}px 0)`;$('#hPad').style.top=base+'px';$('#hGlow').style.top=G.edge+'px';const hbot=G.edge-BH*.58-46;$('#holo').style.top=hbot+'px';HB=base-G.edge;const hb2=base-hbot;
+  $('#holo .hc').style.clipPath=`polygon(${HCW/2-hw(hb2+HCH)}px 0,${HCW/2+hw(hb2+HCH)}px 0,${HCW/2+hw(hb2)}px 100%,${HCW/2-hw(hb2)}px 100%)`};
  function frame(now){if(done)return;const dt=Math.min(.05,(now-last)/1000);last=now;let t=(now-t0)/1000;
   // 1) closed box spins, then settles facing front
   if(t<T_SHAKE-.9){const tv=(t<.35?t/.35:1)*(5.4+1.8*Math.sin(t*3.1)+.9*Math.sin(t*7.3));vel+=(tv-vel)*Math.min(1,dt*6);spin+=vel*dt;box._rotY=spin;
@@ -1839,12 +1841,12 @@ function openBox(bi){const b=BOXES[bi];scr.scrollTop=0;S.bal-=b.price;S.pts+=b.p
    info.classList.add('pre','on');rv.appendChild(info);INFO=info;
    const di=info.querySelector('#dImg');di.style.visibility='hidden';const fr=di.getBoundingClientRect();
   CU=document.createElement('img');CU.className='rv-close';CU.src=win.img;CU.alt='';
-  CU.style.cssText=`left:${r.left-sr.left}px;top:${r.top-sr.top}px;width:${r.width}px;height:${r.height}px`;rv.appendChild(CU);
+  const kk=sr.width/rv.offsetWidth||1;CU.style.cssText=`left:${(r.left-sr.left)/kk}px;top:${(r.top-sr.top)/kk}px;width:${r.width/kk}px;height:${r.height/kk}px`;rv.appendChild(CU);
   holo.classList.add('gone');beam.classList.remove('on');$('#hBeamB').classList.remove('on');$('#hPad').classList.remove('on');$('#hGlow').classList.remove('on');emit=0;
   box.style.transition='opacity .55s';box.style.opacity=0;for(const c of [pc,pcB]){c.style.transition='opacity .55s';c.style.opacity=0}
   void CU.offsetWidth;const E='1.15s cubic-bezier(.45,0,.2,1)';
   CU.style.transition=`left ${E},top ${E},width ${E},height ${E}`;
-  CU.style.left=(fr.left-sr.left)+'px';CU.style.top=(fr.top-sr.top)+'px';CU.style.width=fr.width+'px';CU.style.height=fr.height+'px';SFX.swish()}
+  CU.style.left=(fr.left-sr.left)/kk+'px';CU.style.top=(fr.top-sr.top)/kk+'px';CU.style.width=fr.width/kk+'px';CU.style.height=fr.height/kk+'px';SFX.swish()}
  function finish(){$('#rvSkip').style.opacity=0;MUS.stop();TEN&&TEN.cut();box._rotY=null;const info=INFO;
    const di=info.querySelector('#dImg');di.style.visibility='';if(CU){CU.remove();CU=null}
    requestAnimationFrame(()=>info.classList.remove('pre'));
