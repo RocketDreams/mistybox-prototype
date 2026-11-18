@@ -2493,4 +2493,39 @@ frame();
  document.addEventListener('visibilitychange',()=>{if(!document.hidden&&AC&&AC.state!=='running')on()});
 })();
 </script>
+
+<script>
+/* soft, modern sound set: a synthesized felt piano + warm pad, with the existing reverb. Replaces the old clicks, drums and thunder. */
+(()=>{const NT=m=>440*Math.pow(2,(m-69)/12);
+ function piano(m,st,vel=.5,len=2.4){if(!AC)return;const f=NT(m),bus=AC.createGain(),lp=AC.createBiquadFilter();lp.type='lowpass';lp.frequency.value=1400+vel*3200;lp.Q.value=.3;bus.gain.value=vel*.32;bus.connect(lp);out(lp,true);
+  [[1,1],[2,.42],[3,.2],[4,.11],[5,.06],[6,.03]].forEach(([n,a])=>{const o=AC.createOscillator(),g=AC.createGain();o.type='sine';o.frequency.value=f*n*Math.sqrt(1+.00035*n*n);
+   const d=len/(1+n*.55);g.gain.setValueAtTime(0,st);g.gain.linearRampToValueAtTime(a,st+.006);g.gain.exponentialRampToValueAtTime(a*.35,st+.18);g.gain.exponentialRampToValueAtTime(.0001,st+d);o.connect(g).connect(bus);o.start(st);o.stop(st+d+.05)});
+  // felt hammer: a tiny soft thump
+  try{nz(st,.03,'lowpass',900,500,.7,.012*vel,.002)}catch(e){}}
+ function pad(ms,st,dur,vol=.05){if(!AC)return{stop(){}};const g=AC.createGain(),lp=AC.createBiquadFilter();lp.type='lowpass';lp.frequency.setValueAtTime(600,st);lp.frequency.linearRampToValueAtTime(1800,st+dur);
+  g.gain.setValueAtTime(0,st);g.gain.linearRampToValueAtTime(vol,st+Math.min(1.2,dur*.5));g.gain.linearRampToValueAtTime(vol*1.4,st+dur);g.connect(lp);out(lp,true);const os=[];
+  ms.forEach(m=>[-6,6].forEach(dt=>{const o=AC.createOscillator();o.type='triangle';o.frequency.value=NT(m);o.detune.value=dt;o.connect(g);o.start(st);o.stop(st+dur+2);os.push(o)}));
+  return{stop(t){const c=t||AC.currentTime;g.gain.cancelScheduledValues(c);g.gain.setValueAtTime(g.gain.value,c);g.gain.linearRampToValueAtTime(0,c+.5);os.forEach(o=>{try{o.stop(c+.6)}catch(e){}})}}}
+ const SCALE=[0,2,4,7,9,12,14,16,19,21,24,26,28,31,33,36];let tickN=0,lastTick=0;
+ const on=()=>S.sound&&ac();
+ Object.assign(SFX,{
+  tap(){if(!on())return;piano(88,AC.currentTime,.22,.9)},
+  sw(){if(!on())return;const t=AC.currentTime;piano(76,t,.25,1.2);piano(83,t+.06,.2,1.2)},
+  tick(v){if(!on())return;const t=AC.currentTime;if(t-lastTick>.6)tickN=0;lastTick=t;piano(64+SCALE[tickN%SCALE.length]+12*Math.floor(tickN/SCALE.length)%24,t,.18+.22*(v||.6),1.1);tickN++},
+  charge(){if(!on())return;const t=AC.currentTime;pad([45,52,57],t,1.4,.04).stop(t+1.4)},
+  open(){if(!on())return;const t=AC.currentTime;[69,76,81,88].forEach((m,i)=>piano(m,t+i*.05,.42,3))},
+  burst(){},thunder(){},air(){},
+  swish(){if(!on())return;const t=AC.currentTime;nz(t,.6,'bandpass',600,2600,.8,.03,.2,true)},
+  reveal(tier){if(!on())return;const t=AC.currentTime,k=Math.max(0,TIERS.length-1-TIERS.indexOf(tier));
+   const ch=[[48,55,64,67,71],[48,55,64,67,71,74],[47,54,62,66,69,73],[45,52,60,64,67,71,74],[44,51,60,63,67,70,74],[43,50,59,62,66,69,74,78]][Math.min(5,k)];
+   ch.forEach((m,i)=>piano(m+12,t+i*.035,.55,4.2));pad(ch.slice(0,3),t,2.5,.035).stop(t+2.6)},
+  coin(){if(!on())return;const t=AC.currentTime;piano(84,t,.35,1.4);piano(91,t+.09,.3,1.6)},
+  // build-up: a soft piano arpeggio that speeds up and climbs over a swelling pad
+  buildup(dur){if(!on())return{cut(){}};const t=AC.currentTime,end=t+dur,P=pad([45,52,57,64],t,dur,.045);const sh=AC.createOscillator(),sg=AC.createGain();sh.type='sine';sh.frequency.setValueAtTime(880,t);sh.frequency.exponentialRampToValueAtTime(1760,end);sg.gain.setValueAtTime(0,t);sg.gain.linearRampToValueAtTime(.012,end);sh.connect(sg);out(sg,true);sh.start(t);sh.stop(end+.6);
+   return{cut(){P.stop();const c=AC.currentTime;sg.gain.cancelScheduledValues(c);sg.gain.setValueAtTime(sg.gain.value,c);sg.gain.linearRampToValueAtTime(0,c+.3)}}},
+  brake(){if(!on())return;const t=AC.currentTime;[88,84,81,76,72,69].forEach((m,i)=>piano(m,t+i*.07,.3-.03*i,1.6))},
+  tension(){return{cut(){}}}
+ });
+})();
+</script>
 </body></html>
