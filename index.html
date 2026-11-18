@@ -700,7 +700,160 @@ html,body{overscroll-behavior:none}
  background:repeating-linear-gradient(90deg,rgba(255,255,255,.08) 0 1px,rgba(0,0,0,0) 1px 3px),linear-gradient(180deg,#ffffff 0%,#e3e6ea 40%,#b9bdc4 68%,#eef0f3 100%)!important}
 #buy.cta:active{transform:translateY(2px)}
 #buy.cta::before,#buy.cta::after{display:none!important}
-</style><link rel="stylesheet" href="assets/mb2.css"></head>
+</style><link rel="stylesheet" href="assets/mb2.css"><style>
+/* ===== MistyBox canvas design system: every screen (port of claude.ai canvas v61) ===== */
+#scr{--mb-line:rgba(255,255,255,.12);--mb-line-2:rgba(255,255,255,.22);--mb-text-2:#c3c7cf;--mb-text-3:#9196a1;--mb-gold:#e9c15a;--mb-green:#3fcf8e;
+ --mb-chrome:linear-gradient(180deg,#ffffff 0%,#f2f4f8 26%,#8d95a3 44%,#3f4652 52%,#7d8695 60%,#e8ecf1 80%,#ffffff 100%);
+ --mb-chrome-btn:linear-gradient(180deg,#ffffff 0%,#eef0f4 38%,#c9ced6 62%,#f4f6f9 100%);
+ --mb-gold-grad:linear-gradient(180deg,#fff3c4 0%,#f6c94e 40%,#b98a1e 72%,#ffdf7a 100%);
+ --mb-steel-frame:linear-gradient(135deg,#f4f5f7 0%,#9ea3ab 18%,#e9ebee 42%,#7e838b 62%,#d9dce0 82%,#8c9098 100%);
+ --mb-steel-btn:repeating-linear-gradient(90deg,rgba(255,255,255,.08) 0 1px,rgba(0,0,0,0) 1px 3px),linear-gradient(180deg,#ffffff 0%,#e3e6ea 40%,#b9bdc4 68%,#eef0f3 100%)}
+#scr:not([data-view=boxes]) .mdw{display:none}
+/* header wallet = canvas funds pill */
+#scr .wallet{border:1px solid var(--mb-line-2)!important;background:rgba(20,20,24,.85)!important;box-shadow:none!important;font-weight:800!important}
+#scr .wallet .dot{display:none!important}#scr .wallet #bal{left:calc(16*var(--U))!important}
+#scr .wallet .plus{background:var(--mb-chrome-btn)!important;box-shadow:0 2px 0 rgba(0,0,0,.4)!important}
+/* page titles */
+#scr .ptitle{font:italic 900 32px/1.05 Montserrat,sans-serif!important;letter-spacing:-1px!important;text-transform:uppercase;background:var(--mb-chrome);-webkit-background-clip:text;background-clip:text;color:transparent!important;padding-right:4px}
+#scr .psub{font-size:12px!important;line-height:1.5!important;color:var(--mb-text-3)!important}
+#scr .sec h2{font:800 20px/1.1 Montserrat,sans-serif!important;text-transform:none!important;letter-spacing:0!important}
+/* filter chips = canvas pills; collection + leaderboard = canvas segmented control */
+#scr .chips .chip,#scr .chip{height:32px!important;padding:0 14px!important;border-radius:999px!important;clip-path:none!important;background:#141418!important;border:1px solid var(--mb-line-2)!important;box-shadow:none!important;font:700 12px/1 Montserrat,sans-serif!important;letter-spacing:.3px!important;color:#fff!important}
+#scr .chip.on{background:var(--mb-chrome-btn)!important;border-color:transparent!important;color:#0b0d12!important;font-style:italic!important;font-weight:900!important}
+#scr .chip::before,#scr .chip::after{display:none!important}
+#scr #colChips,#scr .seg{display:flex!important;gap:0!important;height:48px!important;padding:4px!important;margin:14px 20px 0!important;border-radius:999px!important;clip-path:none!important;background:#141418!important;border:1px solid var(--mb-line)!important;overflow:visible!important;box-shadow:none!important}
+#scr #colChips .chip,#scr .seg button{flex:1 1 0!important;height:auto!important;min-width:0;padding:0 4px!important;border:0!important;background:none!important;border-radius:999px!important;clip-path:none!important;font:800 14px/1 Montserrat,sans-serif!important;letter-spacing:0!important;color:var(--mb-text-2)!important;box-shadow:none!important;text-transform:none}
+#scr #colChips .chip small{font-size:11px;font-weight:700;opacity:.65;margin-left:3px}
+#scr #colChips .chip.on,#scr .seg button.on{background:var(--mb-chrome-btn)!important;color:#0b0d12!important;font-style:italic!important;font-weight:900!important}
+#scr .seg button::before,#scr .seg button::after{display:none!important}
+/* search */
+#scr .search{height:44px!important;border-radius:999px!important;clip-path:none!important;background:#141418!important;border:1px solid var(--mb-line)!important;box-shadow:none!important;color:var(--mb-text-3)!important}
+#scr .search input{font:500 14px Montserrat,sans-serif!important;color:#fff!important}
+/* rarity pills */
+#scr .mb-tier{display:inline-flex!important;align-items:center;height:22px;padding:0 10px!important;border-radius:999px!important;border:0!important;font:900 italic 10px/1 Montserrat,sans-serif!important;letter-spacing:1.2px!important;text-transform:uppercase;color:#0b0d12!important;background:none;box-shadow:none}
+#scr .mb-tier::before{display:none!important}
+#scr .mb-tier.common{background:linear-gradient(180deg,#9aa0aa,#5d626c)!important;color:#fff!important}
+#scr .mb-tier.uncommon{background:linear-gradient(180deg,#e2e5ea,#9aa0aa)!important}
+#scr .mb-tier.rare{background:linear-gradient(180deg,#ffffff,#c7d3e6 50%,#8fa3c4)!important}
+#scr .mb-tier.epic{background:linear-gradient(180deg,#ffd9c7,#e0a58c 50%,#a8664e)!important}
+#scr .mb-tier.legendary{background:var(--mb-gold-grad)!important;color:#241800!important}
+#scr .mb-tier.grail{background:linear-gradient(110deg,#fff 0%,#f6e7b0 30%,#ffffff 50%,#cfd8e6 70%,#ffffff 100%)!important;box-shadow:0 0 14px rgba(255,236,170,.45)!important}
+/* showroom / what's-inside tiles = canvas grid tile */
+#scr .grid{gap:12px!important}
+#scr .wc{position:relative;display:flex!important;flex-direction:column;align-items:stretch;text-align:left;padding:12px!important;border-radius:20px!important;clip-path:none!important;background:#111114!important;border:1px solid var(--mb-line)!important;box-shadow:none!important;color:#fff!important}
+#scr .wc::before,#scr .wc::after{display:none!important}
+#scr .wc .wi{order:0;height:118px!important;margin:0!important;background:none!important;border:0!important;box-shadow:none!important;border-radius:0!important}
+#scr .wc .wi img{width:100%!important;height:118px!important;object-fit:contain}
+#scr .wc .rar{position:absolute;left:10px;top:10px;z-index:1;height:20px;padding:0 8px!important;font-size:9px!important}
+#scr .wc .pr{order:1;margin-top:10px!important;font:900 italic 19px/1 Montserrat,sans-serif!important;color:#fff!important;background:none!important;-webkit-text-fill-color:#fff}
+#scr .wc .br{order:2;margin-top:6px!important;font:700 12px/1.2 Montserrat,sans-serif!important;letter-spacing:0!important;text-transform:none!important;color:var(--mb-text-2)!important}
+#scr .wc .md{order:3;margin-top:2px!important;font:500 12px/1.25 Montserrat,sans-serif!important;color:var(--mb-text-3)!important}
+/* collection list = canvas list cards */
+#scr #colGrid{display:flex!important;flex-direction:column;gap:10px!important}
+#scr .mbx-sum{font-size:12px;color:var(--mb-text-3);text-align:right;padding:2px 2px 0}#scr .mbx-sum b{color:var(--mb-gold)}
+#scr .mb-icard{display:flex;align-items:center;gap:14px;width:100%;padding:12px;border-radius:18px;background:#111114;border:1px solid var(--mb-line);color:#fff;text-align:left;font-family:Montserrat,sans-serif}
+#scr .mb-icard.faded{opacity:.5}
+#scr .mb-icard .icph{width:76px;height:76px;flex:none;border-radius:14px;background:radial-gradient(circle at 50% 40%,#202026,#0a0a0c);display:grid;place-items:center}
+#scr .mb-icard .icph img{width:66px;height:66px;object-fit:contain}
+#scr .mb-icard .ict{flex:1;min-width:0}#scr .mb-icard .ict b{display:block;font-size:15px;font-weight:800}
+#scr .mb-icard .ict span{display:block;font-size:12px;color:var(--mb-text-3);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#scr .mb-icard .ict i{display:block;font:900 italic 20px/1 Montserrat,sans-serif;margin-top:6px}
+#scr .mb-timer{flex:none;display:inline-flex;align-items:center;height:26px;padding:0 10px;border-radius:999px;background:#1b1b20;border:1px solid var(--mb-line);font-size:11px;font-weight:700;color:var(--mb-text-2)}
+#scr .mb-timer.shipped{color:var(--mb-green);border-color:rgba(63,207,142,.45);background:rgba(63,207,142,.08)}
+/* cards (account, leaderboard) */
+#scr .acard,#scr .mecard,#scr .pod,#scr .ranks,#scr .ppb,#scr .menu{border-radius:18px!important;clip-path:none!important;background:#111114!important;border:1px solid var(--mb-line)!important;box-shadow:none!important}
+#scr .acard::before,#scr .mecard::before,#scr .pod::before,#scr .acard::after,#scr .mecard::after,#scr .pod::after{display:none!important}
+#scr .pod.first{border-color:rgba(233,193,90,.6)!important;background:linear-gradient(180deg,rgba(233,193,90,.12),#111114 60%)!important}
+#scr .pod .rk{font:900 italic 16px/1 Montserrat,sans-serif!important;color:#fff!important}#scr .pod.first .rk{color:var(--mb-gold)!important}
+#scr .rrow.me{background:#1b1b20!important}
+#scr .acard .bal,#scr .mecard .big{font:italic 900 40px/1 Montserrat,sans-serif!important;letter-spacing:-1px;background:var(--mb-chrome);-webkit-background-clip:text;background-clip:text;color:transparent!important}
+#scr .acard .lab,#scr .form label{font:700 11px/1 Montserrat,sans-serif!important;letter-spacing:2.4px!important;text-transform:uppercase;color:var(--mb-text-3)!important}
+#scr .code{border-radius:14px!important;clip-path:none!important;background:#141418!important;border:1px dashed var(--mb-line-2)!important}
+#scr .pill.acc{border-radius:999px!important;clip-path:none!important;background:#141418!important;border:1px solid var(--mb-line-2)!important;color:#fff!important;box-shadow:none!important}
+#scr .menu button{border-color:var(--mb-line)!important;font-weight:700!important}
+/* inputs */
+#scr .inp,#scr .field input,#scr .form textarea{height:48px!important;min-height:48px;border-radius:14px!important;clip-path:none!important;background:#141418!important;border:1px solid var(--mb-line-2)!important;box-shadow:none!important;color:#fff!important;padding:0 16px!important;font:600 15px Montserrat,sans-serif!important}
+#scr .form textarea{height:84px!important;padding:12px 16px!important}
+#scr .field{border:0!important;background:none!important;clip-path:none!important;gap:8px}
+/* buttons = canvas chamfered steel (primary) and steel-outline (secondary) */
+#scr .cta,#scr .btn{--cut:16px;isolation:isolate;border:0!important;border-radius:0!important;box-shadow:none!important;outline-offset:3px;
+ clip-path:polygon(var(--cut) 0,100% 0,100% calc(100% - var(--cut)),calc(100% - var(--cut)) 100%,0 100%,0 var(--cut))!important;font-family:Montserrat,sans-serif!important;font-style:italic!important;font-weight:900!important;letter-spacing:.2px!important;text-transform:uppercase}
+#scr .cta,#scr .btn.w{background:var(--mb-steel-btn)!important;color:#0b0d12!important}
+#scr .btn:not(.w){position:relative;background:var(--mb-steel-frame)!important;color:#fff!important}
+#scr .cta::before,#scr .cta::after,#scr .btn.w::before,#scr .btn.w::after,#scr .btn:not(.w)::after{display:none!important}
+#scr .btn:not(.w)::before{content:""!important;display:block!important;position:absolute;inset:1.5px;z-index:-1;background:linear-gradient(180deg,#18181b,#060607)!important;border:0!important;border-radius:0!important;box-shadow:none!important;clip-path:polygon(calc(var(--cut) - .6px) 0,100% 0,100% calc(100% - var(--cut) + .6px),calc(100% - var(--cut) + .6px) 100%,0 100%,0 calc(var(--cut) - .6px))!important;opacity:1!important;transform:none!important}
+#scr .cta.sm,#scr .btn{--cut:12px;min-height:48px;font-size:15px!important}
+#scr .cta:disabled{opacity:.45}
+#scr .cta:active,#scr .btn:active{transform:translateY(2px)}
+#scr #buy.cta{--cut:16px;filter:drop-shadow(0 6px 14px rgba(0,0,0,.6))}
+#scr .odds{border-radius:999px!important;clip-path:none!important;background:#141418!important;border:1px solid var(--mb-line-2)!important;box-shadow:none!important;color:#fff!important;font-weight:700!important}
+/* bottom sheet = canvas sheet */
+#scr .sheet{background:#0e0e11!important;border-top:1px solid var(--mb-line-2)!important;border-radius:28px 28px 0 0!important;clip-path:none!important;box-shadow:none!important}
+#scr .sheet .grab{width:40px!important;height:5px!important;border-radius:3px!important;background:rgba(255,255,255,.28)!important}
+#scr .sheet .sh h3{font:800 26px/1.1 Montserrat,sans-serif!important;letter-spacing:-.3px!important;text-transform:none!important;color:#fff!important}
+#scr .sheet .x{width:36px!important;height:36px!important;border-radius:50%!important;clip-path:none!important;background:#1b1b20!important;border:1px solid var(--mb-line-2)!important;box-shadow:none!important}
+#scr .note{color:var(--mb-text-3)!important}
+#scr .toast{border-radius:20px!important;background:rgba(17,17,20,.96)!important;border:1px solid var(--mb-line-2)!important;clip-path:none!important;font-weight:600}
+/* add funds (keypad) */
+#scr .mbx-dep{display:flex;flex-direction:column;align-items:center;gap:14px;padding:4px 20px 22px}
+#scr .mbx-msg{margin:0;font-size:13px;color:var(--mb-text-2);text-align:center}
+#scr .mbx-amt{display:flex;align-items:center;gap:4px;height:78px}
+#scr .mbx-amt span{font:italic 900 68px/1 Montserrat,sans-serif;letter-spacing:-2px;background:var(--mb-chrome);-webkit-background-clip:text;background-clip:text;color:transparent;padding-right:6px}
+#scr .mbx-amt i{width:2px;height:54px;background:#fff;animation:mbxCaret 1s steps(1) infinite}
+@keyframes mbxCaret{50%{opacity:0}}
+#scr .mbx-quick{display:flex;gap:8px;justify-content:center}
+#scr .mbx-quick button{height:32px;padding:0 14px;border-radius:999px;background:#141418;border:1px solid var(--mb-line-2);font:700 13px/1 Montserrat,sans-serif;color:#fff}
+#scr .mbx-quick button.on{background:var(--mb-chrome-btn);border-color:transparent;color:#0b0d12;font-style:italic;font-weight:900}
+#scr .mbx-pay{display:inline-flex;align-items:center;gap:8px;height:36px;padding:0 16px;border-radius:999px;background:#141418;border:1px solid var(--mb-line-2);font:700 13px/1 Montserrat,sans-serif;color:#fff}
+#scr .mbx-keys{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));row-gap:2px;width:100%}
+#scr .mbx-keys button{height:50px;display:grid;place-items:center;font:700 24px/1 Montserrat,sans-serif;color:#fff;background:none;border:0;border-radius:14px}
+#scr .mbx-keys button:active{background:#1b1b20}
+#scr .mbx-dep .cta{width:100%;margin-top:4px}
+#scr .mbx-dep .note{margin:0;font-size:12px;text-align:center}
+/* steel-frame watch card (view watch, reveal) */
+#scr .mb-wcard{position:relative;width:200px;height:272px;margin:0 auto;padding:8px;clip-path:polygon(10% 0,90% 0,100% 7%,100% 93%,90% 100%,10% 100%,0 93%,0 7%);background:var(--mb-steel-frame)}
+#scr .mb-wcard .in{width:100%;height:100%;clip-path:polygon(8% 0,92% 0,100% 6%,100% 94%,92% 100%,8% 100%,0 94%,0 6%);background:radial-gradient(120% 70% at 50% 34%,#161616,#000 70%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:14px}
+#scr .mb-wcard img{width:150px;height:170px;object-fit:contain;filter:drop-shadow(0 8px 14px rgba(0,0,0,.8))}
+#scr .mb-bolt{position:absolute;z-index:2;width:7px;height:7px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff,#9da2aa 45%,#3a3d42)}
+#scr .mbx-view,#scr .mbx-sell{display:flex;flex-direction:column;align-items:center;text-align:center;padding:6px 20px 24px}
+#scr .mbx-brand{margin-top:12px;font:800 20px/1 Montserrat,sans-serif;letter-spacing:3px;text-transform:uppercase;color:#fff}
+#scr .mbx-price{margin-top:8px;font:italic 900 56px/1 Montserrat,sans-serif;letter-spacing:-2px;background:var(--mb-chrome);-webkit-background-clip:text;background-clip:text;color:transparent;padding-right:6px}
+#scr .mbx-model{margin-top:8px;font:600 14px/1.3 Montserrat,sans-serif;color:var(--mb-text-2)}
+#scr .mbx-found{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;margin-top:18px;padding:12px 14px;border-radius:18px;background:#111114;border:1px solid var(--mb-line);font-size:12px;color:var(--mb-text-3)}
+#scr .mbx-found b{color:#fff;font-weight:700;text-transform:none}
+#scr .mbx-acts{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;margin-top:16px}
+#scr .mbx-view .mbx-acts{grid-template-columns:.8fr 1.2fr}
+/* sell item */
+#scr .mbx-ph{width:150px;height:150px;border-radius:18px;background:radial-gradient(circle at 50% 40%,#202026,#0a0a0c);border:1px solid var(--mb-line);display:grid;place-items:center;margin-bottom:12px}
+#scr .mbx-ph img{width:130px;height:130px;object-fit:contain}
+#scr .mbx-sell .mbx-sub{margin-top:6px;font-size:12px;color:var(--mb-text-3)}
+#scr .mbx-buy{display:flex;align-items:center;justify-content:space-between;width:100%;margin:18px 0 16px;padding-top:16px;border-top:1px solid var(--mb-line);font:700 14px Montserrat,sans-serif;color:#fff}
+#scr .mbx-buy b{font:italic 900 32px/1 Montserrat,sans-serif;background:var(--mb-gold-grad);-webkit-background-clip:text;background-clip:text;color:transparent;padding-right:4px}
+#scr .mbx-sell .cta,#scr .mbx-sell .btn{width:100%}#scr .mbx-sell .btn{margin-top:10px}
+#scr .mbx-sell .note{margin-top:10px;font-size:11px}
+/* reveal result = canvas reveal */
+#scr .rv-detail.mbx-rv{display:flex!important;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px 20px 28px!important;gap:0}
+#scr .mbx-rv .mb-wcard{width:220px;height:300px}
+#scr .mbx-rv .mb-wcard img{width:170px;height:200px}
+#scr .mbx-rv .rar{margin-top:16px}
+#scr .mbx-rv .mbx-price{font-size:60px}
+#scr .mbx-rv .dfrom{margin:10px 0 0;font-size:11px;color:var(--mb-text-3)}
+#scr .mbx-rv .acts{width:100%;margin-top:18px}
+#scr .mbx-rv .mbx-acts{grid-template-columns:1.1fr .9fr;margin-top:0}
+#scr .mbx-links{display:flex;justify-content:center;gap:22px;margin-top:14px}
+#scr .lnk{background:none;border:0;font:700 13px Montserrat,sans-serif;color:var(--mb-text-2);text-decoration:underline;text-underline-offset:3px}
+/* box picker */
+#scr .pick .ttl .k{font:700 11px/1 Montserrat,sans-serif!important;letter-spacing:2.4px!important;color:var(--mb-text-2)!important}
+#scr .pick .ttl .n{font:italic 900 40px/1 Montserrat,sans-serif!important;letter-spacing:-1px!important;text-transform:uppercase;background:var(--mb-chrome);-webkit-background-clip:text;background-clip:text;color:transparent!important;padding-right:4px}
+#scr .pick .ttl .s{font-size:12px!important;color:var(--mb-text-3)!important}
+#scr .pick .pk-x{width:40px!important;height:40px!important;border-radius:50%!important;clip-path:none!important;background:rgba(20,20,24,.85)!important;border:1px solid var(--mb-line-2)!important;box-shadow:none!important}
+#scr .mecard .acard{border:0!important;background:none!important;padding:0!important}
+#scr .gline{background:linear-gradient(90deg,rgba(150,150,158,0),rgba(200,200,210,.8) 45%,#fff 50%,rgba(200,200,210,.8) 55%,rgba(150,150,158,0))!important;box-shadow:none!important;height:1px!important}
+#scr .gline::after{background:radial-gradient(closest-side,rgba(255,255,255,.6),transparent)!important}
+#scr .arrow{background:rgba(20,20,24,.85)!important;border:1px solid var(--mb-line-2)!important;box-shadow:none!important;clip-path:none!important;border-radius:50%!important}
+/* bottom nav */
+#scr .nav{background:#000!important;border-top:1px solid var(--mb-line)!important;box-shadow:none!important}
+</style></head>
 <body>
 <div class="stage-glow" id="sg"></div>
 <button class="snd" id="snd" type="button"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path id="sndw" d="M15.5 8.5a5 5 0 0 1 0 7M19 5a10 10 0 0 1 0 14"/></svg><span id="sndt">Sound on</span></button>
@@ -981,7 +1134,7 @@ const ALL=(()=>{const m=new Map();BOXES.forEach(b=>b.items.forEach(i=>{if(!m.has
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const money=v=>'$'+(Math.round(v*100)/100).toLocaleString('en-US',{minimumFractionDigits:v%1?2:0,maximumFractionDigits:2});
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-const rar=t=>`<span class="rar" style="--rc:${RC[t]}">${t.toUpperCase()}</span>`;
+const rar=t=>`<span class="rar mb-tier ${t}" style="--rc:${RC[t]}">${t.toUpperCase()}</span>`;
 const LBOX=(b,cls='')=>`<div class="lbox ${cls}"><img src="${b.img}" alt="${esc(b.skin)} box"><img class="ledglow" src="${b.led}" alt=""><img class="led" src="${b.led}" alt=""><div class="sweep" style="-webkit-mask-image:url(${b.led});mask-image:url(${b.led})"></div></div>`;
 
 /* ---------- state ---------- */
@@ -1301,9 +1454,10 @@ $('#burger').onclick=()=>show('account');
 $('#insideTop').onclick=e=>{const w=e.target.closest('[data-w]');if(w)openWatch(w.dataset.w,+w.dataset.b)};
 
 function openWatch(id,bi){const i=item(id),b=BOXES[bi??i.box];
- openSheet('',`<div class="wdetail" style="--rc:${RC[i.tier]}"><div class="wimg"><img src="${i.img}" alt=""></div>${rar(i.tier)}<div class="br" style="font-size:10px;letter-spacing:2px;color:var(--dim);margin-top:10px">${esc(i.brand).toUpperCase()}</div><h4>${esc(i.model)}</h4>
- <div class="fmv">FAIR MARKET VALUE</div><div class="fv">${money(i.price)}</div><p class="note" style="margin-top:8px">From the ${b.tier} box · ${esc(b.skin)}</p>
- <div class="two" style="margin-top:18px"><button class="btn" id="wShare">SHARE</button><button class="btn w" id="wOpen">OPEN ${b.tier.toUpperCase()} · ${money(b.price)}</button></div></div>`,
+ openSheet('',`<div class="mbx-view"><div class="mb-wcard"><i class="mb-bolt" style="left:10px;top:10px"></i><i class="mb-bolt" style="right:10px;top:10px"></i><i class="mb-bolt" style="left:10px;bottom:10px"></i><i class="mb-bolt" style="right:10px;bottom:10px"></i><div class="in"><img src="${i.img}" alt="${esc(i.brand)} ${esc(i.model)}">${rar(i.tier)}</div></div>
+ <div class="mbx-brand">${esc(i.brand)}</div><div class="mbx-price">${money(i.price)}</div><div class="mbx-model">${esc(i.model)}</div>
+ <div class="mbx-found"><span>Found in</span><b>${b.tier} · ${esc(b.skin)}</b></div>
+ <div class="mbx-acts"><button class="btn" id="wShare">SHARE</button><button class="cta sm" id="wOpen">OPEN · ${money(b.price)}</button></div></div>`,
  el=>{el.querySelector('#wShare').onclick=async()=>{try{await navigator.clipboard.writeText(location.href.split('#')[0]+'#'+id);toast('Link copied')}catch(e){toast('Copy not available here')}};
   el.querySelector('#wOpen').onclick=()=>{closeSheet();if(curView!=='boxes')show('boxes');go(BOXES.indexOf(b));setTimeout(()=>openBuy(BOXES.indexOf(b)),350)}})}
 
@@ -1471,11 +1625,10 @@ function openBox(bi){const b=BOXES[bi];scr.scrollTop=0;S.bal-=b.price;S.pts+=b.p
   setTimeout(()=>{
    // transition: the card zooms through the camera, the watch lands on its own full screen
    const info=document.createElement('div');info.className='rv-detail';info.style.setProperty('--rc',RC[win.tier]);
-   info.innerHTML=`<div class="dstage"><div class="dhalo"></div><img class="dimg" id="dImg" src="${win.img}" alt="${esc(win.brand)} ${esc(win.model)}"></div>
-    <span class="dtier">${win.tier.toUpperCase()}</span><div class="dbrand">${esc(win.brand).toUpperCase()}</div><h2 class="dmodel">${esc(win.model)}</h2>
-    <div class="dvals"><div><small>MARKET VALUE</small><b>${money(win.price)}</b></div><div><small>SELL-BACK (90%)</small><b>${money(win.price*.9)}</b></div></div>
+   info.classList.add('mbx-rv');info.innerHTML=`<div class="mb-wcard"><i class="mb-bolt" style="left:10px;top:10px"></i><i class="mb-bolt" style="right:10px;top:10px"></i><i class="mb-bolt" style="left:10px;bottom:10px"></i><i class="mb-bolt" style="right:10px;bottom:10px"></i><div class="in"><img class="dimg" id="dImg" src="${win.img}" alt="${esc(win.brand)} ${esc(win.model)}"></div></div>
+    ${rar(win.tier)}<div class="mbx-brand">${esc(win.brand)}</div><div class="mbx-price">${money(win.price)}</div><div class="mbx-model">${esc(win.model)}</div>
     <p class="dfrom">Revealed from ${esc(b.skin)} · ${b.tier} box · authenticated &amp; insured</p>
-    <div class="acts"><button class="cta sm" id="rKeep">KEEP IN VAULT</button><div class="two" style="margin:0"><button class="btn" id="rSell">SELL ${money(win.price*.9)}</button><button class="btn" id="rShip">SHIP TO ME</button></div><button class="btn" id="rAgain" style="background:none;border:0;color:var(--mut)">OPEN ANOTHER ${b.tier.toUpperCase()} · ${money(b.price)}</button></div>`;
+    <div class="acts"><div class="mbx-acts"><button class="cta sm" id="rSell">SELL ${money(win.price*.9)}</button><button class="btn" id="rKeep">VAULT</button></div><div class="mbx-links"><button type="button" class="lnk" id="rShip">Ship to me</button><button type="button" class="lnk" id="rAgain">Open another · ${money(b.price)}</button></div></div>`;
    rv.appendChild(info);
    const di=info.querySelector('#dImg'),fr=di.getBoundingClientRect(),sr=rv.getBoundingClientRect(),cw=170,ch=170;
    const fromX=cx-(fr.left-sr.left+fr.width/2),fromY=(H*.36-59)-(fr.top-sr.top+fr.height/2),k=cw/fr.width;
@@ -1502,13 +1655,19 @@ $('#giftBtn').onclick=()=>{const b=BOXES[cur];
   S.bal-=b.price;S.gifts++;save();paintBal();closeSheet();SFX.coin();toast(`Gift sent to ${n} · ${b.skin}`)})};
 
 /* ---------- wallet ---------- */
-function openDeposit(msg,need){let amt=need?Math.max(25,Math.ceil(need/25)*25):100;
- openSheet('Add funds',`<div class="form">${msg?`<p class="note" style="color:#fff">${esc(msg)}</p>`:''}<label>AMOUNT</label><div class="amts">${[25,50,100,250].map(a=>`<button type="button" data-a="${a}" class="${a===amt?'on':''}">$${a}</button>`).join('')}</div>
- <input class="inp" id="dAmt" inputmode="numeric" value="${amt}" aria-label="Custom amount"><div class="kv" style="margin:0">Balance after <b id="dAfter"></b></div>
- <button class="cta sm" id="dGo"></button><p class="note">Demo wallet. No card is charged.</p></div>`,
- el=>{const inp=el.querySelector('#dAmt');const paint=()=>{const v=Math.max(0,parseInt(inp.value)||0);el.querySelector('#dAfter').textContent=money(S.bal+v);el.querySelector('#dGo').textContent='ADD '+money(v);el.querySelectorAll('[data-a]').forEach(b=>b.classList.toggle('on',+b.dataset.a===v))};
-  el.querySelector('.amts').onclick=e=>{const b=e.target.closest('[data-a]');if(b){inp.value=b.dataset.a;paint();SFX.tap()}};inp.oninput=paint;paint();
-  el.querySelector('#dGo').onclick=()=>{const v=Math.max(0,parseInt(inp.value)||0);if(!v)return;S.bal+=v;save();paintBal();closeSheet();SFX.coin();toast(`${money(v)} added to your wallet`)}})}
+function openDeposit(msg,need){let v=need?Math.max(25,Math.ceil(need/25)*25):500;
+ const K=['1','2','3','4','5','6','7','8','9','','0','del'];
+ openSheet('Add funds',`<div class="mbx-dep">${msg?`<p class="mbx-msg">${esc(msg)}</p>`:''}<div class="mbx-amt"><span id="dAmt"></span><i></i></div>
+ <div class="mbx-quick">${[50,100,500,1000].map(a=>`<button type="button" data-a="${a}">$${a.toLocaleString()}</button>`).join('')}</div>
+ <button type="button" class="mbx-pay" id="dPay"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18"/></svg>Apple Pay<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+ <div class="mbx-keys">${K.map(k=>k?`<button type="button" data-k="${k}" aria-label="${k==='del'?'Delete':k}">${k==='del'?'<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 5H9l-6 7 6 7h12z"/><path d="m16 9-5 6M11 9l5 6"/></svg>':k}</button>`:'<span></span>').join('')}</div>
+ <button class="cta sm" id="dGo"></button><p class="note">Demo wallet. No card is charged · balance after <b id="dAfter"></b></p></div>`,
+ el=>{const paint=()=>{el.querySelector('#dAmt').textContent='$'+v.toLocaleString();el.querySelector('#dAfter').textContent=money(S.bal+v);const g=el.querySelector('#dGo');g.textContent='PAY '+money(v);g.disabled=!v;el.querySelectorAll('[data-a]').forEach(b=>b.classList.toggle('on',+b.dataset.a===v))};
+  el.querySelector('.mbx-quick').onclick=e=>{const b=e.target.closest('[data-a]');if(b){v=+b.dataset.a;paint();SFX.tap()}};
+  el.querySelector('.mbx-keys').onclick=e=>{const b=e.target.closest('[data-k]');if(!b)return;const k=b.dataset.k;v=k==='del'?Math.floor(v/10):Math.min(99999,v*10+(+k));paint();SFX.tap()};
+  el.querySelector('#dPay').onclick=()=>toast('Demo wallet: Apple Pay is the only method here');
+  paint();
+  el.querySelector('#dGo').onclick=()=>{if(!v)return;S.bal+=v;save();paintBal();closeSheet();SFX.coin();toast(`${money(v)} added to your wallet`)}})}
 $('#walletBtn').onclick=()=>openDeposit();$('#depBtn').onclick=()=>openDeposit();
 $('#wdBtn').onclick=()=>openSheet('Withdraw',`<div class="form"><div class="kv" style="margin:0">Withdrawable <b>${money(S.bal)}</b></div><label for="wA">AMOUNT</label><input class="inp" id="wA" inputmode="numeric" value="${Math.floor(S.bal)}"><div class="err" id="wErr"></div><button class="cta sm" id="wGo">WITHDRAW</button><p class="note">Minimum withdrawal is $100. Funds return to your linked card in 3–5 business days.</p></div>`,
  el=>el.querySelector('#wGo').onclick=()=>{const v=parseInt(el.querySelector('#wA').value)||0,er=el.querySelector('#wErr');if(v<100){er.textContent='The minimum withdrawal is $100.';return}if(v>S.bal){er.textContent=`You can withdraw up to ${money(S.bal)}.`;return}S.bal-=v;save();paintBal();closeSheet();toast(`Withdrawal of ${money(v)} requested`)});
@@ -1525,16 +1684,18 @@ $('#q').oninput=renderSR;$('#srGrid').onclick=e=>{const w=e.target.closest('[dat
 
 /* ---------- collection ---------- */
 let colF='all';const STL={vault:'VAULTED',sold:'SOLD',shipped:'SHIPPED'};
-function renderCol(){const n=f=>S.col.filter(c=>f==='all'||c.st===f).length;
- $('#colChips').innerHTML=['all','vault','sold','shipped'].map(f=>`<button class="chip ${f===colF?'on':''}" data-f="${f}">${f.toUpperCase()} (${n(f)})</button>`).join('');
+function renderCol(){const n=f=>S.col.filter(c=>f==='all'||c.st===f).length,LB={all:'All',vault:'Vault',sold:'Sold',shipped:'Shipped'};
+ $('#colChips').innerHTML=['all','vault','sold','shipped'].map(f=>`<button class="chip ${f===colF?'on':''}" data-f="${f}">${LB[f]} <small>${n(f)}</small></button>`).join('');
  const list=S.col.map((c,k)=>({...c,k})).filter(c=>colF==='all'||c.st===colF);
- $('#colGrid').style.display=list.length?'':'block';
- $('#colGrid').innerHTML=list.length?list.map(c=>{const i=item(c.id);return wcHTML(i,`<span class="st">${STL[c.st]}</span>`).replace('data-w=','data-k="'+c.k+'" data-w=').replace('</button>',`<div class="sv">Sell value ${money(i.price*.9)} (90%)</div>${c.trk?`<div class="sv">${c.trk}</div>`:''}</button>`)}).join(''):`<div class="empty">Nothing here yet. Open a box to start your collection.</div>`}
+ const tot=list.reduce((a,c)=>a+item(c.id).price,0);
+ const SL={vault:'In vault',sold:'Sold',shipped:'In transit'};
+ $('#colGrid').innerHTML=list.length?`<div class="mbx-sum"><span>${list.length} watch${list.length===1?'':'es'}</span> · <b>${money(tot)}</b></div>`+list.map(c=>{const i=item(c.id);
+  return `<button class="mb-icard${c.st==='sold'?' faded':''}" data-k="${c.k}" data-w="${i.id}"><div class="icph"><img src="${i.img}" alt="" loading="lazy"></div><div class="ict"><b>${esc(i.brand)}</b><span>${esc(i.model)}</span><i>${money(i.price)}</i></div><span class="mb-timer ${c.st}">${c.st==='shipped'&&c.trk?'In transit':SL[c.st]}</span></button>`}).join(''):`<div class="empty">Nothing here yet. Open a box to start your collection.</div>`}
 $('#colChips').onclick=e=>{const c=e.target.closest('[data-f]');if(c){colF=c.dataset.f;renderCol();SFX.tap()}};
 $('#colGrid').onclick=e=>{const w=e.target.closest('[data-k]');if(!w)return;const c=S.col[+w.dataset.k],i=item(c.id);
  if(c.st!=='vault'){openWatch(c.id);return}
- openSheet('',`<div class="wdetail" style="--rc:${RC[i.tier]}"><div class="wimg"><img src="${i.img}" alt=""></div>${rar(i.tier)}<h4>${esc(i.brand)} ${esc(i.model)}</h4><div class="fmv">FAIR MARKET VALUE</div><div class="fv">${money(i.price)}</div>
- <div class="acts" style="display:flex;flex-direction:column;gap:8px;margin-top:18px"><button class="cta sm" id="cSell">SELL BACK · ${money(i.price*.9)}</button><button class="btn" id="cShip">SHIP TO ME</button></div><p class="note" style="margin-top:10px">Vaulted items are insured and stored for free.</p></div>`,
+ openSheet('Sell item',`<div class="mbx-sell"><div class="mbx-ph"><img src="${i.img}" alt="${esc(i.brand)} ${esc(i.model)}"></div>${rar(i.tier)}<div class="mbx-brand">${esc(i.brand)}</div><div class="mbx-sub">${esc(i.model)} · market value ${money(i.price)}</div>
+ <div class="mbx-buy"><span>MistyBox buys it for</span><b>${money(i.price*.9)}</b></div><button class="cta sm" id="cSell">SELL NOW</button><button class="btn" id="cShip">SHIP TO ME</button><p class="note">Vaulted watches are insured and stored for free. By selling you confirm you are over 18 and accept the Terms of Service.</p></div>`,
  el=>{el.querySelector('#cSell').onclick=()=>{c.st='sold';S.bal+=i.price*.9;save();paintBal();renderCol();closeSheet();SFX.coin();toast(`${money(i.price*.9)} added to your wallet`)};
   el.querySelector('#cShip').onclick=()=>{closeSheet();setTimeout(()=>openShip(c),300)}})};
 function openShip(c){const i=item(c.id);
@@ -1588,8 +1749,8 @@ function pushTick(x){TK.unshift(x);TK=TK.slice(0,14);paintTick()}
 paintTick();
 
 /* ---------- navigation ---------- */
-let curView='boxes';const views=$('#views');
-function show(v){if(v===curView)return views.scrollTo({top:0,behavior:'smooth'});curView=v;$$('.view').forEach(s=>s.classList.toggle('on',s.id==='v-'+v));$$('#nav button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));views.scrollTop=0;SFX.tap();
+let curView='boxes';const views=$('#views');scr.dataset.view='boxes';
+function show(v){if(v===curView)return views.scrollTo({top:0,behavior:'smooth'});curView=v;scr.dataset.view=v;$$('.view').forEach(s=>s.classList.toggle('on',s.id==='v-'+v));$$('#nav button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));views.scrollTop=0;SFX.tap();
  try{history.replaceState(null,'','#'+v)}catch(e){}}
 $('#nav').onclick=e=>{const b=e.target.closest('[data-v]');if(b)show(b.dataset.v)};
 views.addEventListener('scroll',()=>$('#top').classList.toggle('solid',views.scrollTop>20),{passive:true});
