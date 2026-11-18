@@ -2261,9 +2261,14 @@ function furShells(o){
     const m = M_({map: T.zebra, color: new THREE.Color().setScalar(.5 + .55 * f), roughness: .92, alphaMap: T.noise, alphaTest: .15 + .8 * f, envMapIntensity: .5});
     m.onBeforeCompile = sh => { sh.uniforms.uOff = {value: L * f}; sh.vertexShader = 'uniform float uOff;\n' + sh.vertexShader.replace('#include <begin_vertex>', '#include <begin_vertex>\n  transformed += normal * uOff; transformed.y -= uOff * uOff * 40.0;') };
     const sh = new THREE.Mesh(o.geometry, m); sh.userData.fur = true; o.add(sh) } }
+function noLatch(root){   // drop the two front latch clasps (base + lid halves) baked into the case shells (Sharon, 2026-11-18)
+  root.traverse(o => { if(!o.isMesh || !/^Bolt/.test(o.material.name) || !o.geometry.index || o.geometry.userData.noLatch) return; const g2 = o.geometry, P = g2.attributes.position, I = g2.index.array, keep = [];
+    for(let i = 0; i < I.length; i += 3){ let x = 0, y = 0, z = 0; for(let q = 0; q < 3; q++){ x += P.getX(I[i+q]); y += P.getY(I[i+q]); z += P.getZ(I[i+q]) } x /= 3; y /= 3; z /= 3;
+      if(Math.abs(x) > .17 && Math.abs(x) < .30 && y > .64 && z > .37) continue; keep.push(I[i], I[i+1], I[i+2]) }
+    window.__noLatch = (window.__noLatch || 0) + (I.length - keep.length) / 3; g2.setIndex(keep); g2.userData.noLatch = true }); return root }
 function loadCube(skin){
   const url = 'assets/3d/' + CUBE_GLB[skin];
-  return (cubeSrc[url] = cubeSrc[url] || loader.loadAsync(url)).then(g => {
+  return (cubeSrc[url] = cubeSrc[url] || loader.loadAsync(url).then(g => { noLatch(g.scene); return g })).then(g => {
     const root = g.scene.clone(true), furry = [];
     root.traverse(o => { if(!o.isMesh) return; const nm = o.material.name; if(skin === 'zebrafur' && nm === 'CarbonPanel') furry.push(o);
       const m = cubeMat(skin, nm, o.material); if(m && o.material.normalMap && !m.normalMap && /Rail|AluPanel/.test(nm)){ m.normalMap = o.material.normalMap; m.normalScale = o.material.normalScale.clone() }   // keep the model's bevel detail
@@ -2275,11 +2280,7 @@ function loadCube(skin){
 function load(k){ if(models[k]) return models[k];
   if(k.startsWith('cube_')) return models[k] = loadCube(k.slice(5)).catch(e => { delete models[k]; throw e });
   return models[k] = loader.loadAsync('assets/3d/' + k + '.glb').then(g => { const root = g.scene;
-    // drop the two front latch clasps (base + lid halves) baked into the case shells (Sharon, 2026-11-18)
-    if(/^case/.test(k)) root.traverse(o => { if(!o.isMesh || !/^Bolt/.test(o.material.name) || !o.geometry.index) return; const g2 = o.geometry, P = g2.attributes.position, I = g2.index.array, keep = [];
-      for(let i = 0; i < I.length; i += 3){ let x = 0, y = 0, z = 0; for(let q = 0; q < 3; q++){ x += P.getX(I[i+q]); y += P.getY(I[i+q]); z += P.getZ(I[i+q]) } x /= 3; y /= 3; z /= 3;
-        if(Math.abs(x) > .17 && Math.abs(x) < .30 && y > .64 && z > .37) continue; keep.push(I[i], I[i+1], I[i+2]) }
-      if(keep.length < I.length) g2.setIndex(keep) });
+    if(/^case/.test(k)) noLatch(root);
     root.traverse(o => { if(o.isMesh && /Front$/.test(o.material.name)){ const geo = o.geometry, p = geo.attributes.position; geo.computeBoundingBox(); const bb = geo.boundingBox, uv = new Float32Array(p.count * 2);
         const sideways = (bb.max.z - bb.min.z) > (bb.max.x - bb.min.x);   // side panels run along z
         for(let i = 0; i < p.count; i++){ uv[2*i] = sideways ? (p.getZ(i) - bb.min.z) / (bb.max.z - bb.min.z) : (p.getX(i) - bb.min.x) / (bb.max.x - bb.min.x); uv[2*i+1] = 1 - (p.getY(i) - bb.min.y) / (bb.max.y - bb.min.y) } geo.setAttribute('uv', new THREE.BufferAttribute(uv, 2)) } });
