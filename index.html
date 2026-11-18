@@ -1496,6 +1496,20 @@ const SFX={
   const n=AC.createBufferSource();n.buffer=buf;const nf=AC.createBiquadFilter();nf.type='bandpass';nf.Q.value=1.4;nf.frequency.setValueAtTime(500,t);nf.frequency.exponentialRampToValueAtTime(7000,end);const ng=AC.createGain();ng.gain.setValueAtTime(0,t);ng.gain.linearRampToValueAtTime(.09,end);n.connect(nf).connect(ng).connect(out2);n.start(t);n.stop(end+.2);
   let pt=t+.15,gap=.55;const pulses=[];while(pt<end-.05){pulses.push(osc('sine',58,40,pt,.22,.38,.004));pt+=gap;gap=Math.max(.12,gap*.86)}
   return{cut(){const c=AC.currentTime;out2.gain.cancelScheduledValues(c);out2.gain.setValueAtTime(out2.gain.value,c);out2.gain.linearRampToValueAtTime(0,c+.04);os.forEach(o=>{try{o.stop(c+.06)}catch(e){}});try{n.stop(c+.06)}catch(e){}pulses.forEach(o=>{try{o.stop(c+.01)}catch(e){}})}}},
+ // build-up: a snare roll that doubles in speed, a rising synth line and a kick, all accelerating together, then cut
+ buildup(dur){if(!S.sound||!ac())return{cut(){}};const t=AC.currentTime,end=t+dur,bus=AC.createGain();bus.gain.setValueAtTime(.55,t);bus.gain.linearRampToValueAtTime(1,end);bus.connect(MST);const nodes=[];
+  const hit=(st,v,fq)=>{const len=Math.floor(AC.sampleRate*.09),b=AC.createBuffer(1,len,AC.sampleRate),d=b.getChannelData(0);for(let i=0;i<len;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/len,3);
+   const n=AC.createBufferSource();n.buffer=b;const f=AC.createBiquadFilter();f.type='bandpass';f.frequency.value=fq;f.Q.value=.9;const g=AC.createGain();g.gain.value=v;n.connect(f).connect(g).connect(bus);n.start(st);nodes.push(n)};
+  // snare: quarter -> eighth -> sixteenth -> thirty-second
+  let st=t,gap=.42;while(st<end){const p=(st-t)/dur;hit(st,.10+.22*p,1800+2600*p);st+=gap;gap=Math.max(.035,gap*.9)}
+  // kick on a quickening pulse
+  let kt=t,kg=.6;while(kt<end){nodes.push(osc('sine',120,42,kt,.18,.5,.003));kt+=kg;kg=Math.max(.14,kg*.88)}
+  // rising synth line
+  const lf=AC.createBiquadFilter();lf.type='lowpass';lf.Q.value=5;lf.frequency.setValueAtTime(500,t);lf.frequency.exponentialRampToValueAtTime(5200,end);const lg=AC.createGain();lg.gain.setValueAtTime(.0001,t);lg.gain.exponentialRampToValueAtTime(.11,end);lf.connect(lg).connect(bus);
+  [0,7].forEach(dt=>{const o=AC.createOscillator();o.type='sawtooth';o.frequency.setValueAtTime(110,t);o.frequency.exponentialRampToValueAtTime(440,end);o.detune.value=dt;o.connect(lf);o.start(t);o.stop(end+.1);nodes.push(o)});
+  return{cut(){const c=AC.currentTime;bus.gain.cancelScheduledValues(c);bus.gain.setValueAtTime(bus.gain.value,c);bus.gain.linearRampToValueAtTime(0,c+.03);nodes.forEach(n=>{try{n.stop(c+.04)}catch(e){}})}}},
+ // the drop when the carousel brakes: a downward whoosh
+ brake(){if(!S.sound||!ac())return;const t=AC.currentTime;nz(t,.7,'bandpass',4200,500,1.2,.12,.01,true);osc('sine',180,60,t,.6,.22,.005)},
  coin(){if(!S.sound||!ac())return;const t=AC.currentTime;nz(t,.06,'bandpass',2600,2600,3,.08,.002,true);nz(t+.07,.08,'bandpass',3400,3400,3,.06,.002,true);osc('sine',196,196,t,.35,.08,.01,true)}
 };
 function paintSnd(){$('#sndt').textContent=S.sound?'Sound on':'Sound off';$('#sndw').style.display=S.sound?'':'none';$('#prefS').textContent=(S.sound?'Sound on':'Sound off')+' ›'}
@@ -1747,7 +1761,7 @@ function openBox(bi){const b=BOXES[bi];scr.scrollTop=0;S.bal-=b.price;S.pts+=b.p
  rv.style.setProperty('--rc',b.accent);rv.style.setProperty('--hc','#7fe9ff');
  const pool=[...new Map(b.items.map(x=>[x.id,x])).values()].filter(x=>x.id!==win.id).sort(()=>Math.random()-.5);
  // swap schedule: fast flicker that slows down, ends on the winner
- const T_SHAKE=3.4,T_OPEN=4.05,T_HOLO=5.15,RUN=6.2,NSTRIP=19;const seq=[];const T_LOCK=T_HOLO+.35+RUN,T_CLOSE=T_LOCK+.5,T_DONE=T_CLOSE+1.2;
+ const T_SHAKE=5.6,T_OPEN=6.25,T_HOLO=7.35,ACC=4.4,DEC=1.35,V0=1.1,VMAX=12,NSTRIP=Math.ceil(1.4+V0*ACC+(VMAX-V0)*ACC/3+VMAX*DEC/2),RUN=ACC+DEC;const seq=[];const T_LOCK=T_HOLO+.35+RUN,T_CLOSE=T_LOCK+.5,T_DONE=T_CLOSE+1.2;
  rv.innerHTML=`<div class="rv-amb"></div><div class="rv-floor" style="top:${boxY+70}px"></div>
   <div class="holo-beam back" id="hBeamB" style="left:${hX}px;top:${hY+4}px"><i></i></div><div class="holo-beam" id="hBeam" style="left:${hX}px;top:${hY+4}px"><i></i></div><div class="holo-pad" id="hPad" style="left:${hX}px;top:${hY+2}px"></div>
   <div class="holo-glow" id="hGlow" style="left:${hX}px;top:${hY}px"></div><canvas class="holo-pt back" id="hPtB" width="${W}" height="${H}"></canvas><canvas class="holo-pt" id="hPt" width="${W}" height="${H}"></canvas>
@@ -1764,7 +1778,8 @@ function openBox(bi){const b=BOXES[bi];scr.scrollTop=0;S.bal-=b.price;S.pts+=b.p
  $('#hStrip').innerHTML=STRIP.map((x,q)=>`<div class="hlay" data-q="${q}"><div class="hi"><img src="${x.img}" alt=""><em class="sp">${money(x.price)}</em></div><div class="ht"><span>${x.tier.toUpperCase()}</span><b>${esc(x.brand)}</b><i>${esc(x.model)}</i><em>${money(x.price)}</em></div></div>`).join('');
  const LY=[...holo.querySelectorAll('.hlay')];let cur=0;const SP=128,P0=1.4;let lastC=-1;
  // position along the strip (in watches): eases out so it starts at a steady pace and glides to a stop on the winner
- const stripAt=t=>{const u=Math.max(0,Math.min(1,(t-T_HOLO-.35)/RUN));const e=1-Math.pow(1-u,2.2);return P0+(WI-P0)*e};
+ const DTOT=V0*ACC+(VMAX-V0)*ACC/3+VMAX*DEC/2;
+ const stripAt=t=>{const u=Math.max(0,t-T_HOLO-.35);let d;if(u<=ACC)d=V0*u+(VMAX-V0)*u*u*u/(3*ACC*ACC);else{const w=Math.min(DEC,u-ACC);d=V0*ACC+(VMAX-V0)*ACC/3+VMAX*(w-w*w/(2*DEC))}return P0+(WI-P0)*Math.min(1,d/DTOT)};
  const layStrip=p=>{for(let q=0;q<LY.length;q++){const d=q-p,a=Math.abs(d);if(a>1.7){LY[q].style.visibility='hidden';continue}LY[q].style.visibility='';
    LY[q].style.transform=`translateX(${d*SP}px) scale(${1-Math.min(.42,a*.38)})`;LY[q].style.opacity=String(a<=1?1-a*.3:Math.max(0,.7*(1.7-a)/.7));LY[q].style.zIndex=String(100-Math.round(a*10));LY[q].style.setProperty('--tx',String(Math.max(0,1-a*1.6)))}
   const c=Math.round(p);if(c!==lastC){if(lastC>=0&&LY[lastC])LY[lastC].classList.remove('cur');LY[c]&&LY[c].classList.add('cur');if(lastC>=0)SFX.tick(.7);lastC=c}};
@@ -1804,8 +1819,8 @@ function openBox(bi){const b=BOXES[bi];scr.scrollTop=0;S.bal-=b.price;S.pts+=b.p
   // 3) it opens, light pours out, particles start rising
   if(phase===1&&t>=T_OPEN){phase=2;spin=box._tgt;box._rotY=spin;centre();box.classList.remove('tremble','charge');box.classList.add('lidopen');$('#hPad').classList.add('on');beam.classList.add('on');$('#hBeamB').classList.add('on');emit=2.2;rv.classList.add('holo-on');$('#hGlow').classList.add('on');SFX.open()}
   // 4) holograms project out of the open box and cycle
-  if(phase===2&&t>=T_HOLO){phase=3;TEN=SFX.tension(T_LOCK-t);layStrip(stripAt(t));holo.classList.add('on')}
-  if(phase===3){layStrip(stripAt(t));
+  if(phase===2&&t>=T_HOLO){phase=3;TEN=SFX.buildup(ACC+.35);layStrip(stripAt(t));holo.classList.add('on')}
+  if(phase===3){layStrip(stripAt(t));if(TEN&&t>=T_HOLO+.35+ACC){TEN.cut();TEN=null;SFX.brake()}
    if(t>=T_LOCK){phase=4;TEN&&TEN.cut();TEN=null;layStrip(WI);show(win,true);SFX.reveal(win.tier);rv.style.setProperty('--rc',RC[win.tier]);emit=4;try{navigator.vibrate&&navigator.vibrate([20,40,40])}catch(e){}}}
   // 5) the chosen watch: transition to its screen
   if(phase===4&&t>=T_CLOSE){phase=5;closeup()}
