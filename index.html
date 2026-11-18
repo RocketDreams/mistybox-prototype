@@ -2510,11 +2510,10 @@ frame();
 <script>
 /* soft, modern sound set: a synthesized felt piano + warm pad, with the existing reverb. Replaces the old clicks, drums and thunder. */
 (()=>{const NT=m=>440*Math.pow(2,(m-69)/12);
- function piano(m,st,vel=.5,len=2.4){if(!AC)return;const f=NT(m),bus=AC.createGain(),lp=AC.createBiquadFilter();lp.type='lowpass';lp.frequency.value=1400+vel*3200;lp.Q.value=.3;bus.gain.value=vel*.32;bus.connect(lp);out(lp,true);
-  [[1,1],[2,.42],[3,.2],[4,.11],[5,.06],[6,.03]].forEach(([n,a])=>{const o=AC.createOscillator(),g=AC.createGain();o.type='sine';o.frequency.value=f*n*Math.sqrt(1+.00035*n*n);
-   const d=len/(1+n*.55);g.gain.setValueAtTime(0,st);g.gain.linearRampToValueAtTime(a,st+.006);g.gain.exponentialRampToValueAtTime(a*.35,st+.18);g.gain.exponentialRampToValueAtTime(.0001,st+d);o.connect(g).connect(bus);o.start(st);o.stop(st+d+.05)});
-  // felt hammer: a tiny soft thump
-  try{nz(st,.03,'lowpass',900,500,.7,.012*vel,.002)}catch(e){}}
+ // soft electronic voice (replaces the piano): a rounded triangle + sine an octave up, a gentle filter sweep and a short airy tail
+ function piano(m,st,vel=.5,len=2.4){if(!AC)return;const f=NT(m),d=Math.min(1.3,len*.5),bus=AC.createGain(),lp=AC.createBiquadFilter();lp.type='lowpass';lp.Q.value=2.2;
+  lp.frequency.setValueAtTime(900+vel*2600,st);lp.frequency.exponentialRampToValueAtTime(520,st+d);bus.gain.setValueAtTime(0,st);bus.gain.linearRampToValueAtTime(vel*.22,st+.012);bus.gain.exponentialRampToValueAtTime(.0001,st+d);bus.connect(lp);out(lp,true);
+  [['triangle',1,1],['sine',2,.35],['triangle',1.003,.5]].forEach(([ty,k,a])=>{const o=AC.createOscillator(),g=AC.createGain();o.type=ty;o.frequency.setValueAtTime(f*k*1.01,st);o.frequency.exponentialRampToValueAtTime(f*k,st+.04);g.gain.value=a;o.connect(g).connect(bus);o.start(st);o.stop(st+d+.05)})}
  function pad(ms,st,dur,vol=.05){if(!AC)return{stop(){}};const g=AC.createGain(),lp=AC.createBiquadFilter();lp.type='lowpass';lp.frequency.setValueAtTime(600,st);lp.frequency.linearRampToValueAtTime(1800,st+dur);
   g.gain.setValueAtTime(0,st);g.gain.linearRampToValueAtTime(vol,st+Math.min(1.2,dur*.5));g.gain.linearRampToValueAtTime(vol*1.4,st+dur);g.connect(lp);out(lp,true);const os=[];
   ms.forEach(m=>[-6,6].forEach(dt=>{const o=AC.createOscillator();o.type='triangle';o.frequency.value=NT(m);o.detune.value=dt;o.connect(g);o.start(st);o.stop(st+dur+2);os.push(o)}));
