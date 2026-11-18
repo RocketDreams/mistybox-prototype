@@ -2598,13 +2598,13 @@ frame();
  Object.assign(SFX,{
   tap(){if(!on())return;const t=AC.currentTime;blip(t,1100,450,.07,.07);nz(t,.012,'highpass',6000,6000,.7,.012,.001)},
   coin(){if(!on())return;const t=AC.currentTime;blip(t,700,690,.09,.07);blip(t+.08,1050,1040,.12,.07)},
-  open(){if(!on())return;const t=AC.currentTime;stab([57,64,69,73],t,.07);clap(t,.05);osc('sine',110,50,t,.45,.22,.004)},
+  open(){if(!on())return;const t=AC.currentTime;nz(t,1.1,'bandpass',700,1500,.8,.022,.35,true);[57,64,69,73].forEach(m=>osc('sine',NT(m+12),NT(m+12),t,1.2,.008,.4,true))},
   brake(){if(!on())return;const t=AC.currentTime;nz(t,.7,'bandpass',6000,400,1.4,.08,.01,true);osc('sine',220,55,t,.5,.16,.005)},
   reveal(tier){if(!on())return;const t=AC.currentTime,k=Math.max(0,TIERS.length-1-TIERS.indexOf(tier));
    const ch=[[57,64,69,72],[57,64,69,72,76],[55,62,67,71,74],[53,60,65,69,72,76],[52,59,64,68,71,76],[50,57,62,66,69,74,78]][Math.min(5,k)];
    stab(ch,t,.08);clap(t,.05+.01*k);osc('sine',110,46,t,.7,.35,.004);nz(t,1.4,'highpass',8000,1500,.7,.03+.01*k,.01,true);
    if(k>=3)[0,1,2,3].forEach(i=>stab(ch.slice(-3),t+.36+i*.24,.035))},
-  charge(){if(!on())return;const t=AC.currentTime;nz(t,.6,'bandpass',300,1500,1,.05,.4,true)}
+  charge(){if(!on())return;const t=AC.currentTime;nz(t,.9,'bandpass',900,1800,.8,.015,.3,true)}
  });
 })();
 </script>
