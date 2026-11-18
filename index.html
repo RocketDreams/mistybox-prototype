@@ -1680,7 +1680,7 @@ function openPicker(bi){const b=BOXES[bi],pk=$('#pick');let chosen=false,api=nul
   <div class="ttl"><div class="k">CHOOSE YOUR BOX</div><div class="n">${esc(b.skin)}</div><div class="s">Every box has the same odds. Trust your gut.</div></div>
   <div class="hint"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11V5.5a1.5 1.5 0 0 1 3 0V11"/><path d="M12 10.5V4.5a1.5 1.5 0 0 1 3 0v6"/><path d="M15 10.5V6.5a1.5 1.5 0 0 1 3 0V14a6 6 0 0 1-6 6h-1a6 6 0 0 1-5-2.7L3.6 14a1.6 1.6 0 0 1 2.6-1.8L9 15"/></svg><span>Drag to move</span></div>
   <button class="cta pk-go">OPEN THIS BOX</button><button class="pk-x" aria-label="Back">×</button>`;
- pk.classList.add('on');scr.classList.add('pk-on');requestAnimationFrame(()=>requestAnimationFrame(()=>pk.classList.add('vis')));
+ pk.classList.add('on');scr.classList.add('pk-on');requestAnimationFrame(()=>requestAnimationFrame(()=>pk.classList.add('vis')));SFX.whoosh(1);
  const choose=()=>{if(chosen)return;chosen=true;pk.classList.add('chosen');SFX.charge();try{navigator.vibrate&&navigator.vibrate(20)}catch(e){}
   if(!api){setTimeout(()=>{openBox(bi);setTimeout(closePicker,300)},150);return}
   api.pick();window.MB3D.lastReveal=null;pk.style.zIndex='31';openBox(bi);
@@ -1772,6 +1772,7 @@ function openBox(bi){const b=BOXES[bi];scr.scrollTop=0;S.bal-=b.price;S.pts+=b.p
  rv.classList.add('on');scr.classList.add('rv-on');
  const box=$('#rvBox'),holo=$('#holo'),beam=$('#hBeam'),rise=$('#rise');
  try{window.MB3D&&window.MB3D.reveal(box,b)}catch(e){console.warn('3D reveal off',e)}
+ SFX.whoosh(.9);
  let HB=0;const CBW=460,CBH=540,CWB=CBW*.16,HCW=330,HCH=262,hb=BH*.58+4,hw=h=>CWB/2+(CBW/2-CWB/2)*h/CBH;
  $('#holo .hc').style.clipPath=`polygon(${HCW/2-hw(hb+HCH)}px 0,${HCW/2+hw(hb+HCH)}px 0,${HCW/2+hw(hb)}px 100%,${HCW/2-hw(hb)}px 100%)`;
  const STRIP=[];for(let q=0;q<NSTRIP;q++)STRIP.push(pool[q%pool.length]);const WI=STRIP.length;STRIP.push(win);for(let q=0;q<3;q++)STRIP.push(pool[(NSTRIP+q)%pool.length]);
@@ -2551,6 +2552,15 @@ frame();
   const len=Math.floor(AC.sampleRate*(dur+.3)),b=AC.createBuffer(1,len,AC.sampleRate),d=b.getChannelData(0);for(let i=0;i<len;i++)d[i]=Math.random()*2-1;
   const ns=AC.createBufferSource();ns.buffer=b;const nf=AC.createBiquadFilter();nf.type='highpass';nf.frequency.setValueAtTime(1500,t);nf.frequency.exponentialRampToValueAtTime(9000,end);const ng=AC.createGain();ng.gain.setValueAtTime(0,t);ng.gain.linearRampToValueAtTime(.035,end);ns.connect(nf).connect(ng).connect(bus);ns.start(t);ns.stop(end+.3);nodes.push(ns);
   return{cut(){E=null;const c=AC.currentTime;bus.gain.cancelScheduledValues(c);bus.gain.setValueAtTime(bus.gain.value,c);bus.gain.linearRampToValueAtTime(0,c+.06);nodes.forEach(x=>{try{x.stop(c+.08)}catch(e){}})}}};
+})();
+</script>
+
+<script>
+/* soft modern whoosh: two layered noise sweeps (airy + body) with a reverb tail; used for box switching, the picker and the spin start */
+(()=>{SFX.whoosh=function(v=1){if(!S.sound||!ac())return;const t=AC.currentTime,len=Math.floor(AC.sampleRate*.9),b=AC.createBuffer(1,len,AC.sampleRate),d=b.getChannelData(0);for(let i=0;i<len;i++)d[i]=Math.random()*2-1;
+  [[700,3200,.9,.17],[260,900,.6,.11]].forEach(([f0,f1,q,vol])=>{const n=AC.createBufferSource();n.buffer=b;const f=AC.createBiquadFilter();f.type='bandpass';f.Q.value=q;f.frequency.setValueAtTime(f0,t);f.frequency.exponentialRampToValueAtTime(f1,t+.32);f.frequency.exponentialRampToValueAtTime(f0*.8,t+.8);
+   const g=AC.createGain();g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(vol*v,t+.18);g.gain.exponentialRampToValueAtTime(.0001,t+.8);n.connect(f).connect(g);out(g,true);n.start(t);n.stop(t+.9)})};
+ SFX.sw=function(){SFX.whoosh(.85)};
 })();
 </script>
 </body></html>
