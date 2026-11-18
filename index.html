@@ -2597,4 +2597,29 @@ frame();
  });
 })();
 </script>
+
+<script>
+/* epic reveal: a riser that builds while the carousel brakes, then a full drop on the lock (impact + sub boom + wide chord + crash + arpeggio), scaled by rarity */
+(()=>{const NT=m=>440*Math.pow(2,(m-69)/12),on=()=>S.sound&&ac();
+ SFX.brake=function(){if(!on())return;const t=AC.currentTime,d=1.3,len=Math.floor(AC.sampleRate*d),b=AC.createBuffer(1,len,AC.sampleRate),x=b.getChannelData(0);for(let i=0;i<len;i++)x[i]=Math.random()*2-1;
+  const n=AC.createBufferSource();n.buffer=b;const f=AC.createBiquadFilter();f.type='bandpass';f.Q.value=1.1;f.frequency.setValueAtTime(350,t);f.frequency.exponentialRampToValueAtTime(7500,t+d);
+  const g=AC.createGain();g.gain.setValueAtTime(.02,t);g.gain.linearRampToValueAtTime(.3,t+d*.97);g.gain.linearRampToValueAtTime(0,t+d);n.connect(f).connect(g);out(g,true);n.start(t);n.stop(t+d);
+  const o=AC.createOscillator(),og=AC.createGain();o.type='sawtooth';o.frequency.setValueAtTime(110,t);o.frequency.exponentialRampToValueAtTime(440,t+d);const ol=AC.createBiquadFilter();ol.type='lowpass';ol.frequency.setValueAtTime(400,t);ol.frequency.exponentialRampToValueAtTime(3500,t+d);
+  og.gain.setValueAtTime(.01,t);og.gain.linearRampToValueAtTime(.12,t+d*.97);og.gain.linearRampToValueAtTime(0,t+d);o.connect(ol).connect(og);out(og,true);o.start(t);o.stop(t+d)};
+ SFX.reveal=function(tier){if(!on())return;const t=AC.currentTime,k=Math.max(0,TIERS.length-1-TIERS.indexOf(tier)),big=.75+.05*k;
+  const ch=[[57,64,69,72,76],[57,64,69,72,76],[55,62,67,71,74,79],[53,60,65,69,72,77],[52,59,64,68,71,76,80],[50,57,62,66,69,74,78,81]][Math.min(5,k)];
+  // impact: sub boom + low thud + noise burst + clap
+  osc('sine',150,32,t,1.6+.2*k,.62*big,.003);osc('triangle',90,40,t,.5,.25*big,.002);nz(t,.9,'lowpass',4200,180,.8,.35*big,.002,true);[0,.011,.022].forEach(o=>nz(t+o,.16,'bandpass',1500,1200,1.2,.08*big,.002,true));
+  // crash: long bright noise decay
+  nz(t,2.6+.4*k,'highpass',7000,4500,.6,.075*big,.004,true);
+  // wide chord: 7-voice supersaw, filter blooms open, pumping
+  const g=AC.createGain(),pump=AC.createGain(),lp=AC.createBiquadFilter(),D=3.2+.4*k;lp.type='lowpass';lp.Q.value=2;lp.frequency.setValueAtTime(700,t);lp.frequency.exponentialRampToValueAtTime(6500,t+.35);lp.frequency.exponentialRampToValueAtTime(1800,t+D);
+  g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.085*big,t+.02);g.gain.exponentialRampToValueAtTime(.0001,t+D);const beat=60/128;pump.gain.setValueAtTime(1,t);for(let q=t+beat;q<t+D;q+=beat){pump.gain.setValueAtTime(.35,q);pump.gain.linearRampToValueAtTime(1,q+beat*.75)}
+  g.connect(pump).connect(lp);out(lp,true);ch.forEach(m=>[-24,-14,-6,0,6,14,24].forEach(dt=>{const o=AC.createOscillator();o.type='sawtooth';o.frequency.value=NT(m+12);o.detune.value=dt;const og=AC.createGain();og.gain.value=.16;o.connect(og).connect(g);o.start(t);o.stop(t+D+.1)}));
+  // rising arpeggio through the close-up
+  const top=ch.slice(-4),s16=60/128/4;for(let i=0;i<16+4*k;i++){const st=t+.18+i*s16,m=top[i%top.length]+12+(i>=8?12:0),v=.05*big*(1-i/(22+4*k));
+   const o=AC.createOscillator(),f=AC.createBiquadFilter(),og=AC.createGain();o.type='sawtooth';o.frequency.value=NT(m);f.type='lowpass';f.Q.value=6;f.frequency.setValueAtTime(5000,st);f.frequency.exponentialRampToValueAtTime(500,st+.12);
+   og.gain.setValueAtTime(0,st);og.gain.linearRampToValueAtTime(v,st+.004);og.gain.exponentialRampToValueAtTime(.0001,st+.16);o.connect(f).connect(og);out(og,true);o.start(st);o.stop(st+.2)}};
+})();
+</script>
 </body></html>
