@@ -980,10 +980,11 @@ html,body{overscroll-behavior:none}
 .reveal .holo .hlay .ht{white-space:nowrap}
 .reveal .holo .hc{-webkit-mask-image:linear-gradient(90deg,transparent 0%,#000 30%,#000 70%,transparent 100%)!important;mask-image:linear-gradient(90deg,transparent 0%,#000 30%,#000 70%,transparent 100%)!important}
 /* wider cone; carousel clipped to it */
-.reveal .holo-beam{width:380px!important;height:360px!important}
+.reveal .holo-beam{width:400px!important;height:430px!important}
 .reveal .holo-beam::before,.reveal .holo-beam i{clip-path:polygon(42% 100%,58% 100%,100% 0,0 0)!important}
 .reveal .holo .hc{width:300px!important;height:200px!important;-webkit-mask-image:linear-gradient(90deg,transparent 0%,#000 16%,#000 84%,transparent 100%)!important;mask-image:linear-gradient(90deg,transparent 0%,#000 16%,#000 84%,transparent 100%)!important}
 .reveal .holo-pt.back{z-index:2}
+.reveal .holo-beam.back{z-index:2!important}
 /* bottom nav */
 #scr .nav{background:#000!important;border-top:1px solid var(--mb-line)!important;box-shadow:none!important}
 </style></head>
@@ -1687,9 +1688,9 @@ function openBox(bi){const b=BOXES[bi];scr.scrollTop=0;S.bal-=b.price;S.pts+=b.p
  rv.style.setProperty('--rc',b.accent);rv.style.setProperty('--hc','#7fe9ff');
  const pool=[...new Map(b.items.map(x=>[x.id,x])).values()].filter(x=>x.id!==win.id).sort(()=>Math.random()-.5);
  // swap schedule: fast flicker that slows down, ends on the winner
- const T_SHAKE=3.4,T_OPEN=4.05,T_HOLO=4.5,RUN=6.2,NSTRIP=14;const seq=[];const T_LOCK=T_HOLO+.35+RUN,T_CLOSE=T_LOCK+.6,T_DONE=T_CLOSE+1.25;
+ const T_SHAKE=3.4,T_OPEN=4.05,T_HOLO=4.5,RUN=6.2,NSTRIP=14;const seq=[];const T_LOCK=T_HOLO+.35+RUN,T_CLOSE=T_LOCK+.5,T_DONE=T_CLOSE+1.35;
  rv.innerHTML=`<div class="rv-amb"></div><div class="rv-floor" style="top:${boxY+70}px"></div>
-  <div class="holo-beam" id="hBeam" style="left:${hX}px;top:${hY+4}px"><i></i></div><div class="holo-pad" id="hPad" style="left:${hX}px;top:${hY+2}px"></div>
+  <div class="holo-beam back" id="hBeamB" style="left:${hX}px;top:${hY+4}px"><i></i></div><div class="holo-beam" id="hBeam" style="left:${hX}px;top:${hY+4}px"><i></i></div><div class="holo-pad" id="hPad" style="left:${hX}px;top:${hY+2}px"></div>
   <div class="holo-glow" id="hGlow" style="left:${hX}px;top:${hY}px"></div><canvas class="holo-pt back" id="hPtB" width="${W}" height="${H}"></canvas><canvas class="holo-pt" id="hPt" width="${W}" height="${H}"></canvas>
   <div class="holo" id="holo" style="left:${hX}px;top:${hY-BH*.58}px"><div class="hc"><div class="hstrip" id="hStrip"></div></div></div>
   <div class="rv-box charge" id="rvBox" style="top:${boxY}px;width:${BW}px">${OB.html}</div>
@@ -1698,15 +1699,15 @@ function openBox(bi){const b=BOXES[bi];scr.scrollTop=0;S.bal-=b.price;S.pts+=b.p
  rv.classList.add('on');scr.classList.add('rv-on');
  const box=$('#rvBox'),holo=$('#holo'),beam=$('#hBeam'),rise=$('#rise');
  try{window.MB3D&&window.MB3D.reveal(box,b)}catch(e){console.warn('3D reveal off',e)}
- const CBW=380,CBH=360,CWB=CBW*.16,HCW=300,HCH=200,hb=BH*.58+4,hw=h=>CWB/2+(CBW/2-CWB/2)*h/CBH;
+ let HB=0;const CBW=400,CBH=430,CWB=CBW*.16,HCW=300,HCH=200,hb=BH*.58+4,hw=h=>CWB/2+(CBW/2-CWB/2)*h/CBH;
  $('#holo .hc').style.clipPath=`polygon(${HCW/2-hw(hb+HCH)}px 0,${HCW/2+hw(hb+HCH)}px 0,${HCW/2+hw(hb)}px 100%,${HCW/2-hw(hb)}px 100%)`;
  const STRIP=[];for(let q=0;q<NSTRIP;q++)STRIP.push(pool[q%pool.length]);const WI=STRIP.length;STRIP.push(win);for(let q=0;q<3;q++)STRIP.push(pool[(NSTRIP+q)%pool.length]);
  $('#hStrip').innerHTML=STRIP.map((x,q)=>`<div class="hlay" data-q="${q}"><div class="hi"><img src="${x.img}" alt=""></div><div class="ht"><span>${x.tier.toUpperCase()}</span><b>${esc(x.brand)}</b><i>${esc(x.model)}</i><em>${money(x.price)}</em></div></div>`).join('');
- const LY=[...holo.querySelectorAll('.hlay')];let cur=0;const SP=72,P0=1.4;let lastC=-1;
+ const LY=[...holo.querySelectorAll('.hlay')];let cur=0;const SP=96,P0=1.4;let lastC=-1;
  // position along the strip (in watches): eases out so it starts at a steady pace and glides to a stop on the winner
  const stripAt=t=>{const u=Math.max(0,Math.min(1,(t-T_HOLO-.35)/RUN));const e=1-Math.pow(1-u,2.2);return P0+(WI-P0)*e};
- const layStrip=p=>{for(let q=0;q<LY.length;q++){const d=q-p,a=Math.abs(d);if(a>3.2){LY[q].style.visibility='hidden';continue}LY[q].style.visibility='';
-   LY[q].style.transform=`translateX(${d*SP}px) scale(${1-Math.min(.45,a*.22)})`;LY[q].style.opacity=String(Math.max(0,1-a*.32));LY[q].style.zIndex=String(100-Math.round(a*10));LY[q].querySelector('.ht').style.opacity=String(Math.max(0,1-a*1.6))}
+ const layStrip=p=>{for(let q=0;q<LY.length;q++){const d=q-p,a=Math.abs(d);if(a>1.7){LY[q].style.visibility='hidden';continue}LY[q].style.visibility='';
+   LY[q].style.transform=`translateX(${d*SP}px) scale(${1-Math.min(.42,a*.38)})`;LY[q].style.opacity=String(a<=1?1-a*.3:Math.max(0,.7*(1.7-a)/.7));LY[q].style.zIndex=String(100-Math.round(a*10));LY[q].querySelector('.ht').style.opacity=String(Math.max(0,1-a*1.6))}
   const c=Math.round(p);if(c!==lastC){if(lastC>=0&&LY[lastC])LY[lastC].classList.remove('cur');LY[c]&&LY[c].classList.add('cur');if(lastC>=0)SFX.tick(.7);lastC=c}};
  // carousel: the new watch slides in from the right, the current one slides out to the left (inside the cone)
  const show=(x,final,dur)=>{if(final){holo.classList.add('lock');holo.style.setProperty('--tc',RC[x.tier])}return;const o=LY[cur];cur=(cur+1)%LY.length;const n=LY[cur];const d=Math.max(.12,Math.min(.42,dur||.3));
@@ -1719,16 +1720,17 @@ function openBox(bi){const b=BOXES[bi];scr.scrollTop=0;S.bal-=b.price;S.pts+=b.p
  const MUS=startMusic(T_OPEN);let t0=performance.now(),k=0,phase=0,done=false,spin=0,vel=0,last=t0;
  const pc=$('#hPt'),pg=pc.getContext('2d'),pcB=$('#hPtB'),pgB=pcB.getContext('2d'),PT=[];let emit=0,acc=0,burst=0;
  // geometry of the open box on screen (from the 3D render): centre, front-wall top edge, depth of the inside
- const geo=()=>{const r=window.MB3D&&window.MB3D.lastReveal;return r&&r.w>20?{cx:r.cx,edge:r.y0+r.h*.24,depth:r.h*.3,iw:r.w*.62}:{cx:cx,edge:hY,depth:BH*.3,iw:BW*.55}};
+ const geo=()=>{const r=window.MB3D&&window.MB3D.lastReveal;return r&&r.w>20?{cx:r.cx,edge:r.y0+r.h*.3,depth:r.h*.34,iw:r.w*.6}:{cx:cx,edge:hY,depth:BH*.32,iw:BW*.55}};
  const motes=dt=>{pg.clearRect(0,0,W,H);pgB.clearRect(0,0,W,H);const G=geo();
   if(emit>0){burst=Math.max(0,burst-dt);if(Math.random()<dt*1.4)burst=.15+Math.random()*.35;   // random bursts
    acc+=emit*60*dt*(.35+Math.random()*1.3)*(burst>0?2.6:1);while(acc>=1){acc--;
     PT.push({x:G.cx+(Math.random()+Math.random()-1)*G.iw*.5,y:G.edge+Math.random()*G.depth,vx:(Math.random()-.5)*18,vy:-(22+Math.random()*95),ph:Math.random()*6.3,fq:1+Math.random()*3,l:1,d:.25+Math.random()*.5,s:.4+Math.random()*1.6,g:1+Math.random()*1.2,w:Math.random()<.3,a:0})}}
   for(const p of PT){p.ph+=dt*p.fq;p.x+=(p.vx+Math.sin(p.ph)*10)*dt;p.y+=p.vy*dt;p.vy*=1-dt*.15;p.l-=dt*p.d;p.a=Math.min(1,p.a+dt*3);if(p.l<=0)continue;
-   const ctx=p.y>G.edge?pgB:pg,sz=p.s*(1+(1-p.l)*p.g);ctx.globalAlpha=Math.min(1,p.l*1.3)*p.a;ctx.fillStyle=p.w?'#ffffff':'#8feeff';ctx.beginPath();ctx.arc(p.x,p.y,sz,0,7);ctx.fill()}
+   const ctx=p.y>G.edge?pgB:pg,sz=p.s*(1+(1-p.l)*p.g);ctx.globalAlpha=Math.min(1,p.l*1.3)*p.a;ctx.fillStyle=p.w?'#efe2ff':(p.ph%2<1?'#b98cff':'#8a5cff');ctx.beginPath();ctx.arc(p.x,p.y,sz,0,7);ctx.fill()}
   for(let q=PT.length-1;q>=0;q--)if(PT[q].l<=0)PT.splice(q,1);pg.globalAlpha=1;pgB.globalAlpha=1};
  // centre beam, light and hologram on the box itself
- const centre=()=>{const G=geo();for(const id of ['#hBeam','#hPad','#hGlow','#holo'])$(id).style.left=G.cx+'px';$('#hBeam').style.top=(G.edge+4)+'px';$('#hPad').style.top=(G.edge+2)+'px';$('#hGlow').style.top=G.edge+'px';$('#holo').style.top=(G.edge-BH*.58)+'px'};
+ const centre=()=>{const G=geo(),base=G.edge+G.depth*.75;for(const id of ['#hBeam','#hBeamB','#hPad','#hGlow','#holo'])$(id).style.left=G.cx+'px';$('#hBeam').style.top=base+'px';$('#hBeamB').style.top=base+'px';
+  $('#hBeam').style.clipPath=`inset(0 0 ${base-G.edge}px 0)`;$('#hPad').style.top=base+'px';$('#hGlow').style.top=G.edge+'px';$('#holo').style.top=(G.edge-BH*.58)+'px';HB=base-G.edge};
  function frame(now){if(done)return;const dt=Math.min(.05,(now-last)/1000);last=now;let t=(now-t0)/1000;
   // 1) closed box spins, then settles facing front
   if(t<T_SHAKE-.9){vel+=((t<.6?t/.6:1)*2.4-vel)*Math.min(1,dt*3);spin+=vel*dt;box._rotY=spin}
@@ -1736,7 +1738,7 @@ function openBox(bi){const b=BOXES[bi];scr.scrollTop=0;S.bal-=b.price;S.pts+=b.p
   // 2) a small tremble
   if(phase===0&&t>=T_SHAKE){phase=1;box.classList.add('tremble');SFX.charge()}
   // 3) it opens, light pours out, particles start rising
-  if(phase===1&&t>=T_OPEN){phase=2;spin=box._tgt;box._rotY=spin;centre();box.classList.remove('tremble','charge');box.classList.add('lidopen');$('#hPad').classList.add('on');beam.classList.add('on');emit=2.2;rv.classList.add('holo-on');$('#hGlow').classList.add('on');SFX.open()}
+  if(phase===1&&t>=T_OPEN){phase=2;spin=box._tgt;box._rotY=spin;centre();box.classList.remove('tremble','charge');box.classList.add('lidopen');$('#hPad').classList.add('on');beam.classList.add('on');$('#hBeamB').classList.add('on');emit=2.2;rv.classList.add('holo-on');$('#hGlow').classList.add('on');SFX.open()}
   // 4) holograms project out of the open box and cycle
   if(phase===2&&t>=T_HOLO){phase=3;layStrip(stripAt(t));holo.classList.add('on')}
   if(phase===3){layStrip(stripAt(t));
@@ -1746,14 +1748,14 @@ function openBox(bi){const b=BOXES[bi];scr.scrollTop=0;S.bal-=b.price;S.pts+=b.p
   if(phase===5&&t>=T_DONE){phase=6;emit=0;finish();return}
   motes(dt);requestAnimationFrame(frame)}
  requestAnimationFrame(frame);
- rv.onclick=e=>{if(phase<4&&!e.target.closest('.rv-detail')){if(phase<2){box.classList.remove('tremble','charge');box.classList.add('lidopen');$('#hPad').classList.add('on');beam.classList.add('on');emit=2.2;rv.classList.add('holo-on');holo.classList.add('on');phase=3}box._tgt=Math.round(spin/(Math.PI*2))*Math.PI*2-10*Math.PI/180;spin=box._tgt;box._rotY=spin;t0=performance.now()-T_LOCK*1000;k=seq.length;MUS.cut&&MUS.cut()}};
+ rv.onclick=e=>{if(phase<4&&!e.target.closest('.rv-detail')){if(phase<2){box.classList.remove('tremble','charge');box.classList.add('lidopen');$('#hPad').classList.add('on');beam.classList.add('on');$('#hBeamB').classList.add('on');emit=2.2;rv.classList.add('holo-on');holo.classList.add('on');phase=3}box._tgt=Math.round(spin/(Math.PI*2))*Math.PI*2-10*Math.PI/180;spin=box._tgt;box._rotY=spin;t0=performance.now()-T_LOCK*1000;k=seq.length;MUS.cut&&MUS.cut()}};
  let CU=null;
  function closeup(){const im=holo.querySelector('.hlay.cur img'),r=im.getBoundingClientRect(),sr=rv.getBoundingClientRect();
   CU=document.createElement('img');CU.className='rv-close';CU.src=win.img;CU.alt='';
   CU.style.cssText=`left:${r.left-sr.left}px;top:${r.top-sr.top}px;width:${r.width}px;height:${r.height}px`;rv.appendChild(CU);
-  holo.classList.add('gone');beam.classList.remove('on');$('#hPad').classList.remove('on');$('#hGlow').classList.remove('on');emit=0;
+  holo.classList.add('gone');beam.classList.remove('on');$('#hBeamB').classList.remove('on');$('#hPad').classList.remove('on');$('#hGlow').classList.remove('on');emit=0;
   box.style.transition='opacity .6s, transform .9s';box.style.opacity=0;pc.style.transition='opacity .6s';pc.style.opacity=0;pcB.style.transition='opacity .6s';pcB.style.opacity=0;
-  const sz=Math.min(W*.9,H*.52);void CU.offsetWidth;
+  const sz=Math.min(W*1.05,H*.62);void CU.offsetWidth;
   CU.style.transition='left 1s cubic-bezier(.2,.9,.25,1),top 1s cubic-bezier(.2,.9,.25,1),width 1s cubic-bezier(.2,.9,.25,1),height 1s cubic-bezier(.2,.9,.25,1)';
   CU.style.left=(W-sz)/2+'px';CU.style.top=(H-sz)/2-30+'px';CU.style.width=sz+'px';CU.style.height=sz+'px';SFX.swish()}
  function finish(){$('#rvSkip').style.opacity=0;MUS.stop();box._rotY=null;
@@ -1767,7 +1769,7 @@ function openBox(bi){const b=BOXES[bi];scr.scrollTop=0;S.bal-=b.price;S.pts+=b.p
    const di=info.querySelector('#dImg'),fr=di.getBoundingClientRect(),sr=rv.getBoundingClientRect(),cw=170,ch=170;
    const hImg=CU||holo.querySelector('.hlay.cur img'),wr=(hImg||rise).getBoundingClientRect(),fromX=(wr.left+wr.width/2)-(fr.left+fr.width/2),fromY=(wr.top+wr.height/2)-(fr.top+fr.height/2),k=wr.width/fr.width;
    di.style.transition='none';di.style.transform=`translate(${fromX}px,${fromY}px) scale(${k})`;void di.offsetWidth;
-   if(CU)CU.style.opacity=0;holo.classList.add('gone');beam.classList.remove('on');$('#hGlow').classList.remove('on');$('#hPad').classList.remove('on');pc.style.opacity=0;box.style.opacity=0;requestAnimationFrame(()=>{info.classList.add('on');di.style.transition='';di.style.transform=''});SFX.swish();
+   if(CU)CU.style.opacity=0;holo.classList.add('gone');beam.classList.remove('on');$('#hBeamB').classList.remove('on');$('#hGlow').classList.remove('on');$('#hPad').classList.remove('on');pc.style.opacity=0;box.style.opacity=0;requestAnimationFrame(()=>{info.classList.add('on');di.style.transition='';di.style.transform=''});SFX.swish();
    pushTick({who:'You',tier:win.tier,box:b.tier,i:win});
    const close=st=>{done=true;S.col.unshift({id:win.id,st,t:Date.now(),trk:st==='shipped'?'UPS · 1Z'+Math.random().toString(36).slice(2,9).toUpperCase():undefined});save();rv.classList.remove('on');rv.innerHTML='';scr.classList.remove('rv-on');renderCol();renderLB()};
    info.querySelector('#rKeep').onclick=()=>{close('vault');toast(`${win.model} is in your vault`)};
