@@ -992,6 +992,16 @@ html,body{overscroll-behavior:none}
 #scr .rv-detail.mbx-rv.pre>*:not(.mbx-big){opacity:0;transform:translateY(10px)}
 #scr .rv-detail.mbx-rv>*:nth-child(2){transition-delay:.0s}#scr .rv-detail.mbx-rv>*:nth-child(3){transition-delay:.05s}#scr .rv-detail.mbx-rv>*:nth-child(4){transition-delay:.1s}
 #scr .rv-detail.mbx-rv>*:nth-child(5){transition-delay:.15s}#scr .rv-detail.mbx-rv>*:nth-child(6){transition-delay:.2s}#scr .rv-detail.mbx-rv>*:nth-child(7){transition-delay:.26s}
+/* bigger hologram watches; price always shown */
+.reveal .holo .hlay,.reveal .holo .hlay.cur,.reveal .holo .hlay.out{width:180px!important;margin-left:-90px!important}
+.reveal .holo .hi{height:140px!important}
+.reveal .holo .hi img{max-width:132px!important;max-height:140px!important}
+.reveal .holo .hc{height:230px!important}
+.reveal .holo .hlay .ht span,.reveal .holo .hlay .ht b,.reveal .holo .hlay .ht i{opacity:var(--tx,1)}
+.reveal .holo .hlay .ht em{opacity:1}
+.reveal .holo .hlay .hi{position:relative}
+.reveal .holo .hlay .hi .sp{position:absolute;left:0;right:0;bottom:-4px;text-align:center;font:900 italic 16px/1 Montserrat;color:#c8f8ff;text-shadow:0 0 8px rgba(127,233,255,.8);opacity:calc(1 - var(--tx,1))}
+.reveal .holo .hlay .ht em{opacity:var(--tx,1)!important}
 /* bottom nav */
 #scr .nav{background:#000!important;border-top:1px solid var(--mb-line)!important;box-shadow:none!important}
 </style></head>
@@ -1706,15 +1716,15 @@ function openBox(bi){const b=BOXES[bi];scr.scrollTop=0;S.bal-=b.price;S.pts+=b.p
  rv.classList.add('on');scr.classList.add('rv-on');
  const box=$('#rvBox'),holo=$('#holo'),beam=$('#hBeam'),rise=$('#rise');
  try{window.MB3D&&window.MB3D.reveal(box,b)}catch(e){console.warn('3D reveal off',e)}
- let HB=0;const CBW=400,CBH=430,CWB=CBW*.16,HCW=300,HCH=200,hb=BH*.58+4,hw=h=>CWB/2+(CBW/2-CWB/2)*h/CBH;
+ let HB=0;const CBW=400,CBH=430,CWB=CBW*.16,HCW=300,HCH=230,hb=BH*.58+4,hw=h=>CWB/2+(CBW/2-CWB/2)*h/CBH;
  $('#holo .hc').style.clipPath=`polygon(${HCW/2-hw(hb+HCH)}px 0,${HCW/2+hw(hb+HCH)}px 0,${HCW/2+hw(hb)}px 100%,${HCW/2-hw(hb)}px 100%)`;
  const STRIP=[];for(let q=0;q<NSTRIP;q++)STRIP.push(pool[q%pool.length]);const WI=STRIP.length;STRIP.push(win);for(let q=0;q<3;q++)STRIP.push(pool[(NSTRIP+q)%pool.length]);
- $('#hStrip').innerHTML=STRIP.map((x,q)=>`<div class="hlay" data-q="${q}"><div class="hi"><img src="${x.img}" alt=""></div><div class="ht"><span>${x.tier.toUpperCase()}</span><b>${esc(x.brand)}</b><i>${esc(x.model)}</i><em>${money(x.price)}</em></div></div>`).join('');
- const LY=[...holo.querySelectorAll('.hlay')];let cur=0;const SP=96,P0=1.4;let lastC=-1;
+ $('#hStrip').innerHTML=STRIP.map((x,q)=>`<div class="hlay" data-q="${q}"><div class="hi"><img src="${x.img}" alt=""><em class="sp">${money(x.price)}</em></div><div class="ht"><span>${x.tier.toUpperCase()}</span><b>${esc(x.brand)}</b><i>${esc(x.model)}</i><em>${money(x.price)}</em></div></div>`).join('');
+ const LY=[...holo.querySelectorAll('.hlay')];let cur=0;const SP=112,P0=1.4;let lastC=-1;
  // position along the strip (in watches): eases out so it starts at a steady pace and glides to a stop on the winner
  const stripAt=t=>{const u=Math.max(0,Math.min(1,(t-T_HOLO-.35)/RUN));const e=1-Math.pow(1-u,2.2);return P0+(WI-P0)*e};
  const layStrip=p=>{for(let q=0;q<LY.length;q++){const d=q-p,a=Math.abs(d);if(a>1.7){LY[q].style.visibility='hidden';continue}LY[q].style.visibility='';
-   LY[q].style.transform=`translateX(${d*SP}px) scale(${1-Math.min(.42,a*.38)})`;LY[q].style.opacity=String(a<=1?1-a*.3:Math.max(0,.7*(1.7-a)/.7));LY[q].style.zIndex=String(100-Math.round(a*10));LY[q].querySelector('.ht').style.opacity=String(Math.max(0,1-a*1.6))}
+   LY[q].style.transform=`translateX(${d*SP}px) scale(${1-Math.min(.42,a*.38)})`;LY[q].style.opacity=String(a<=1?1-a*.3:Math.max(0,.7*(1.7-a)/.7));LY[q].style.zIndex=String(100-Math.round(a*10));LY[q].style.setProperty('--tx',String(Math.max(0,1-a*1.6)))}
   const c=Math.round(p);if(c!==lastC){if(lastC>=0&&LY[lastC])LY[lastC].classList.remove('cur');LY[c]&&LY[c].classList.add('cur');if(lastC>=0)SFX.tick(.7);lastC=c}};
  // carousel: the new watch slides in from the right, the current one slides out to the left (inside the cone)
  const show=(x,final,dur)=>{if(final){holo.classList.add('lock');holo.style.setProperty('--tc',RC[x.tier])}return;const o=LY[cur];cur=(cur+1)%LY.length;const n=LY[cur];const d=Math.max(.12,Math.min(.42,dur||.3));
@@ -1728,12 +1738,16 @@ function openBox(bi){const b=BOXES[bi];scr.scrollTop=0;S.bal-=b.price;S.pts+=b.p
  const pc=$('#hPt'),pg=pc.getContext('2d'),pcB=$('#hPtB'),pgB=pcB.getContext('2d'),PT=[];let emit=0,acc=0,burst=0;
  // geometry of the open box on screen (from the 3D render): centre, front-wall top edge, depth of the inside
  const geo=()=>{const r=window.MB3D&&window.MB3D.lastReveal;return r&&r.w>20?{cx:r.cx,edge:r.y0+r.h*.3,depth:r.h*.34,iw:r.w*.6}:{cx:cx,edge:hY,depth:BH*.32,iw:BW*.55}};
- const motes=dt=>{pg.clearRect(0,0,W,H);pgB.clearRect(0,0,W,H);const G=geo();
-  if(emit>0){burst=Math.max(0,burst-dt);if(Math.random()<dt*1.4)burst=.15+Math.random()*.35;   // random bursts
-   acc+=emit*60*dt*(.35+Math.random()*1.3)*(burst>0?2.6:1);while(acc>=1){acc--;
-    PT.push({x:G.cx+(Math.random()+Math.random()-1)*G.iw*.5,y:G.edge+Math.random()*G.depth,vx:(Math.random()-.5)*18,vy:-(22+Math.random()*95),ph:Math.random()*6.3,fq:1+Math.random()*3,l:1,d:.25+Math.random()*.5,s:.4+Math.random()*1.6,g:1+Math.random()*1.2,w:Math.random()<.3,a:0})}}
-  for(const p of PT){p.ph+=dt*p.fq;p.x+=(p.vx+Math.sin(p.ph)*10)*dt;p.y+=p.vy*dt;p.vy*=1-dt*.15;p.l-=dt*p.d;p.a=Math.min(1,p.a+dt*3);if(p.l<=0)continue;
-   const ctx=p.y>G.edge?pgB:pg,sz=p.s*(1+(1-p.l)*p.g);ctx.globalAlpha=Math.min(1,p.l*1.3)*p.a;ctx.fillStyle=p.w?'#efe2ff':(p.ph%2<1?'#b98cff':'#8a5cff');ctx.beginPath();ctx.arc(p.x,p.y,sz,0,7);ctx.fill()}
+ const motes=dt=>{pg.clearRect(0,0,W,H);pgB.clearRect(0,0,W,H);const G=geo(),R0=G.iw*.5;
+  if(emit>0){burst=Math.max(0,burst-dt);if(Math.random()<dt*1.2)burst=.2+Math.random()*.4;
+   acc+=emit*60*dt*(.4+Math.random()*1.2)*(burst>0?2.2:1);while(acc>=1){acc--;
+    PT.push({th:Math.random()*6.283,w:(1.6+Math.random()*1.6)*(Math.random()<.85?1:-.6),r:R0*(.15+Math.random()*.5),gr:R0*(.55+Math.random()*1.1),
+     h:-G.depth*(.2+Math.random()*.8),vh:45+Math.random()*80,l:1,d:.22+Math.random()*.35,s:.6+Math.random()*1.7,c:Math.random(),a:0})}}
+  const oy=G.edge;
+  for(const p of PT){p.th+=p.w*dt*(1+Math.max(0,p.h)/180);p.h+=p.vh*dt;p.r+=p.gr*dt*(p.h>0?1:.25);p.l-=dt*p.d;p.a=Math.min(1,p.a+dt*2.5);if(p.l<=0)continue;
+   const x=G.cx+Math.cos(p.th)*p.r,y=oy-p.h+Math.sin(p.th)*p.r*.28,front=Math.sin(p.th)>0,
+    ctx=(p.h<0||!front)?pgB:pg,sz=p.s*(front?1.15:.8)*(1+(1-p.l)*.6);
+   ctx.globalAlpha=Math.min(1,p.l*1.3)*p.a*(front?1:.65);ctx.fillStyle=p.c<.25?'#efe2ff':(p.c<.65?'#b98cff':'#8a5cff');ctx.beginPath();ctx.arc(x,y,sz,0,7);ctx.fill()}
   for(let q=PT.length-1;q>=0;q--)if(PT[q].l<=0)PT.splice(q,1);pg.globalAlpha=1;pgB.globalAlpha=1};
  // centre beam, light and hologram on the box itself
  const centre=()=>{const G=geo(),base=G.edge+G.depth*.75;for(const id of ['#hBeam','#hBeamB','#hPad','#hGlow','#holo'])$(id).style.left=G.cx+'px';$('#hBeam').style.top=base+'px';$('#hBeamB').style.top=base+'px';
