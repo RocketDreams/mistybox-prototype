@@ -948,6 +948,19 @@ html,body{overscroll-behavior:none}
 .reveal .holo-glow{position:absolute;width:340px;height:260px;transform:translate(-50%,-62%);z-index:2;pointer-events:none;opacity:0;transition:opacity .5s ease-out;background:radial-gradient(closest-side,rgba(200,250,255,.55),rgba(127,233,255,.18) 50%,transparent)}
 .reveal .holo-glow.on{opacity:1;animation:hglow .9s ease-out}
 @keyframes hglow{0%{opacity:0;transform:translate(-50%,-62%) scale(.6)}35%{opacity:1;transform:translate(-50%,-62%) scale(1.15)}100%{opacity:1;transform:translate(-50%,-62%) scale(1)}}
+/* hologram: no frame, the watch floats inside the top of the projection cone */
+.reveal .holo-beam{height:360px}
+.reveal .holo-beam{height:360px!important;width:260px!important}
+.reveal .holo-beam::before{background:radial-gradient(70% 100% at 50% 100%,rgba(160,240,255,.55),rgba(127,233,255,.2) 50%,rgba(127,233,255,.06) 80%,transparent)!important}
+.reveal .holo .hc{border:0!important;background:none!important;box-shadow:none!important;overflow:visible!important;height:200px!important}
+.reveal .holo .hc::after{display:none!important}
+.reveal .holo .hi img{filter:grayscale(1) sepia(1) hue-rotate(150deg) saturate(2.6) brightness(1.2) drop-shadow(0 0 10px rgba(127,233,255,.7))!important;opacity:.82}
+.reveal .holo .hlay .hi{-webkit-mask-image:repeating-linear-gradient(0deg,#000 0 2px,rgba(0,0,0,.55) 2px 3px);mask-image:repeating-linear-gradient(0deg,#000 0 2px,rgba(0,0,0,.55) 2px 3px)}
+.reveal .holo .ht{text-shadow:0 0 8px rgba(127,233,255,.8)}
+.reveal .holo.lock .hc{box-shadow:none!important}
+.reveal .holo.lock .hlay.cur .hi{-webkit-mask-image:none;mask-image:none}
+.reveal .holo.lock .hlay.cur .hi img{filter:drop-shadow(0 0 16px color-mix(in srgb,var(--tc) 80%,transparent))!important;opacity:1}
+.reveal .holo.lock .ht{text-shadow:0 0 10px color-mix(in srgb,var(--tc) 70%,transparent)}
 /* bottom nav */
 #scr .nav{background:#000!important;border-top:1px solid var(--mb-line)!important;box-shadow:none!important}
 </style></head>
@@ -1655,7 +1668,7 @@ function openBox(bi){const b=BOXES[bi];scr.scrollTop=0;S.bal-=b.price;S.pts+=b.p
  rv.innerHTML=`<div class="rv-amb"></div><div class="rv-floor" style="top:${boxY+70}px"></div>
   <div class="holo-beam" id="hBeam" style="left:${hX}px;top:${hY+4}px"><i></i></div><div class="holo-pad" id="hPad" style="left:${hX}px;top:${hY+2}px"></div>
   <div class="holo-glow" id="hGlow" style="left:${hX}px;top:${hY}px"></div><canvas class="holo-pt" id="hPt" width="${W}" height="${H}"></canvas>
-  <div class="holo" id="holo" style="left:${hX}px;top:${hY-BH*.62}px"><div class="hc">${[0,1].map(n=>`<div class="hlay" data-l="${n}"><div class="hi"><img alt=""></div><div class="ht"><span></span><b></b><i></i><em></em></div></div>`).join('')}</div></div>
+  <div class="holo" id="holo" style="left:${hX}px;top:${hY-BH*.58}px"><div class="hc">${[0,1].map(n=>`<div class="hlay" data-l="${n}"><div class="hi"><img alt=""></div><div class="ht"><span></span><b></b><i></i><em></em></div></div>`).join('')}</div></div>
   <div class="rv-box charge" id="rvBox" style="top:${boxY}px;width:${BW}px">${OB.html}</div>
   <img class="rise" id="rise" src="${win.img}" alt="" style="left:${hX}px;top:${hY}px">
   <div class="rv-lbl" id="rvLbl">OPENING ${esc(b.skin.toUpperCase())}</div><div class="flash" id="flash"></div><div class="rv-skip" id="rvSkip">TAP TO SKIP</div>`;
