@@ -2144,19 +2144,24 @@ frame();
 </script>
 
 <script>
-/* audio unlock: iOS mutes Web Audio on the silent switch and every browser starts it suspended.
-   Mark the session as media playback and wake the audio context on the first touch/click/key. */
+/* audio unlock for iOS Safari: the AudioContext is only created inside a real tap (touchend/click/key),
+   the session is marked as media playback (silent switch), and a silent HTML audio loop keeps older iOS in playback mode. */
 (()=>{try{if(navigator.audioSession)navigator.audioSession.type='playback'}catch(e){}
- let done=false,el=null;
+ const realAc=ac;let gest=false,el=null;
+ ac=function(){return gest?realAc():null};          // no context before the first tap (iOS would keep it locked)
  function silentWav(){const n=800,b=new ArrayBuffer(44+n*2),v=new DataView(b),w=(o,s)=>{for(let i=0;i<s.length;i++)v.setUint8(o+i,s.charCodeAt(i))};
   w(0,'RIFF');v.setUint32(4,36+n*2,true);w(8,'WAVEfmt ');v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,1,true);v.setUint32(24,8000,true);v.setUint32(28,16000,true);v.setUint16(32,2,true);v.setUint16(34,16,true);w(36,'data');v.setUint32(40,n*2,true);
   return URL.createObjectURL(new Blob([b],{type:'audio/wav'}))}
- function unlock(){if(done)return;
-  try{const c=ac();if(c){if(c.state!=='running')c.resume();const src=c.createBufferSource();src.buffer=c.createBuffer(1,1,22050);src.connect(c.destination);src.start(0)}}catch(e){}
-  try{if(!el){el=new Audio(silentWav());el.loop=true;el.setAttribute('playsinline','');el.volume=.001}const p=el.play();p&&p.catch(()=>{})}catch(e){}
-  setTimeout(()=>{if(AC&&AC.state==='running'){done=true;['pointerdown','touchend','keydown','click'].forEach(t=>removeEventListener(t,unlock,true))}},300)}
- ['pointerdown','touchend','keydown','click'].forEach(t=>addEventListener(t,unlock,true));
- document.addEventListener('visibilitychange',()=>{if(!document.hidden&&AC&&AC.state!=='running'){done=false;['pointerdown','touchend','keydown','click'].forEach(t=>addEventListener(t,unlock,true))}});
+ function unlock(){gest=true;
+  try{if(AC&&AC.state!=='running'){try{AC.close()}catch(e){}AC=null}
+   const c=realAc();if(c){c.resume&&c.resume();const src=c.createBufferSource();src.buffer=c.createBuffer(1,1,22050);src.connect(c.destination);src.start(0)}}catch(e){}
+  try{if(!el){el=new Audio(silentWav());el.loop=true;el.setAttribute('playsinline','');el.setAttribute('x-webkit-airplay','deny')}const p=el.play();p&&p.catch(()=>{})}catch(e){}
+  if(AC&&AC.state==='running')off()}
+ const EV=['touchend','click','keydown'];
+ function on(){EV.forEach(t=>addEventListener(t,unlock,{capture:true,passive:true}))}
+ function off(){setTimeout(()=>{if(AC&&AC.state==='running')EV.forEach(t=>removeEventListener(t,unlock,{capture:true}))},400)}
+ on();
+ document.addEventListener('visibilitychange',()=>{if(!document.hidden&&AC&&AC.state!=='running')on()});
 })();
 </script>
 </body></html>
