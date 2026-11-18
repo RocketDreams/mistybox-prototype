@@ -1034,6 +1034,12 @@ html,body{overscroll-behavior:none}
 /* playful spin: little hops with a squash on landing */
 .rv-box.hop .ob{animation:mbHop .62s cubic-bezier(.35,.6,.45,1) infinite;transform-origin:50% 90%}
 @keyframes mbHop{0%{transform:translateY(0) scale(1.02,.98)}40%{transform:translateY(-7px) scale(.995,1.01)}70%{transform:translateY(-2px) scale(1,1)}100%{transform:translateY(0) scale(1.02,.98)}}
+/* volumetric light beam: bright core, soft falloff to the edges, rounded cap */
+.reveal .holo-beam::before{background:linear-gradient(90deg,rgba(127,233,255,0) 2%,rgba(127,233,255,.10) 18%,rgba(150,240,255,.26) 36%,rgba(215,252,255,.55) 50%,rgba(150,240,255,.26) 64%,rgba(127,233,255,.10) 82%,rgba(127,233,255,0) 98%)!important}
+.reveal .holo-beam .core{position:absolute;left:50%;bottom:0;width:26%;height:100%;transform:translateX(-50%);clip-path:polygon(44% 100%,56% 100%,100% 0,0 0);
+ background:linear-gradient(90deg,transparent,rgba(235,255,255,.5) 50%,transparent);filter:blur(6px);animation:hcore 2.6s ease-in-out infinite;mix-blend-mode:screen}
+@keyframes hcore{0%,100%{opacity:.75}50%{opacity:1}}
+.reveal .holo-beam .cap{position:absolute;left:0;right:0;top:-14px;height:28px;border-radius:50%;background:radial-gradient(closest-side,rgba(160,240,255,.22),rgba(160,240,255,.05) 70%,transparent);border:1px solid rgba(160,240,255,.18);filter:blur(1px)}
 /* bottom nav */
 #scr .nav{background:#000!important;border-top:1px solid var(--mb-line)!important;box-shadow:none!important}
 </style></head>
@@ -1689,7 +1695,7 @@ function openPicker(bi){const b=BOXES[bi],pk=$('#pick');let chosen=false,api=nul
    if(performance.now()-t0>1500){setTimeout(closePicker,200);return}requestAnimationFrame(wait)};requestAnimationFrame(wait)};
  pk.querySelector('.pk-go').onclick=e=>{e.stopPropagation();choose()};
  pk.querySelector('.pk-x').onclick=e=>{e.stopPropagation();if(!chosen)closePicker()};
- try{if(window.MB3D&&window.MB3D.picker)api=window.MB3D.picker(pk,b,{tick:()=>{SFX.tick(.9);try{navigator.vibrate&&navigator.vibrate(6)}catch(e){}},tap:choose,moved:()=>{const h=pk.querySelector('.hint');if(h)h.style.opacity=0}})}catch(e){console.warn('3D picker off',e)}
+ try{if(window.MB3D&&window.MB3D.picker)api=window.MB3D.picker(pk,b,{tick:()=>{SFX.click();try{navigator.vibrate&&navigator.vibrate(6)}catch(e){}},tap:choose,moved:()=>{const h=pk.querySelector('.hint');if(h)h.style.opacity=0}})}catch(e){console.warn('3D picker off',e)}
  if(!api)choose()}
 function closePicker(){const pk=$('#pick');pk.classList.remove('vis');setTimeout(()=>{pk.style.zIndex=''},470);scr.classList.remove('pk-on');setTimeout(()=>{if(!pk.classList.contains('vis')){pk.classList.remove('on');pk.innerHTML=''}},460)}
 $('#buy').onclick=()=>openBuy(cur);
@@ -1756,14 +1762,14 @@ function OBOX(b){const G=GEO[b.key==='icy'?'crown':'std'],sm=G.seam,pt=p=>`${p[0
    they cycle, slow down and lock on the winner, then the lid opens and that watch rises out of the box */
 function openBox(bi){const b=BOXES[bi];scr.scrollTop=0;S.bal-=b.price;S.pts+=b.price*5;save();paintBal();
  const win=draw(b);lastWin={id:win.id,box:bi};
- const rv=$('#reveal'),W=scr.clientWidth,H=scr.clientHeight,cx=W/2,boxY=H*.54;
+ const rv=$('#reveal'),W=scr.clientWidth,H=scr.clientHeight,cx=W/2,boxY=Math.min(H-140,Math.max(H*.58,512));
  const OB=OBOX(b),RA=(window.MB3D&&window.MB3D.anchor)?window.MB3D.anchor(b):null,BW=Math.min(255,W*.68),BH=BW*(760/900),hX=cx-BW/2+BW*(RA?RA.hx:OB.hx)/100,hY=boxY-BH/2+BH*(RA?RA.hy:OB.hy)/100;
  rv.style.setProperty('--rc',b.accent);rv.style.setProperty('--hc','#7fe9ff');
  const pool=[...new Map(b.items.map(x=>[x.id,x])).values()].filter(x=>x.id!==win.id).sort(()=>Math.random()-.5);
  // swap schedule: fast flicker that slows down, ends on the winner
  const T_SHAKE=5.6,T_OPEN=5.15,T_HOLO=6.25,ACC=4.4,DEC=1.35,V0=1.1,VMAX=12,NSTRIP=Math.ceil(1.4+V0*ACC+(VMAX-V0)*ACC/3+VMAX*DEC/2),RUN=ACC+DEC;const seq=[];const T_LOCK=T_HOLO+.35+RUN,T_CLOSE=T_LOCK+.5,T_DONE=T_CLOSE+1.2;
  rv.innerHTML=`<div class="rv-amb"></div><div class="rv-floor" style="top:${boxY+70}px"></div>
-  <div class="holo-beam back" id="hBeamB" style="left:${hX}px;top:${hY+4}px"><i></i></div><div class="holo-beam" id="hBeam" style="left:${hX}px;top:${hY+4}px"><i></i></div><div class="holo-pad" id="hPad" style="left:${hX}px;top:${hY+2}px"></div>
+  <div class="holo-beam back" id="hBeamB" style="left:${hX}px;top:${hY+4}px"><i></i><b class="core"></b></div><div class="holo-beam" id="hBeam" style="left:${hX}px;top:${hY+4}px"><i></i><b class="core"></b><s class="cap"></s></div><div class="holo-pad" id="hPad" style="left:${hX}px;top:${hY+2}px"></div>
   <div class="holo-glow" id="hGlow" style="left:${hX}px;top:${hY}px"></div><canvas class="holo-pt back" id="hPtB" width="${W}" height="${H}"></canvas><canvas class="holo-pt" id="hPt" width="${W}" height="${H}"></canvas>
   <div class="holo" id="holo" style="left:${hX}px;top:${hY-BH*.58}px"><div class="hc"><div class="hstrip" id="hStrip"></div></div></div>
   <div class="rv-box charge" id="rvBox" style="top:${boxY}px;width:${BW}px">${OB.html}</div>
@@ -2358,8 +2364,8 @@ window.MB3D.reveal = function(boxEl, b){
     const hingeN = holder.getObjectByName('LidHinge');
     boxEl._inside = () => { const b3 = new THREE.Box3().setFromObject(holder), c = b3.getCenter(new THREE.Vector3()), hw = new THREE.Vector3(); (hingeN || holder).getWorldPosition(hw); const r = cv2.getBoundingClientRect(),
       sp = v => { const p = v.clone().project(C2); return {x: r.left + (p.x * .5 + .5) * r.width, y: r.top + (-p.y * .5 + .5) * r.height} };
-      const rim = sp(new THREE.Vector3(c.x, hw.y, b3.max.z)), flo = sp(new THREE.Vector3(c.x, b3.min.y + (hw.y - b3.min.y) * .2, c.z)), back = sp(new THREE.Vector3(c.x, hw.y, b3.min.z));
-      return {cx: (rim.x + flo.x) / 2, rim: rim.y, floor: flo.y, back: back.y} };
+      const ax = new THREE.Vector3(); holder.getWorldPosition(ax); const rim = sp(new THREE.Vector3(ax.x, hw.y, b3.max.z)), flo = sp(new THREE.Vector3(ax.x, b3.min.y + (hw.y - b3.min.y) * .2, ax.z)), top = sp(new THREE.Vector3(ax.x, hw.y, ax.z)), back = sp(new THREE.Vector3(ax.x, hw.y, b3.min.z));
+      return {cx: (top.x + flo.x) / 2, rim: rim.y, floor: flo.y, back: back.y} };
     // glow inside the box (seen once the lid lifts) + light spilling from the opening
     const box3 = new THREE.Box3().setFromObject(holder), sz = box3.getSize(new THREE.Vector3()), ctr = box3.getCenter(new THREE.Vector3());
 
@@ -2562,5 +2568,10 @@ frame();
    const g=AC.createGain();g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(vol*v,t+.18);g.gain.exponentialRampToValueAtTime(.0001,t+.8);n.connect(f).connect(g);out(g,true);n.start(t);n.stop(t+.9)})};
  SFX.sw=function(){SFX.whoosh(.85)};
 })();
+</script>
+
+<script>
+/* gentle click for the box picker (like the original) */
+(()=>{SFX.click=function(){if(!S.sound||!ac())return;const t=AC.currentTime;nz(t,.035,'bandpass',2600,2300,6,.05,.002,true);osc('sine',1800,1700,t,.03,.012,.002)}})();
 </script>
 </body></html>
