@@ -1026,6 +1026,11 @@ html,body{overscroll-behavior:none}
 #scr[data-bg=white] .gift img,#scr[data-bg=white] .mb-drawer-tab .chev{filter:invert(1)}
 #scr[data-bg=white] .mb-drawer-tab{filter:drop-shadow(0 2px 4px rgba(0,0,0,.35))!important}
 #scr[data-bg=white] .gline{background:linear-gradient(90deg,transparent,#555 45%,#000 50%,#555 55%,transparent)!important}
+/* the light beam shoots up out of the box, then the watches come in */
+.reveal .holo-beam{transform-origin:50% 100%!important;transform:translate(-50%,-100%) scaleY(.02) scaleX(.35)!important;transition:opacity .2s ease,transform .95s cubic-bezier(.22,.9,.25,1)!important}
+.reveal .holo-beam.on{transform:translate(-50%,-100%) scaleY(1) scaleX(1)!important}
+.reveal .holo-pad.on{animation:hpadin .5s ease-out}
+@keyframes hpadin{0%{opacity:0;transform:translate(-50%,-50%) scale(.3)}60%{opacity:1;transform:translate(-50%,-50%) scale(1.25)}100%{transform:translate(-50%,-50%) scale(1)}}
 /* bottom nav */
 #scr .nav{background:#000!important;border-top:1px solid var(--mb-line)!important;box-shadow:none!important}
 </style></head>
@@ -1739,7 +1744,7 @@ function openBox(bi){const b=BOXES[bi];scr.scrollTop=0;S.bal-=b.price;S.pts+=b.p
  rv.style.setProperty('--rc',b.accent);rv.style.setProperty('--hc','#7fe9ff');
  const pool=[...new Map(b.items.map(x=>[x.id,x])).values()].filter(x=>x.id!==win.id).sort(()=>Math.random()-.5);
  // swap schedule: fast flicker that slows down, ends on the winner
- const T_SHAKE=3.4,T_OPEN=4.05,T_HOLO=4.5,RUN=6.2,NSTRIP=19;const seq=[];const T_LOCK=T_HOLO+.35+RUN,T_CLOSE=T_LOCK+.5,T_DONE=T_CLOSE+1.2;
+ const T_SHAKE=3.4,T_OPEN=4.05,T_HOLO=5.15,RUN=6.2,NSTRIP=19;const seq=[];const T_LOCK=T_HOLO+.35+RUN,T_CLOSE=T_LOCK+.5,T_DONE=T_CLOSE+1.2;
  rv.innerHTML=`<div class="rv-amb"></div><div class="rv-floor" style="top:${boxY+70}px"></div>
   <div class="holo-beam back" id="hBeamB" style="left:${hX}px;top:${hY+4}px"><i></i></div><div class="holo-beam" id="hBeam" style="left:${hX}px;top:${hY+4}px"><i></i></div><div class="holo-pad" id="hPad" style="left:${hX}px;top:${hY+2}px"></div>
   <div class="holo-glow" id="hGlow" style="left:${hX}px;top:${hY}px"></div><canvas class="holo-pt back" id="hPtB" width="${W}" height="${H}"></canvas><canvas class="holo-pt" id="hPt" width="${W}" height="${H}"></canvas>
