@@ -1032,8 +1032,8 @@ html,body{overscroll-behavior:none}
 .reveal .holo-pad.on{animation:hpadin .5s ease-out}
 @keyframes hpadin{0%{opacity:0;transform:translate(-50%,-50%) scale(.3)}60%{opacity:1;transform:translate(-50%,-50%) scale(1.25)}100%{transform:translate(-50%,-50%) scale(1)}}
 /* playful spin: little hops with a squash on landing */
-.rv-box.hop .ob{animation:mbHop .62s cubic-bezier(.35,.6,.45,1) infinite;transform-origin:50% 90%}
-@keyframes mbHop{0%{transform:translateY(0) scale(1.02,.98)}40%{transform:translateY(-7px) scale(.995,1.01)}70%{transform:translateY(-2px) scale(1,1)}100%{transform:translateY(0) scale(1.02,.98)}}
+.rv-box.hop .ob{animation:mbHop .9s ease-in-out infinite;transform-origin:50% 90%}
+@keyframes mbHop{0%{transform:translateY(0) scale(1.02,.98)}50%{transform:translateY(-4px) scale(1,1)}100%{transform:translateY(0) scale(1.02,.98)}}
 /* volumetric light beam: bright core, soft falloff to the edges, rounded cap */
 .reveal .holo-beam::before{background:linear-gradient(90deg,rgba(127,233,255,0) 2%,rgba(127,233,255,.10) 18%,rgba(150,240,255,.26) 36%,rgba(215,252,255,.55) 50%,rgba(150,240,255,.26) 64%,rgba(127,233,255,.10) 82%,rgba(127,233,255,0) 98%)!important}
 .reveal .holo-beam .core{position:absolute;left:50%;bottom:0;width:26%;height:100%;transform:translateX(-50%);clip-path:polygon(44% 100%,56% 100%,100% 0,0 0);
@@ -1798,7 +1798,7 @@ function openBox(bi){const b=BOXES[bi];scr.scrollTop=0;S.bal-=b.price;S.pts+=b.p
   o.classList.remove('cur');n.classList.add('cur');if(final){holo.classList.add('lock');holo.style.setProperty('--tc',RC[x.tier])}};
  // decode every hologram image up front so swaps never stall
  const PRE=[win,...pool.slice(0,40)].map(x=>{const im=new Image();im.src=x.img;return im.decode?im.decode().catch(()=>{}):Promise.resolve()});
- const MUS={stop(){},cut(){}};let TEN=null;let t0=performance.now(),k=0,phase=0,done=false,spin=0,vel=0,last=t0;
+ const MUS={stop(){},cut(){}};let TEN=SFX.buildup(T_HOLO+.35+ACC);let t0=performance.now(),k=0,phase=0,done=false,spin=0,vel=0,last=t0;
  const pc=$('#hPt'),pg=pc.getContext('2d'),pcB=$('#hPtB'),pgB=pcB.getContext('2d'),PT=[];let emit=0,acc=0,burst=0;
  // geometry of the open box on screen (from the 3D render): centre, front-wall top edge, depth of the inside
  let GEO=null;const L=()=>{const q=rv.getBoundingClientRect(),k=q.width/rv.offsetWidth||1;return{x:v=>(v-q.left)/k,y:v=>(v-q.top)/k,s:v=>v/k}};
@@ -1820,15 +1820,15 @@ function openBox(bi){const b=BOXES[bi];scr.scrollTop=0;S.bal-=b.price;S.pts+=b.p
   $('#holo .hc').style.clipPath=`polygon(${HCW/2-hw(hb2+HCH)}px 0,${HCW/2+hw(hb2+HCH)}px 0,${HCW/2+hw(hb2)}px 100%,${HCW/2-hw(hb2)}px 100%)`};
  function frame(now){if(done)return;const dt=Math.min(.05,(now-last)/1000);last=now;let t=(now-t0)/1000;
   // 1) closed box spins, then settles facing front
-  if(t<T_SHAKE-.9){const tv=(t<.35?t/.35:1)*(5.4+1.8*Math.sin(t*3.1)+.9*Math.sin(t*7.3));vel+=(tv-vel)*Math.min(1,dt*6);spin+=vel*dt;box._rotY=spin;
-   box._rz=Math.sin(t*8.5)*.11*Math.min(1,t*3);box._rx=Math.sin(t*5.7+1)*.07;if(!box.classList.contains('hop'))box.classList.add('hop')}
+  if(t<T_SHAKE-.9){const tv=(t<.5?t/.5:1)*(6.6+.45*Math.sin(t*1.6));vel+=(tv-vel)*Math.min(1,dt*3);spin+=vel*dt;box._rotY=spin;
+   box._rz=Math.sin(t*3.2)*.045*Math.min(1,t*2);box._rx=Math.sin(t*2.4+1)*.03;if(!box.classList.contains('hop'))box.classList.add('hop')}
   else{box.classList.remove('hop');box._rz=(box._rz||0)*Math.max(0,1-dt*8);box._rx=(box._rx||0)*Math.max(0,1-dt*8);const FR=-10*Math.PI/180;if(box._tgt==null)box._tgt=Math.ceil((spin+vel*.32+.5-FR)/(Math.PI*2))*Math.PI*2+FR;if(box._sv==null)box._sv=vel;box._sv+=((box._tgt-spin)*58-box._sv*9)*dt;spin+=box._sv*dt;if(Math.abs(box._tgt-spin)<.002&&Math.abs(box._sv)<.05)spin=box._tgt;box._rotY=spin;box._front=t>=T_SHAKE}
   // 2) a small tremble
   if(phase===0&&t>=T_OPEN){phase=1}
   // 3) it opens, light pours out, particles start rising
   if(phase===1&&t>=T_OPEN){phase=2;centre();box.classList.remove('tremble','charge');box.classList.add('lidopen');$('#hPad').classList.add('on');beam.classList.add('on');$('#hBeamB').classList.add('on');emit=2.2;rv.classList.add('holo-on');$('#hGlow').classList.add('on');SFX.open()}
   // 4) holograms project out of the open box and cycle
-  if(phase===2&&t>=T_HOLO){phase=3;TEN=SFX.buildup(ACC+.35);layStrip(stripAt(t));holo.classList.add('on')}
+  if(phase===2&&t>=T_HOLO){phase=3;layStrip(stripAt(t));holo.classList.add('on')}
   if(phase===3){layStrip(stripAt(t));if(TEN&&t>=T_HOLO+.35+ACC){TEN.cut();TEN=null;SFX.brake()}
    if(t>=T_LOCK){phase=4;TEN&&TEN.cut();TEN=null;layStrip(WI);show(win,true);SFX.reveal(win.tier);rv.style.setProperty('--rc',RC[win.tier]);emit=4;try{navigator.vibrate&&navigator.vibrate([20,40,40])}catch(e){}}}
   // 5) the chosen watch: transition to its screen
@@ -2587,7 +2587,7 @@ frame();
  Object.assign(SFX,{
   tap(){if(!on())return;const t=AC.currentTime;blip(t,1900,700,.07,.08);nz(t,.012,'highpass',6000,6000,.7,.012,.001)},
   coin(){if(!on())return;const t=AC.currentTime;blip(t,1200,1180,.09,.08);blip(t+.08,1800,1780,.12,.08)},
-  open(){if(!on())return;const t=AC.currentTime;nz(t,.9,'bandpass',500,6000,1.2,.07,.6,true);stab([57,64,69,72],t+.85,.07)},
+  open(){if(!on())return;const t=AC.currentTime;nz(t,.9,'bandpass',500,6000,1.2,.07,.6,true);stab([57,64,69,73],t+.85,.07)},
   brake(){if(!on())return;const t=AC.currentTime;nz(t,.7,'bandpass',6000,400,1.4,.08,.01,true);osc('sine',220,55,t,.5,.16,.005)},
   reveal(tier){if(!on())return;const t=AC.currentTime,k=Math.max(0,TIERS.length-1-TIERS.indexOf(tier));
    const ch=[[57,64,69,72],[57,64,69,72,76],[55,62,67,71,74],[53,60,65,69,72,76],[52,59,64,68,71,76],[50,57,62,66,69,74,78]][Math.min(5,k)];
@@ -2628,23 +2628,22 @@ frame();
  const baseTick=SFX.tick;
  SFX.tick=function(v){if(!BU)return baseTick.call(SFX,v);if(!on())return;const t=AC.currentTime;nz(t,.03,'highpass',7000,7000,.7,.012+.02*Math.min(1,(t-BU)/4),.001,false)};
  SFX.buildup=function(dur){if(!on())return{cut(){}};const t=AC.currentTime,end=t+dur;BU=t;const nodes=[],P=x=>Math.min(1,Math.max(0,(x-t)/dur));
-  const bus=AC.createGain();bus.gain.setValueAtTime(0,t);bus.gain.linearRampToValueAtTime(.55,t+.3);bus.gain.linearRampToValueAtTime(1.1,end);bus.connect(MST);
+  const bus=AC.createGain();bus.gain.setValueAtTime(0,t);bus.gain.linearRampToValueAtTime(.4,t+.6);bus.gain.linearRampToValueAtTime(1.1,end);bus.connect(MST);
   const lp=AC.createBiquadFilter();lp.type='lowpass';lp.Q.value=3;lp.frequency.setValueAtTime(650,t);lp.frequency.exponentialRampToValueAtTime(7000,end);
-  const pump=AC.createGain();pump.gain.setValueAtTime(1,t);for(let q=t;q<end;q+=BEAT){pump.gain.setValueAtTime(.3,q);pump.gain.linearRampToValueAtTime(1,q+BEAT*.75)}
+  const BT=[];{let q=t;while(q<end){BT.push(q);q+=60/(96+36*Math.pow(P(q),1.2))}}const bl=i=>(BT[i+1]||end)-BT[i];
+  const pump=AC.createGain();pump.gain.setValueAtTime(1,t);BT.forEach((q,i)=>{pump.gain.setValueAtTime(.3,q);pump.gain.linearRampToValueAtTime(1,q+bl(i)*.75)});
   pump.connect(lp);const rv=AC.createGain();rv.gain.value=1;lp.connect(rv);rv.connect(bus);const sendR=AC.createGain();sendR.gain.value=.5;bus.connect(sendR);try{sendR.connect(REV)}catch(e){}
-  const prog=[[57,61,64,69],[56,59,64,68],[57,61,66,69],[57,62,66,69],[59,62,64,68]];
-  const seg=BEAT*2,nseg=Math.max(1,Math.ceil(dur/seg));
-  for(let i=0;i<nseg;i++){const st=t+i*seg,c=prog[Math.min(prog.length-1,Math.max(0,i-(nseg-prog.length)))],sd=Math.min(seg,end-st)+.05;if(sd<=0)break;
+  const prog=[[57,61,64,69],[56,59,64,68],[57,61,66,69],[57,62,66,69]],FIN=[59,62,64,68],nseg=Math.ceil(BT.length/2);
+  for(let i=0;i<nseg;i++){const st=BT[i*2],se=BT[i*2+2]||end,c=i===nseg-1?FIN:prog[i%4],sd=se-st+.03;
    const g=AC.createGain();g.gain.setValueAtTime(0,st);g.gain.linearRampToValueAtTime(.05,st+.02);g.gain.setValueAtTime(.05,st+sd-.03);g.gain.linearRampToValueAtTime(0,st+sd);g.connect(pump);
    c.forEach(m=>[-20,-8,0,8,20].forEach(dt=>{const o=AC.createOscillator();o.type='sawtooth';o.frequency.value=NT(m+12);o.detune.value=dt;const og=AC.createGain();og.gain.value=.16;o.connect(og).connect(g);o.start(st);o.stop(st+sd);nodes.push(o)}));
-   // arpeggio from this chord: 8ths in the first half, 16ths after, climbing an octave near the end
-   const s16=BEAT/4;for(let j=0;j<8;j++){const at=st+j*s16;if(at>=end)break;const pr=P(at);if(pr<.45&&j%2)continue;
+   // arpeggio: 8ths early, 16ths after 45%, up an octave near the end
+   const s16=(se-st)/8;for(let j=0;j<8;j++){const at=st+j*s16;if(at>=end)break;const pr=P(at);if(pr<.45&&j%2)continue;
     const top=c.concat(c.map(x=>x+12)),m=top[(i*3+j)%top.length]+12+(pr>.75?12:0),v=(.022+.05*pr);
     const o=AC.createOscillator(),f=AC.createBiquadFilter(),og=AC.createGain();o.type='sawtooth';o.frequency.value=NT(m);f.type='lowpass';f.Q.value=6;f.frequency.setValueAtTime(1800+4000*pr,at);f.frequency.exponentialRampToValueAtTime(450,at+.12);
     og.gain.setValueAtTime(0,at);og.gain.linearRampToValueAtTime(v,at+.004);og.gain.exponentialRampToValueAtTime(.0001,at+.16);o.connect(f).connect(og).connect(bus);o.start(at);o.stop(at+.2);nodes.push(o)}}
-  // four-on-the-floor kick fading in, clap roll that speeds up in the last bar
-  for(let q=t;q<end;q+=BEAT){const pr=P(q);nodes.push(osc('sine',120,45,q,.25,.08+.22*pr,.004))}
-  let ct=t+BEAT,step=BEAT;while(ct<end){const pr=P(ct);if(pr>.35){[0,.011].forEach(o=>nodes.push(nz(ct+o,.1,'bandpass',1500,1200,1.2,.012+.05*pr,.002,true)))}ct+=step;if(end-ct<BEAT*4)step=Math.max(BEAT/4,step*.8)}
+  // four-on-the-floor kick fading in on the accelerating grid; clap on 2&4, rolling faster in the last bar
+  BT.forEach((q,i)=>{const pr=P(q);nodes.push(osc('sine',120,45,q,.25,.05+.25*pr,.004));if(pr>.3&&(i%2||end-q<4*bl(i))){const r=end-q<4*bl(i)?(end-q<2*bl(i)?4:2):1;for(let z=0;z<r;z++){const ct=q+z*bl(i)/r;[0,.011].forEach(o=>nodes.push(nz(ct+o,.1,'bandpass',1500,1200,1.2,.012+.05*pr,.002,true)))}}});
   // airy noise riser underneath
   const len=Math.floor(AC.sampleRate*(dur+.3)),b=AC.createBuffer(1,len,AC.sampleRate),d=b.getChannelData(0);for(let i=0;i<len;i++)d[i]=Math.random()*2-1;
   const ns=AC.createBufferSource();ns.buffer=b;const nf=AC.createBiquadFilter();nf.type='highpass';nf.frequency.setValueAtTime(1500,t);nf.frequency.exponentialRampToValueAtTime(9000,end);const ng=AC.createGain();ng.gain.setValueAtTime(0,t);ng.gain.linearRampToValueAtTime(.05,end);ns.connect(nf).connect(ng).connect(bus);ns.start(t);ns.stop(end+.3);nodes.push(ns);
