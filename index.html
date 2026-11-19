@@ -2157,7 +2157,7 @@ const h=location.hash.slice(1);if(['showroom','collection','leaderboard','accoun
    }catch(e){want-=it.w;it.w=0} tick()};
  let p3=0;const tick=()=>set(.8*(want?got/want:1)+.17*p3);
  const pool=async(items,n)=>{let i=0;await Promise.all(Array.from({length:n},async()=>{while(i<items.length)await one(items[i++])}))};
- window.__mbPrefetch=pool(list.sort((a,b)=>b.w-a.w),6);           // 3D module waits for this before its first model load (no double download)
+ window.__mbPrefetch=pool(list.sort((a,b)=>b.w-a.w),6).then(()=>{window.__mbPrefetchDone=true});           // 3D module waits for this before its first model load (no double download)
  const ready3d=new Promise(res=>{if(window.__mb3d)return res(window.__mb3d);addEventListener('mb3d-ready',()=>res(window.__mb3d),{once:true});addEventListener('mb3d-failed',()=>res(null),{once:true})});
  const fonts=()=>Promise.all(['900 italic 20px Montserrat','800 italic 20px Montserrat','800 20px Montserrat','700 20px Montserrat','600 20px Montserrat','500 20px Montserrat','800 italic 20px Poppins','700 20px Poppins','600 20px Poppins','400 20px Poppins'].map(f=>document.fonts.load(f).catch(()=>{}))).then(()=>document.fonts.ready);
  const finish=()=>{if(boot.classList.contains('done'))return;set(1);window.__mbBooted=true;const wait=Math.max(0,900-(performance.now()-T0));
@@ -2331,6 +2331,7 @@ function loadCube(skin){
     const box = new THREE.Box3().setFromObject(root); root.position.set(-(box.min.x + box.max.x) / 2, -box.min.y, -(box.min.z + box.max.z) / 2);
     const holder = new THREE.Group(); holder.add(root); holder.userData.cube = skin; return holder }) }
 function load(k){ if(models[k]) return models[k];
+  if(window.__mbPrefetch && !window.__mbPrefetchDone) return models[k] = window.__mbPrefetch.then(() => { delete models[k]; return load(k) });   // never race the boot download
   if(k.startsWith('cube_')) return models[k] = loadCube(k.slice(5)).catch(e => { delete models[k]; throw e });
   return models[k] = loader.loadAsync('assets/3d/' + k + '.glb').then(g => { const root = g.scene;
     if(/^case/.test(k)) noLatch(root);
