@@ -2203,13 +2203,13 @@ setTimeout(()=>{const id=new URLSearchParams(location.search).get('gift'),g=id&&
  const el=document.createElement('section');el.className='glnd';el.id='giftLand';el.setAttribute('aria-labelledby','glT');
  el.innerHTML=`<div class="gl-sw"></div><div class="gl-glow"></div><div class="gl-ey">A gift for ${esc(g.to)}</div><div class="gl-pre">Here’s a gift from</div><h1 id="glT">${esc(g.from)}</h1>
   <div class="gl-box" role="img" aria-label="${esc(b.tier)} box, ${esc(b.skin)}. Drag to turn it."><img src="${b.img}" alt=""></div>
-  <div class="gl-hint" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11V5.5a1.5 1.5 0 0 1 3 0V11"/><path d="M12 10.5V4.5a1.5 1.5 0 0 1 3 0v6"/><path d="M15 10.5V6.5a1.5 1.5 0 0 1 3 0V14a6 6 0 0 1-6 6h-1a6 6 0 0 1-5-2.7L3.6 14a1.6 1.6 0 0 1 2.6-1.8L9 15"/></svg>Drag to turn the box</div>
+  <div class="gl-hint" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11V5.5a1.5 1.5 0 0 1 3 0V11"/><path d="M12 10.5V4.5a1.5 1.5 0 0 1 3 0v6"/><path d="M15 10.5V6.5a1.5 1.5 0 0 1 3 0V14a6 6 0 0 1-6 6h-1a6 6 0 0 1-5-2.7L3.6 14a1.6 1.6 0 0 1 2.6-1.8L9 15"/></svg>Turn it over · peek through the glass</div>
   <div class="gl-tag">${esc(b.tier)} box</div><div class="gl-sub">${esc(b.skin)} · real watches up to ${money(b.max)}</div>
   <button type="button" class="gl-cta" id="glOpen">OPEN YOUR GIFT <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
   <div class="gl-fine">Already paid for by ${esc(g.from.split(' ')[0])} · every watch authenticated &amp; insured</div>`;
  scr.appendChild(el);
  const gb=el.querySelector('.gl-box'),gh=el.querySelector('.gl-hint');
- const mount=()=>{try{window.MB3D.viewer(gb,b,{ready:()=>{gb.classList.add('three');gh.classList.add('on')},moved:()=>gh.classList.add('gone')})}catch(e){console.warn('gift 3D off',e)}};
+ const mount=()=>{try{window.MB3D.viewer(gb,b,{peek:true,ready:()=>{gb.classList.add('three');gh.classList.add('on')},moved:()=>gh.classList.add('gone')})}catch(e){console.warn('gift 3D off',e)}};
  if(window.MB3D&&window.MB3D.viewer)mount();else addEventListener('mb3d-ready',mount,{once:true});
  el.querySelector('#glOpen').onclick=()=>{try{SFX.tap()}catch(e){}el.classList.add('out');setTimeout(()=>el.remove(),500);
   if(curView!=='boxes')show('boxes');go(bi,1);window.__giftFree=bi;   // the sender already paid: the friend's open is free
@@ -2545,6 +2545,39 @@ window.MB3D.reveal = function(boxEl, b){
     requestAnimationFrame(step);
   }).catch(err => console.warn('3D reveal off:', err));
 };
+// gift page teaser: the box floor becomes a glass window and the inside is packed with the box's real watches
+function glassBottom(h, b){
+  let body = null;
+  h.traverse(o => { if(!o.isMesh || body) return; o.geometry.computeBoundingBox(); const g = o.geometry.boundingBox;
+    if(g.max.x - g.min.x > .9 && g.max.z - g.min.z > .9 && g.min.y < .02 && g.max.y > .6 && g.max.y < .8) body = o.parent && o.parent.isMesh ? o.parent : o });
+  const shells = []; h.traverse(o => { if(o.isMesh){ o.geometry.computeBoundingBox(); const g = o.geometry.boundingBox; if(g.max.x - g.min.x > .9 && g.max.z - g.min.z > .9 && g.min.y < .02 && g.max.y > .6 && g.max.y < .8) shells.push(o) } });
+  if(!shells.length) return;
+  const IN = .392, FLOOR = .1;
+  shells.forEach(o => { const geo = o.geometry.clone(), P = geo.attributes.position, idx = geo.index ? geo.index.array : null, keep = [];   // own copy: the shared model stays intact
+    const n = idx ? idx.length : P.count;
+    for(let i = 0; i < n; i += 3){ const a = idx ? [idx[i], idx[i+1], idx[i+2]] : [i, i+1, i+2]; let my = -1, mx = 0, mz = 0;
+      for(const v of a){ my = Math.max(my, P.getY(v)); mx = Math.max(mx, Math.abs(P.getX(v))); mz = Math.max(mz, Math.abs(P.getZ(v))) }
+      if(my < FLOOR) continue;      // outer bottom + inner floor (single full-width faces; the bottom rails frame the opening)
+      keep.push(...a) }
+    geo.setIndex(keep); o.geometry = geo });
+  const par = shells[0].parent;
+  ROOM = ROOM || studioEnv();
+  const glass = new THREE.Mesh(new THREE.PlaneGeometry(IN * 2 + .03, IN * 2 + .03), new THREE.MeshPhysicalMaterial({color: 0xffffff, metalness: 0, roughness: .04, transparent: true, opacity: .07,
+    envMap: ROOM, envMapIntensity: 1.6, clearcoat: 1, clearcoatRoughness: .02, side: THREE.DoubleSide, depthWrite: false}));
+  glass.rotation.x = -Math.PI / 2; glass.position.y = .006; glass.renderOrder = 5; par.add(glass);
+  // a dense pile of watches, dials facing down toward the glass; a soft light inside so they read
+  const TL2 = new THREE.TextureLoader(), its = b.items.slice().sort((x, y) => y.price - x.price), tex = {};
+  let sd = 7; const rnd = () => (sd = (sd * 16807) % 2147483647) / 2147483647;
+  const pile = new THREE.Group(); par.add(pile);
+  for(let i = 0; i < 150; i++){ const it = its[i % its.length]; const t = tex[it.id] || (tex[it.id] = (() => { const x = TL2.load(it.img); x.colorSpace = THREE.SRGBColorSpace; x.anisotropy = 4; return x })());
+    const sz = .23 + rnd() * .1, layer = Math.floor(i / 25);
+    const m = new THREE.Mesh(new THREE.PlaneGeometry(sz, sz * 1.25), new THREE.MeshBasicMaterial({map: t, transparent: true, alphaTest: .35, side: THREE.DoubleSide, color: new THREE.Color().setScalar(Math.max(.45, .96 - layer * .09))}));
+    m.position.set((rnd() * 2 - 1) * (IN - sz * .35), .022 + layer * .045 + rnd() * .035, (rnd() * 2 - 1) * (IN - sz * .35));
+    m.rotation.set(Math.PI / 2 + (rnd() - .5) * .5, (rnd() - .5) * .4, rnd() * Math.PI * 2, 'XZY');   // lying flat, dial down, any heading
+    m.material.onBeforeCompile = sh => { sh.fragmentShader = sh.fragmentShader.replace('#include <map_fragment>', '#include <map_fragment>\n  if(min(diffuseColor.r, min(diffuseColor.g, diffuseColor.b)) > .93 * diffuseColor.a && max(diffuseColor.r, max(diffuseColor.g, diffuseColor.b)) - min(diffuseColor.r, min(diffuseColor.g, diffuseColor.b)) < .05) discard;') };   // photo backgrounds that are plain white -> cut out
+    m.material.customProgramCacheKey = () => 'pileCut';
+    m.renderOrder = 1; pile.add(m) }
+  const glow = new THREE.PointLight(0xffffff, 1.2, 1.4, 1.5); glow.position.set(0, .3, 0); par.add(glow) }
 // ---- free 3D viewer (gift landing, 2026-11-19): drag to turn the box any way (yaw + tilt), inertia, slow idle spin ----
 window.MB3D.viewer = function(wrap, b, cb){
   cb = cb || {};
@@ -2562,10 +2595,11 @@ window.MB3D.viewer = function(wrap, b, cb){
   fit(); addEventListener('resize', fit);
   let ok = false;
   load(keyOf(b)).then(src => { if(!cv.isConnected) return; const h = src.clone(true);
-    const bb = new THREE.Box3().setFromObject(h), c = bb.getCenter(new THREE.Vector3()); h.position.sub(c); spin.add(h); ok = true; cb.ready && cb.ready() })
+    if(cb.peek) glassBottom(h, b);
+    const bb = new THREE.Box3().setFromObject(h), c = bb.getCenter(new THREE.Vector3()); h.position.sub(c); spin.add(h); ok = true; introAt = performance.now(); cb.ready && cb.ready() })
     .catch(e => { console.warn('3D viewer off', e); cv.remove(); cb.fail && cb.fail() });
-  let yaw = -.62, pitch = .36, vy = 0, vp = 0, drag = false, lx = 0, ly = 0, lt = 0, idleAt = performance.now(), moved = 0;
-  const down = e => { drag = true; lx = e.clientX; ly = e.clientY; lt = performance.now(); vy = vp = 0; moved = 0; try{ wrap.setPointerCapture(e.pointerId) }catch(_){} };
+  let yaw = -.62, pitch = .36, vy = 0, vp = 0, drag = false, lx = 0, ly = 0, lt = 0, idleAt = performance.now(), moved = 0, introAt = 0, touched = false;
+  const down = e => { drag = true; touched = true; lx = e.clientX; ly = e.clientY; lt = performance.now(); vy = vp = 0; moved = 0; try{ wrap.setPointerCapture(e.pointerId) }catch(_){} };
   const move = e => { if(!drag) return; const now = performance.now(), dx = e.clientX - lx, dy = e.clientY - ly, dt = Math.max(8, now - lt); lx = e.clientX; ly = e.clientY; lt = now;
     const ky = dx * .009, kp = dy * .007; yaw += ky; pitch = Math.max(-1.35, Math.min(1.45, pitch + kp)); vy = ky / dt * 16; vp = kp / dt * 16; moved += Math.abs(dx) + Math.abs(dy);
     if(moved > 6 && cb.moved) { cb.moved(); cb.moved = null } };
@@ -2575,7 +2609,10 @@ window.MB3D.viewer = function(wrap, b, cb){
   const step = () => {
     if(!cv.isConnected){ removeEventListener('resize', fit); glv.dispose(); RV.dispose(); RV.forceContextLoss(); return }
     requestAnimationFrame(step); const dt = Math.min(clk.getDelta(), .05);
-    if(!drag){ yaw += vy; pitch = Math.max(-1.35, Math.min(1.45, pitch + vp)); vy *= Math.pow(.05, dt); vp *= Math.pow(.05, dt);     // fling, then ease out
+    const it_ = cb.peek && introAt && !touched ? (performance.now() - introAt) / 1000 : -1;
+    if(it_ >= .9 && it_ < 5.2){ const k = it_ < 2.4 ? (it_ - .9) / 1.5 : it_ < 3.7 ? 1 : 1 - (it_ - 3.7) / 1.5, e = k * k * (3 - 2 * k);   // intro: tip the box to show the glass floor, hold, tip back
+      pitch = .36 + (-1.05 - .36) * e; yaw += dt * .25; idleAt = performance.now() }
+    else if(!drag){ yaw += vy; pitch = Math.max(-1.35, Math.min(1.45, pitch + vp)); vy *= Math.pow(.05, dt); vp *= Math.pow(.05, dt);     // fling, then ease out
       if(performance.now() - idleAt > 2200){ yaw += dt * .35; pitch += (.36 - pitch) * Math.min(1, dt * .8) } }            // idle: slow turn, back to a 3/4 view from above
     spin.rotation.y = yaw; tilt.rotation.x = pitch;
     if(ok){ RV.render(SV, CV); glv.render(SV, CV, .35) } };
