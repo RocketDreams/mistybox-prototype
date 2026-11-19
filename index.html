@@ -724,6 +724,26 @@ html,body{overscroll-behavior:none}
 #scr .ipage .ip-sech .c b{display:block;font-weight:800;color:#fff}
 #scr .ipage .ip-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
 #scr .ipage .ip-grid .mbx-mini{width:auto}
+
+/* GIFT landing (2026-11-19): a friend opens the link, sees who sent it, then opens the box like a normal open (no charge) */
+#scr .glnd{position:absolute;inset:0;z-index:26;background:#000;overflow:hidden;display:flex;flex-direction:column;align-items:center;text-align:center;padding:calc(env(safe-area-inset-top,0px) + 56px) 24px calc(env(safe-area-inset-bottom,0px) + 34px);transition:opacity .45s ease,transform .45s ease}
+#scr .glnd.out{opacity:0;transform:scale(1.04);pointer-events:none}
+#scr .glnd .gl-sw{position:absolute;inset:-16px;background:url(assets/swoosh.svg) center top/100% auto no-repeat;opacity:.8;pointer-events:none}
+#scr .glnd .gl-glow{position:absolute;left:50%;top:50%;width:560px;height:560px;transform:translate(-50%,-52%);border-radius:50%;pointer-events:none;
+ background:radial-gradient(closest-side,rgba(255,255,255,.16),rgba(140,90,255,.10) 45%,rgba(0,0,0,0))}
+#scr .glnd .gl-ey{position:relative;font:700 11px/1 Montserrat,sans-serif;letter-spacing:2.6px;text-transform:uppercase;color:var(--mb-text-3)}
+#scr .glnd .gl-pre{position:relative;margin-top:18px;font:800 15px/1.2 Montserrat,sans-serif;letter-spacing:.4px;color:#fff}
+#scr .glnd h1{position:relative;margin-top:6px;font:italic 900 40px/1 Montserrat,sans-serif;letter-spacing:-1px;text-transform:uppercase;background:var(--mb-chrome);-webkit-background-clip:text;background-clip:text;color:transparent;padding:0 4px}
+#scr .glnd .gl-box{position:relative;flex:1;min-height:0;width:100%;display:grid;place-items:center}
+#scr .glnd .gl-box img{width:min(78vw,300px);max-height:100%;object-fit:contain;animation:glFloat 3.2s ease-in-out infinite;filter:drop-shadow(0 26px 36px rgba(0,0,0,.7))}
+#scr .glnd .gl-tag{position:relative;font:italic 900 22px/1 Montserrat,sans-serif;text-transform:uppercase;background:var(--mb-chrome);-webkit-background-clip:text;background-clip:text;color:transparent;padding:0 3px}
+#scr .glnd .gl-sub{position:relative;margin-top:6px;font:600 13px/1.4 Montserrat,sans-serif;color:var(--mb-text-2)}
+#scr .glnd .gl-cta{position:relative;margin-top:22px;width:100%;max-width:360px;height:58px;border:0;cursor:pointer;background:var(--mb-chrome-btn);color:#0b0d12;font:italic 900 19px/1 Montserrat,sans-serif;letter-spacing:.3px;
+ clip-path:polygon(16px 0,100% 0,100% calc(100% - 16px),calc(100% - 16px) 100%,0 100%,0 16px);display:flex;align-items:center;justify-content:center;gap:10px}
+#scr .glnd .gl-cta:active{transform:translateY(2px)}
+#scr .glnd .gl-fine{position:relative;margin-top:14px;font:600 11px/1.4 Montserrat,sans-serif;color:var(--mb-text-3)}
+@keyframes glFloat{0%,100%{transform:translateY(0) rotate(-1deg)}50%{transform:translateY(-10px) rotate(1deg)}}
+@media (prefers-reduced-motion:reduce){#scr .glnd .gl-box img{animation:none}}
 </style><link rel="stylesheet" href="assets/mb2.css"><style>
 /* ===== MistyBox canvas design system: every screen (port of claude.ai canvas v61) ===== */
 #scr{--mb-line:rgba(255,255,255,.12);--mb-line-2:rgba(255,255,255,.22);--mb-text-2:#c3c7cf;--mb-text-3:#9196a1;--mb-gold:#e9c15a;--mb-green:#3fcf8e;
@@ -2168,6 +2188,22 @@ addEventListener('resize',fit);fit();
 /* boot */
 applyBg();[...dots.children][0].classList.add('on');theme(BOXES[0]);paintBox();paintBal();paintSnd();renderSR();renderCol();renderLB();tickReset();
 const h=location.hash.slice(1);if(['showroom','collection','leaderboard','account'].includes(h))show(h);
+/* ---------- gift links: ?gift=<id> opens a gift landing for that friend (2026-11-19) ---------- */
+const GIFTS={martin:{to:'Martin',from:'Sharon Tal',box:'gold'}};   // gold = Legacy, the prismatic enamel box
+setTimeout(()=>{const id=new URLSearchParams(location.search).get('gift'),g=id&&GIFTS[id.toLowerCase()];if(!g)return;
+ const bi=BOXES.findIndex(b=>b.key===g.box&&b.cube);if(bi<0)return;const b=BOXES[bi];
+ go(bi,1);document.title='A MistyBox gift from '+g.from;
+ const el=document.createElement('section');el.className='glnd';el.id='giftLand';el.setAttribute('aria-labelledby','glT');
+ el.innerHTML=`<div class="gl-sw"></div><div class="gl-glow"></div><div class="gl-ey">A gift for ${esc(g.to)}</div><div class="gl-pre">Here’s a gift from</div><h1 id="glT">${esc(g.from)}</h1>
+  <div class="gl-box"><img src="${b.img}" alt="${esc(b.tier)} box, ${esc(b.skin)}"></div>
+  <div class="gl-tag">${esc(b.tier)} box</div><div class="gl-sub">${esc(b.skin)} · real watches up to ${money(b.max)}</div>
+  <button type="button" class="gl-cta" id="glOpen">OPEN YOUR GIFT <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+  <div class="gl-fine">Already paid for by ${esc(g.from.split(' ')[0])} · every watch authenticated &amp; insured</div>`;
+ scr.appendChild(el);
+ el.querySelector('#glOpen').onclick=()=>{try{SFX.tap()}catch(e){}el.classList.add('out');setTimeout(()=>el.remove(),500);
+  if(curView!=='boxes')show('boxes');go(bi,1);S.bal+=b.price;   // the sender already paid: opening is free for the friend
+  setTimeout(()=>openBox(bi),350)}},0);   // after the rest of the app script has set up its views
+
 </script>
 
 <script>
