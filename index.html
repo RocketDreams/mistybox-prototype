@@ -748,6 +748,27 @@ html,body{overscroll-behavior:none}
  clip-path:polygon(16px 0,100% 0,100% calc(100% - 16px),calc(100% - 16px) 100%,0 100%,0 16px);display:flex;align-items:center;justify-content:center;gap:10px}
 #scr .glnd .gl-cta:active{transform:translateY(2px)}
 #scr .glnd .gl-fine{position:relative;margin-top:14px;font:600 11px/1.4 Montserrat,sans-serif;color:var(--mb-text-3)}
+
+/* gift note: blinking envelope -> short thank-you message from the sender */
+#scr .glnd .gl-env{position:absolute;z-index:3;top:calc(env(safe-area-inset-top,0px) + 14px);right:16px;width:52px;height:52px;border-radius:50%;border:1px solid rgba(255,255,255,.35);
+ background:radial-gradient(circle at 50% 35%,#2a2a33,#0c0c10);color:#fff;display:grid;place-items:center;cursor:pointer;animation:envBlink 1.4s ease-in-out infinite}
+#scr .glnd .gl-env::after{content:"";position:absolute;inset:-6px;border-radius:50%;border:2px solid rgba(255,255,255,.55);animation:envRing 1.4s ease-out infinite}
+#scr .glnd .gl-env .dot{position:absolute;top:6px;right:6px;width:11px;height:11px;border-radius:50%;background:#ff3b5c;box-shadow:0 0 10px #ff3b5c;border:2px solid #0c0c10}
+#scr .glnd .gl-env.read{animation:none}#scr .glnd .gl-env.read::after,#scr .glnd .gl-env.read .dot{display:none}
+@keyframes envBlink{0%,100%{box-shadow:0 0 0 rgba(255,255,255,0);transform:scale(1)}50%{box-shadow:0 0 22px rgba(255,255,255,.55);transform:scale(1.08)}}
+@keyframes envRing{0%{transform:scale(.85);opacity:.9}100%{transform:scale(1.45);opacity:0}}
+#scr .glnd .gl-note{position:absolute;inset:0;z-index:5;display:flex;align-items:center;justify-content:center;padding:24px;background:rgba(0,0,0,.72);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);opacity:0;pointer-events:none;transition:opacity .3s}
+#scr .glnd .gl-note.on{opacity:1;pointer-events:auto}
+#scr .glnd .gl-card{position:relative;width:100%;max-width:360px;text-align:left;padding:30px 24px 24px;border-radius:24px;background:linear-gradient(180deg,#17171c,#0d0d11);border:1px solid rgba(255,255,255,.18);box-shadow:0 30px 80px rgba(0,0,0,.7);transform:translateY(16px) scale(.97);transition:transform .35s cubic-bezier(.2,.9,.25,1)}
+#scr .glnd .gl-note.on .gl-card{transform:none}
+#scr .glnd .gl-card .ic{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;background:var(--mb-chrome-btn);color:#0b0d12;margin-bottom:16px}
+#scr .glnd .gl-card h2{font:italic 900 26px/1.05 Montserrat,sans-serif;text-transform:uppercase;background:var(--mb-chrome);-webkit-background-clip:text;background-clip:text;color:transparent;padding-right:4px}
+#scr .glnd .gl-card p{margin-top:12px;font:500 15px/1.55 Montserrat,sans-serif;color:#e4e6ea}
+#scr .glnd .gl-card .sig{margin-top:18px;font:600 13px/1.4 Montserrat,sans-serif;color:var(--mb-text-3)}
+#scr .glnd .gl-card .sig b{display:block;margin-top:2px;font:italic 900 20px/1.1 Montserrat,sans-serif;background:var(--mb-chrome);-webkit-background-clip:text;background-clip:text;color:transparent;padding-right:3px}
+#scr .glnd .gl-card .x{position:absolute;top:14px;right:14px;width:40px;height:40px;border-radius:50%;border:1px solid rgba(255,255,255,.22);background:#141418;color:#fff;display:grid;place-items:center;cursor:pointer}
+#scr .glnd .gl-card .ok{margin-top:22px;width:100%;height:52px;border:0;cursor:pointer;background:var(--mb-chrome-btn);color:#0b0d12;font:italic 900 17px/1 Montserrat,sans-serif;clip-path:polygon(14px 0,100% 0,100% calc(100% - 14px),calc(100% - 14px) 100%,0 100%,0 14px)}
+@media (prefers-reduced-motion:reduce){#scr .glnd .gl-env,#scr .glnd .gl-env::after{animation:none}}
 @keyframes glFloat{0%,100%{transform:translateY(0) rotate(-1deg)}50%{transform:translateY(-10px) rotate(1deg)}}
 @media (prefers-reduced-motion:reduce){#scr .glnd .gl-box img{animation:none}}
 </style><link rel="stylesheet" href="assets/mb2.css"><style>
@@ -2201,14 +2222,27 @@ setTimeout(()=>{const id=new URLSearchParams(location.search).get('gift'),g=id&&
  const bi=BOXES.findIndex(b=>b.key===g.box&&b.cube);if(bi<0)return;const b=BOXES[bi];
  go(bi,1);document.title='A MistyBox gift from '+g.from;
  const el=document.createElement('section');el.className='glnd';el.id='giftLand';el.setAttribute('aria-labelledby','glT');
- el.innerHTML=`<div class="gl-sw"></div><div class="gl-glow"></div><div class="gl-ey">A gift for ${esc(g.to)}</div><div class="gl-pre">Here’s a gift from</div><h1 id="glT">${esc(g.from)}</h1>
+ const first=esc(g.first||g.to.split(' ')[0]);
+ el.innerHTML=`<div class="gl-sw"></div><div class="gl-glow"></div><button type="button" class="gl-env" id="glEnv" aria-label="A note from ${esc(g.from)}" aria-haspopup="dialog"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5.5" width="18" height="13" rx="2"/><path d="M3.5 7l8.5 6.2L20.5 7"/></svg><i class="dot"></i></button><div class="gl-ey">A gift for ${esc(g.to)}</div><div class="gl-pre">Here’s a gift from</div><h1 id="glT">${esc(g.from)}</h1>
   <div class="gl-box" role="img" aria-label="${esc(b.tier)} box, ${esc(b.skin)}. Drag to turn it."><img src="${b.img}" alt=""></div>
   <div class="gl-hint" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11V5.5a1.5 1.5 0 0 1 3 0V11"/><path d="M12 10.5V4.5a1.5 1.5 0 0 1 3 0v6"/><path d="M15 10.5V6.5a1.5 1.5 0 0 1 3 0V14a6 6 0 0 1-6 6h-1a6 6 0 0 1-5-2.7L3.6 14a1.6 1.6 0 0 1 2.6-1.8L9 15"/></svg>Drag to turn the box</div>
   <div class="gl-tag">${esc(b.tier)} box</div><div class="gl-sub">${esc(b.skin)} · real watches up to ${money(b.max)}</div>
   <button type="button" class="gl-cta" id="glOpen">OPEN YOUR GIFT <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
-  <div class="gl-fine">Already paid for by ${esc(g.from.split(' ')[0])} · every watch authenticated &amp; insured</div>`;
+  <div class="gl-fine">Already paid for by ${esc(g.from.split(' ')[0])} · every watch authenticated &amp; insured</div>
+  <div class="gl-note" id="glNote" role="dialog" aria-modal="true" aria-labelledby="glNoteT"><div class="gl-card">
+   <button type="button" class="x" id="glNoteX" aria-label="Close"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+   <div class="ic"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5.5" width="18" height="13" rx="2"/><path d="M3.5 7l8.5 6.2L20.5 7"/></svg></div>
+   <h2 id="glNoteT">Hi ${first},</h2>
+   <p>I wanted to say thank you for everything. As a token of my appreciation, I got you a mystery box with something inside that I hope you’ll love.</p>
+   <div class="sig">With gratitude,<b>${esc(g.from)}</b></div>
+   <button type="button" class="ok" id="glNoteOk">OPEN YOUR GIFT</button>
+  </div></div>`;
  scr.appendChild(el);
- const gb=el.querySelector('.gl-box'),gh=el.querySelector('.gl-hint');
+ const gb=el.querySelector('.gl-box'),gh=el.querySelector('.gl-hint'),env=el.querySelector('#glEnv'),note=el.querySelector('#glNote');
+ const noteOn=v=>{note.classList.toggle('on',v);if(v){env.classList.add('read');try{SFX.tap()}catch(e){}setTimeout(()=>el.querySelector('#glNoteX').focus({preventScroll:true}),60)}else env.focus({preventScroll:true})};
+ env.onclick=()=>noteOn(true);el.querySelector('#glNoteX').onclick=()=>noteOn(false);note.onclick=e=>{if(e.target===note)noteOn(false)};
+ el.querySelector('#glNoteOk').onclick=()=>{note.classList.remove('on');el.querySelector('#glOpen').click()};
+ addEventListener('keydown',e=>{if(e.key==='Escape'&&note.classList.contains('on'))noteOn(false)});
  const mount=()=>{try{window.MB3D.viewer(gb,b,{ready:()=>{gb.classList.add('three');gh.classList.add('on')},moved:()=>gh.classList.add('gone')})}catch(e){console.warn('gift 3D off',e)}};
  if(window.MB3D&&window.MB3D.viewer)mount();else addEventListener('mb3d-ready',mount,{once:true});
  el.querySelector('#glOpen').onclick=()=>{try{SFX.tap()}catch(e){}el.classList.add('out');setTimeout(()=>el.remove(),500);
