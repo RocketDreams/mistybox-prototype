@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 390 844" width="390" height="844" preserveAspectRatio="xMidYMin slice">
+  <defs>
+    <linearGradient id="g1" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#9ea3ad" stop-opacity="0"></stop>
+      <stop offset="0.55" stop-color="#9ea3ad" stop-opacity="0.26"></stop>
+      <stop offset="0.86" stop-color="#dfe2e8" stop-opacity="0.36"></stop>
+      <stop offset="1" stop-color="#dfe2e8" stop-opacity="0"></stop>
+    </linearGradient>
+    <linearGradient id="g2" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#9ea3ad" stop-opacity="0"></stop>
+      <stop offset="0.6" stop-color="#9ea3ad" stop-opacity="0.16"></stop>
+      <stop offset="0.88" stop-color="#c8ccd4" stop-opacity="0.24"></stop>
+      <stop offset="1" stop-color="#c8ccd4" stop-opacity="0"></stop>
+    </linearGradient>
+    <linearGradient id="g3" x1="1" y1="0" x2="0" y2="0">
+      <stop offset="0" stop-color="#9ea3ad" stop-opacity="0"></stop>
+      <stop offset="0.6" stop-color="#9ea3ad" stop-opacity="0.12"></stop>
+      <stop offset="0.9" stop-color="#c8ccd4" stop-opacity="0.18"></stop>
+      <stop offset="1" stop-color="#c8ccd4" stop-opacity="0"></stop>
+    </linearGradient>
+  </defs>
+  <path d="M-40,150 Q110,154 410,-20 Q130,118 -40,150 Z" fill="url(#g2)"></path>
+  <path d="M430,236 Q280,238 -20,92 Q262,208 430,236 Z" fill="url(#g3)"></path>
+  <path d="M-30,330 Q120,332 412,64 Q132,288 -30,330 Z" fill="url(#g1)"></path>
+  <path d="M40,382 Q222,384 432,166 Q232,346 40,382 Z" fill="url(#g2)"></path>
+  <path d="M-40,486 Q140,486 420,300 Q150,448 -40,486 Z" fill="url(#g1)"></path>
+  <path d="M430,560 Q260,560 -30,420 Q240,530 430,560 Z" fill="url(#g3)"></path>
+  <path d="M-40,646 Q112,646 404,466 Q124,606 -40,646 Z" fill="url(#g1)"></path>
+  <path d="M118,706 Q282,704 444,556 Q292,672 118,706 Z" fill="url(#g2)"></path>
+  <path d="M430,770 Q250,770 -30,650 Q230,742 430,770 Z" fill="url(#g3)"></path>
+  <path d="M-30,836 Q152,834 412,698 Q162,802 -30,836 Z" fill="url(#g1)"></path>
+</svg>

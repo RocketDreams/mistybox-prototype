@@ -1042,8 +1042,21 @@ html,body{overscroll-behavior:none}
 .reveal .holo-beam .cap{position:absolute;left:0;right:0;top:-14px;height:28px;border-radius:50%;background:radial-gradient(closest-side,rgba(160,240,255,.22),rgba(160,240,255,.05) 70%,transparent);border:1px solid rgba(160,240,255,.18);filter:blur(1px)}
 /* bottom nav */
 #scr .nav{background:#000!important;border-top:1px solid var(--mb-line)!important;box-shadow:none!important}
+</style><style id="boot-css">
+#boot{position:fixed;inset:0;z-index:2147483000;background:#000;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .55s ease}
+#boot.done{opacity:0;pointer-events:none}
+#boot .bt-sw{position:absolute;inset:-16px;background:url(assets/swoosh.svg) center top/100% auto no-repeat;opacity:.9;animation:btDrift 9s ease-in-out infinite alternate}
+#boot .bt-glow{position:absolute;left:50%;top:44%;width:520px;height:520px;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(closest-side,rgba(255,255,255,.10),rgba(255,255,255,0))}
+#boot .bt-mark{position:relative;width:80px;height:auto;display:block;animation:btPulse 1.8s ease-in-out infinite}
+#boot .bt-bar{position:relative;margin-top:44px;width:120px;height:3px;border-radius:2px;background:rgba(255,255,255,.14);overflow:hidden}
+#boot .bt-bar i{position:absolute;left:0;top:0;bottom:0;width:0;background:linear-gradient(90deg,#9aa0aa,#fff);transition:width .25s ease-out}
+#boot .bt-txt{position:relative;margin-top:16px;font:700 11px/1 Montserrat,system-ui,sans-serif;letter-spacing:2.4px;text-transform:uppercase;color:#9196a1}
+@keyframes btPulse{0%,100%{transform:scale(1);filter:drop-shadow(0 0 0 rgba(255,255,255,0))}50%{transform:scale(1.04);filter:drop-shadow(0 0 14px rgba(255,255,255,.35))}}
+@keyframes btDrift{to{transform:translate3d(6px,-6px,0) scale(1.03)}}
+@media (prefers-reduced-motion:reduce){#boot .bt-sw,#boot .bt-mark{animation:none}}
 </style></head>
 <body>
+<div id="boot" role="status" aria-live="polite" aria-label="Loading MistyBox"><div class="bt-sw"></div><div class="bt-glow"></div><img class="bt-mark" src="assets/mark.png" alt="MistyBox"><div class="bt-bar"><i></i></div><div class="bt-txt">Loading <span id="bootPct">0%</span></div></div>
 <div class="stage-glow" id="sg"></div>
 <button class="snd" id="snd" type="button"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path id="sndw" d="M15.5 8.5a5 5 0 0 1 0 7M19 5a10 10 0 0 1 0 14"/></svg><span id="sndt">Sound on</span></button>
 <div class="phone" id="phone"><div class="screen" id="scr">
@@ -2120,6 +2133,41 @@ applyBg();[...dots.children][0].classList.add('on');theme(BOXES[0]);paintBox();p
 const h=location.hash.slice(1);if(['showroom','collection','leaderboard','account'].includes(h))show(h);
 </script>
 
+<script>
+/* Boot preloader (2026-11-19): really download + decode every asset before the app shows, so the first session has no lag.
+   Phase A: byte-tracked download of all images, 3D models and textures. Phase B: the 3D module parses every model and
+   compiles its shaders/uploads its textures on the GPU. Then fonts, then the loading screen fades out. */
+(()=>{const boot=document.getElementById('boot'),bar=boot.querySelector('.bt-bar i'),pct=document.getElementById('bootPct');
+ const T0=performance.now();let shown=0;
+ const set=v=>{v=Math.max(shown,Math.min(1,v));shown=v;bar.style.width=(v*100).toFixed(1)+'%';pct.textContent=Math.round(v*100)+'%'};
+ const CUBE_GLB={alu:'case.glb',carbon:'case_carbon.glb',zebra:'case_carbon.glb',zebrafur:'case_carbon.glb',hearts:'case_hearts.glb',hoops:'case_hoops.glb',leather:'case_leather.glb',redleather:'case_leather.glb'};
+ const imgs=new Set(['assets/logo-white.png','assets/wallet-plus.png','assets/mk/logo.png','assets/mk/bg.jpg','assets/mk/bg_top.jpg','assets/mk/bg_bot.jpg','assets/mk/i_star.png','assets/mk/i_gift.png',
+   'assets/mk/n_boxes.png','assets/mk/n_showroom.png','assets/mk/n_collection.png','assets/mk/n_leaderboard.png','assets/mk/n_account.png']);
+ const three=new Set(), opt=new Set();
+ BOXES.forEach(b=>{imgs.add(b.img);if(b.led&&!/none\.png$/.test(b.led))imgs.add(b.led);
+   if(b.cube){three.add('assets/3d/'+CUBE_GLB[b.cube]);if(/leather/.test(b.cube))['leather_col.jpg','leather_red_col.jpg','leather_rough.jpg','leather_nrm.jpg'].forEach(f=>three.add('assets/3d/'+f));if(/zebra/.test(b.cube))three.add('assets/3d/zebra_fur.jpg')}
+   else{const m=/3d\/(\w+)-box/.exec(b.img);if(m){three.add('assets/3d/'+m[1]+'.glb');['_front','lid_front','side_front'].forEach(x=>opt.add('assets/3d/'+m[1]+x+'.png'))}}});
+ ALL.forEach(i=>imgs.add(i.img));
+ const list=[...three].map(u=>({u,w:2e6})).concat([...opt].map(u=>({u,w:4e5,opt:1})),[...imgs].map(u=>({u,w:6e4})));
+ const keep=window.__mbAssets=[];let got=0,want=list.reduce((a,x)=>a+x.w,0);
+ const one=async it=>{try{const r=await fetch(it.u);if(!r.ok)throw 0;const len=+r.headers.get('content-length')||0;if(len){want+=len-it.w;it.w=len}
+     const rd=r.body&&r.body.getReader();let n=0;if(rd){for(;;){const {done,value}=await rd.read();if(done)break;n+=value.length;got+=value.length;tick()}} else {const b=await r.arrayBuffer();n=b.byteLength;got+=n}
+     if(!len){want+=n-it.w;it.w=n}
+     if(/\.(webp|png|jpe?g)$/i.test(it.u)&&!/\/3d\/[^/]+_front|leather_|zebra_fur/.test(it.u)){const im=new Image();im.decoding='async';im.src=it.u;keep.push(im);try{await im.decode()}catch(e){}}
+   }catch(e){want-=it.w;it.w=0} tick()};
+ let p3=0;const tick=()=>set(.8*(want?got/want:1)+.17*p3);
+ const pool=async(items,n)=>{let i=0;await Promise.all(Array.from({length:n},async()=>{while(i<items.length)await one(items[i++])}))};
+ window.__mbPrefetch=pool(list.sort((a,b)=>b.w-a.w),6);           // 3D module waits for this before its first model load (no double download)
+ const ready3d=new Promise(res=>{if(window.__mb3d)return res(window.__mb3d);addEventListener('mb3d-ready',()=>res(window.__mb3d),{once:true});addEventListener('mb3d-failed',()=>res(null),{once:true})});
+ const fonts=()=>Promise.all(['900 italic 20px Montserrat','800 italic 20px Montserrat','800 20px Montserrat','700 20px Montserrat','600 20px Montserrat','500 20px Montserrat','800 italic 20px Poppins','700 20px Poppins','600 20px Poppins','400 20px Poppins'].map(f=>document.fonts.load(f).catch(()=>{}))).then(()=>document.fonts.ready);
+ const finish=()=>{if(boot.classList.contains('done'))return;set(1);window.__mbBooted=true;const wait=Math.max(0,900-(performance.now()-T0));
+   setTimeout(()=>{boot.classList.add('done');setTimeout(()=>boot.remove(),700);dispatchEvent(new Event('mb-booted'))},wait+200)};
+ const all=window.__mbPrefetch.then(()=>Promise.race([ready3d,new Promise(r=>setTimeout(()=>r(null),20000))]))
+   .then(m=>m?m.warmAll(f=>{p3=f;tick()}):null).catch(e=>console.warn('boot 3D warm-up:',e)).then(()=>{p3=1;tick();return fonts()});
+ all.then(finish,finish);
+ setTimeout(finish,90000);   // never trap the user behind the loader
+})();
+</script>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"}}</script>
 <script type="module">
 // Live 3D box in the hero. Reads the classic script's globals (BOXES, cur, curView); falls back to the images on any error.
@@ -2470,14 +2518,24 @@ window.MB3D.picker = function(pk, b, cb){
         const dy = (r2.cy - r.cy) / .1, dx = (r3.cx - r.cx) / .1; if(dy) p.y += (rect.cy - r.cy) / dy; if(dx) p.x += (rect.cx - r.cx) / dx }
       fly = {from: h.position.clone(), to: p, t0: performance.now(), ms: ms || 600}; return true } };
 };
-const first = load(keyOf(BOXES[typeof cur !== 'undefined' ? cur : 0])).then(() => { hero.classList.add('has3d'); size(); });
+const first = (window.__mbPrefetch || Promise.resolve()).then(() => load(keyOf(BOXES[typeof cur !== 'undefined' ? cur : 0]))).then(() => { hero.classList.add('has3d'); size(); });
+{ const LM = THREE.DefaultLoadingManager; let busy = 0; const s0 = LM.itemStart.bind(LM), e0 = LM.itemEnd.bind(LM), x0 = LM.itemError.bind(LM);
+  LM.itemStart = u => { busy++; s0(u) }; LM.itemEnd = u => { busy--; e0(u) }; LM.itemError = u => { busy--; x0(u) };
+  const idleTex = () => new Promise(r => { const t0 = performance.now(), chk = () => (busy <= 0 || performance.now() - t0 > 15000) ? r() : setTimeout(chk, 50); chk() });
+  const gpu = m => { const tmp = new THREE.Scene(); tmp.environment = S.environment; const par = m.parent; tmp.add(m); R.compile(tmp, cam);
+    m.traverse(o => { if(o.isMesh){ for(const mm of [].concat(o.material)) for(const t of ['map','normalMap','roughnessMap','metalnessMap','bumpMap','emissiveMap','alphaMap','envMap']) if(mm[t] && mm[t].image) R.initTexture(mm[t]) } });
+    tmp.remove(m); if(par) par.add(m) };
+  window.__mb3d = { async warmAll(prog){ const keys = [...new Set(BOXES.map(keyOf))], ms = [];
+      for(let i = 0; i < keys.length; i++){ try { ms.push(await load(keys[i])) } catch(e){ console.warn('3D preload', keys[i], e) } prog && prog((i + 1) / keys.length * .7) }
+      await idleTex(); for(let i = 0; i < ms.length; i++){ try { if(!ms[i].parent) gpu(ms[i]) } catch(e){} prog && prog(.7 + (i + 1) / ms.length * .3); await new Promise(r => setTimeout(r, 0)) } } };
+  dispatchEvent(new Event('mb3d-ready')); }
 first.then(() => { const keys = [...new Set(BOXES.map(keyOf))], idle = f => (window.requestIdleCallback ? requestIdleCallback(f, {timeout: 1500}) : setTimeout(f, 300));
   const warm = i => { if(i >= keys.length) return; idle(() => load(keys[i]).then(m => { if(m.parent){ warm(i + 1); return } try { const tmp = new THREE.Scene(); tmp.environment = S.environment; tmp.add(m); R.compile(tmp, cam);
       m.traverse(o => { if(o.isMesh){ for(const mm of [].concat(o.material)) for(const t of ['map','normalMap','roughnessMap','metalnessMap','bumpMap','emissiveMap','alphaMap']) if(mm[t]) R.initTexture(mm[t]) } }); tmp.remove(m) } catch(e){} warm(i + 1) }).catch(() => warm(i + 1))) };
-  setTimeout(() => warm(0), 1200) });
+  if(!window.__mbBooted && !window.__mb3d) setTimeout(() => warm(0), 1200) });
 first.catch(err => { console.warn('3D hero off:', err); cv.remove(); });
 frame();
-} catch(err) { console.warn('3D hero off:', err); }
+} catch(err) { console.warn('3D hero off:', err); dispatchEvent(new Event('mb3d-failed')); }
 </script>
 
 <script>
