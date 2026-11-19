@@ -2190,7 +2190,7 @@ addEventListener('resize',fit);fit();
 applyBg();[...dots.children][0].classList.add('on');theme(BOXES[0]);paintBox();paintBal();paintSnd();renderSR();renderCol();renderLB();tickReset();
 const h=location.hash.slice(1);if(['showroom','collection','leaderboard','account'].includes(h))show(h);
 /* ---------- gift links: ?gift=<id> opens a gift landing for that friend (2026-11-19) ---------- */
-const GIFTS={martin:{to:'Martin',from:'Sharon Tal',box:'gold'},marius:{to:'Marius',from:'Sharon Tal',box:'gold'},peter:{to:'Peter Marcus',from:'Sharon Tal',box:'gold'}};   // gold = Legacy, the prismatic enamel box
+const GIFTS={martin:{to:'Martin',from:'Sharon Tal',box:'gold'},marius:{to:'Marius',from:'Sharon Tal',box:'gold'},peter:{to:'Peter Marcus',from:'Sharon Tal',box:'gold'},mike:{to:'Mike Vasiloudis',from:'Sharon Tal',box:'gold'}};   // gold = Legacy, the prismatic enamel box
 setTimeout(()=>{const id=new URLSearchParams(location.search).get('gift'),g=id&&GIFTS[id.toLowerCase()];if(!g)return;
  const bi=BOXES.findIndex(b=>b.key===g.box&&b.cube);if(bi<0)return;const b=BOXES[bi];
  go(bi,1);document.title='A MistyBox gift from '+g.from;
