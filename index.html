@@ -1048,7 +1048,9 @@ html,body{overscroll-behavior:none}
 .reveal .holo .hc{border:0!important;background:none!important;box-shadow:none!important;overflow:visible!important;height:200px!important}
 .reveal .holo .hc::after{display:none!important}
 .reveal .holo .hi img{filter:grayscale(1) sepia(1) hue-rotate(150deg) saturate(2.6) brightness(1.2) drop-shadow(0 0 10px rgba(127,233,255,.7))!important;opacity:.82}
-.reveal .holo .hlay .hi{-webkit-mask-image:repeating-linear-gradient(0deg,#000 0 2px,rgba(0,0,0,.55) 2px 3px);mask-image:repeating-linear-gradient(0deg,#000 0 2px,rgba(0,0,0,.55) 2px 3px)}
+.reveal .holo .hlay .hi{-webkit-mask-image:none;mask-image:none}
+.reveal .holo .hc::after{content:"";position:absolute;inset:0;z-index:300;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(0,0,0,0) 0 2px,rgba(0,0,0,.38) 2px 3px);transition:opacity .35s}
+.reveal .holo.lock .hc::after{opacity:0}   /* perf: one static scanline overlay instead of a mask on every moving card */
 .reveal .holo .ht{text-shadow:0 0 8px rgba(127,233,255,.8)}
 .reveal .holo.lock .hc{box-shadow:none!important}
 .reveal .holo.lock .hlay.cur .hi{-webkit-mask-image:none;mask-image:none}
@@ -1529,7 +1531,7 @@ function startSwoosh(){if(SWON)return;SWON=1;
    const gr=g.createLinearGradient(x0+ox,y0+oy,x1+ox,y1+oy);const pp=.28+.5*(((ts/PER)*.8+k*.37)%1);   // a light sheen travelling along the swoosh
    gr.addColorStop(0,'rgba(150,150,158,0)');gr.addColorStop(.14,`rgba(150,150,158,${al*.6})`);gr.addColorStop(pp-.13,`rgba(160,160,168,${al})`);gr.addColorStop(pp,`rgba(225,225,235,${Math.min(.75,al*2.1)})`);gr.addColorStop(pp+.13,`rgba(170,170,180,${al})`);gr.addColorStop(.93,`rgba(185,185,195,${al*.8})`);gr.addColorStop(1,'rgba(185,185,195,0)');
    g.fillStyle=gr;g.fill();g.beginPath();g.moveTo(T[0][0],T[0][1]);for(const q of T)g.lineTo(q[0],q[1]);g.lineWidth=Math.max(.6,.8*U);g.strokeStyle=gr;g.globalAlpha=.6;g.stroke();g.globalAlpha=1})};
- const step=t=>{requestAnimationFrame(step);if(t-last<33||document.hidden||document.querySelector('.pk-on'))return;last=t;draw(RM?0:t)};
+ const step=t=>{requestAnimationFrame(step);if(t-last<33||document.hidden||document.querySelector('.pk-on,.rv-on'))return;last=t;draw(RM?0:t)};   // frozen during the box picker + opening (perf, esp. Safari)
  draw(0);requestAnimationFrame(step)}
 /* embers: small sparks drifting up (own canvas, cheap) */
 let EMB=null,FIRE_BOT=0;
@@ -2618,7 +2620,8 @@ window.MB3D.reveal = function(boxEl, b){
       spill.intensity = openAt ? Math.min(2, to * 5) : 0;
       GY.sx += (GY.x - GY.sx) * .12; GY.sy += (GY.y - GY.sy) * .12;
       holder.rotation.y = (boxEl._rotY != null ? boxEl._rotY : (openAt ? 0 : .05 * Math.sin(t * 1.3))) + (boxEl._front ? 0 : GY.sx * .35); holder.rotation.x = GY.sy * .12 + (boxEl._rx || 0); holder.rotation.z = boxEl._rz || 0;
-      R2.render(S2, C2); gl2.render(S2, C2, .35); if(!openAt) window.MB3D.lastReveal = window.MB3D.screenRect(holder, C2, cv2); boxEl._measure = y => { const o2 = holder.rotation.y; holder.rotation.y = y; holder.updateMatrixWorld(true); const r = window.MB3D.screenRect(holder, C2, cv2); holder.rotation.y = o2; holder.updateMatrixWorld(true); return r.w };
+      const thin = openAt && now - openAt > 1800 && ((boxEl._fc = (boxEl._fc || 0) + 1) & 1);   // perf: 30 fps once the lid has settled
+      if(!thin){ R2.render(S2, C2); gl2.render(S2, C2, .35) } if(!openAt) window.MB3D.lastReveal = window.MB3D.screenRect(holder, C2, cv2); boxEl._measure = y => { const o2 = holder.rotation.y; holder.rotation.y = y; holder.updateMatrixWorld(true); const r = window.MB3D.screenRect(holder, C2, cv2); holder.rotation.y = o2; holder.updateMatrixWorld(true); return r.w };
     };
     requestAnimationFrame(step);
   }).catch(err => console.warn('3D reveal off:', err));
