@@ -1830,7 +1830,8 @@ function OBOX(b){const G=GEO[b.key==='icy'?'crown':'std'],sm=G.seam,pt=p=>`${p[0
 
 /* opening v2: the closed box spins on its axis and strains to open while it projects holograms of the watches inside;
    they cycle, slow down and lock on the winner, then the lid opens and that watch rises out of the box */
-function openBox(bi){const b=BOXES[bi];scr.scrollTop=0;S.bal-=b.price;S.pts+=b.price*5;save();paintBal();
+function openBox(bi){const b=BOXES[bi];scr.scrollTop=0;if(window.__giftFree===bi)window.__giftFree=null;else S.bal-=b.price;   // a gift's first open is already paid for
+ S.pts+=b.price*5;save();paintBal();
  const win=draw(b);lastWin={id:win.id,box:bi};
  const rv=$('#reveal'),W=scr.clientWidth,H=scr.clientHeight,cx=W/2,boxY=Math.min(H-140,Math.max(H*.58,512));
  const OB=OBOX(b),RA=(window.MB3D&&window.MB3D.anchor)?window.MB3D.anchor(b):null,BW=Math.min(255,W*.68),BH=BW*(760/900),hX=cx-BW/2+BW*(RA?RA.hx:OB.hx)/100,hY=boxY-BH/2+BH*(RA?RA.hy:OB.hy)/100;
@@ -2201,8 +2202,8 @@ setTimeout(()=>{const id=new URLSearchParams(location.search).get('gift'),g=id&&
   <div class="gl-fine">Already paid for by ${esc(g.from.split(' ')[0])} · every watch authenticated &amp; insured</div>`;
  scr.appendChild(el);
  el.querySelector('#glOpen').onclick=()=>{try{SFX.tap()}catch(e){}el.classList.add('out');setTimeout(()=>el.remove(),500);
-  if(curView!=='boxes')show('boxes');go(bi,1);S.bal+=b.price;   // the sender already paid: opening is free for the friend
-  setTimeout(()=>openBox(bi),350)}},0);   // after the rest of the app script has set up its views
+  if(curView!=='boxes')show('boxes');go(bi,1);window.__giftFree=bi;   // the sender already paid: the friend's open is free
+  setTimeout(()=>openPicker(bi),350)}},0);   // same as the regular flow: choose your box from the ring, then it opens   // after the rest of the app script has set up its views
 
 </script>
 
