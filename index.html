@@ -1996,7 +1996,7 @@ function openBox(bi){const b=BOXES[bi];scr.scrollTop=0;const GIFT=window.__giftF
   // 4) holograms project out of the open box and cycle
   if(phase===2&&t>=T_HOLO){phase=3;layStrip(stripAt(t));holo.classList.add('on');if(CV_OK){try{cvGeom();CV_ON=true;holo.classList.add('cv');drawCv(stripAt(t))}catch(e){CV_ON=false}}}
   if(phase===3){if(CV_ON)drawCv(stripAt(t));else layStrip(stripAt(t));if(TEN&&t>=T_CUT){TEN.cut();TEN=null;SFX.brake()}
-   if(t>=T_LOCK){phase=4;TEN&&TEN.cut();TEN=null;if(CV_ON){CV_ON=false;lastC=-1}layStrip(WI);holo.classList.remove('cv');show(win,true);SFX.reveal(win.tier);rv.style.setProperty('--rc',RC[win.tier]);emit=4;try{navigator.vibrate&&navigator.vibrate([20,40,40])}catch(e){}}}
+   if(t>=T_LOCK){phase=4;TEN&&TEN.cut();TEN=null;if(CV_ON){CV_ON=false;LY.forEach(n=>n.classList.remove('cur'));lastC=-1}layStrip(WI);holo.classList.remove('cv');show(win,true);SFX.reveal(win.tier);rv.style.setProperty('--rc',RC[win.tier]);emit=4;try{navigator.vibrate&&navigator.vibrate([20,40,40])}catch(e){}}}
   // 5) the chosen watch: transition to its screen
   if(phase===4&&t>=T_CLOSE){phase=5;closeup()}
   if(phase===5&&t>=T_DONE){phase=6;emit=0;finish();return}
