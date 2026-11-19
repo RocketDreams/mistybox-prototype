@@ -735,7 +735,13 @@ html,body{overscroll-behavior:none}
 #scr .glnd .gl-pre{position:relative;margin-top:18px;font:800 15px/1.2 Montserrat,sans-serif;letter-spacing:.4px;color:#fff}
 #scr .glnd h1{position:relative;margin-top:6px;font:italic 900 40px/1 Montserrat,sans-serif;letter-spacing:-1px;text-transform:uppercase;background:var(--mb-chrome);-webkit-background-clip:text;background-clip:text;color:transparent;padding:0 4px}
 #scr .glnd .gl-box{position:relative;flex:1;min-height:0;width:100%;display:grid;place-items:center}
-#scr .glnd .gl-box img{width:min(78vw,300px);max-height:100%;object-fit:contain;animation:glFloat 3.2s ease-in-out infinite;filter:drop-shadow(0 26px 36px rgba(0,0,0,.7))}
+#scr .glnd .gl-box img{width:min(78vw,300px);max-height:100%;object-fit:contain;animation:glFloat 3.2s ease-in-out infinite;filter:drop-shadow(0 26px 36px rgba(0,0,0,.7));transition:opacity .4s}
+#scr .glnd .gl-box{touch-action:none;cursor:grab;-webkit-user-select:none;user-select:none}
+#scr .glnd .gl-box:active{cursor:grabbing}
+#scr .glnd .gl-box canvas.v3d{position:absolute;inset:-8% -12%;width:124%;height:116%;opacity:0;transition:opacity .5s}
+#scr .glnd .gl-box.three canvas.v3d{opacity:1}#scr .glnd .gl-box.three img{opacity:0}
+#scr .glnd .gl-hint{position:relative;display:flex;align-items:center;gap:7px;margin:-4px 0 12px;font:600 11px/1 Montserrat,sans-serif;letter-spacing:1.4px;text-transform:uppercase;color:var(--mb-text-3);opacity:0;transition:opacity .5s}
+#scr .glnd .gl-hint.on{opacity:1}#scr .glnd .gl-hint.gone{opacity:0}
 #scr .glnd .gl-tag{position:relative;font:italic 900 22px/1 Montserrat,sans-serif;text-transform:uppercase;background:var(--mb-chrome);-webkit-background-clip:text;background-clip:text;color:transparent;padding:0 3px}
 #scr .glnd .gl-sub{position:relative;margin-top:6px;font:600 13px/1.4 Montserrat,sans-serif;color:var(--mb-text-2)}
 #scr .glnd .gl-cta{position:relative;margin-top:22px;width:100%;max-width:360px;height:58px;border:0;cursor:pointer;background:var(--mb-chrome-btn);color:#0b0d12;font:italic 900 19px/1 Montserrat,sans-serif;letter-spacing:.3px;
@@ -2196,11 +2202,15 @@ setTimeout(()=>{const id=new URLSearchParams(location.search).get('gift'),g=id&&
  go(bi,1);document.title='A MistyBox gift from '+g.from;
  const el=document.createElement('section');el.className='glnd';el.id='giftLand';el.setAttribute('aria-labelledby','glT');
  el.innerHTML=`<div class="gl-sw"></div><div class="gl-glow"></div><div class="gl-ey">A gift for ${esc(g.to)}</div><div class="gl-pre">Here’s a gift from</div><h1 id="glT">${esc(g.from)}</h1>
-  <div class="gl-box"><img src="${b.img}" alt="${esc(b.tier)} box, ${esc(b.skin)}"></div>
+  <div class="gl-box" role="img" aria-label="${esc(b.tier)} box, ${esc(b.skin)}. Drag to turn it."><img src="${b.img}" alt=""></div>
+  <div class="gl-hint" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11V5.5a1.5 1.5 0 0 1 3 0V11"/><path d="M12 10.5V4.5a1.5 1.5 0 0 1 3 0v6"/><path d="M15 10.5V6.5a1.5 1.5 0 0 1 3 0V14a6 6 0 0 1-6 6h-1a6 6 0 0 1-5-2.7L3.6 14a1.6 1.6 0 0 1 2.6-1.8L9 15"/></svg>Drag to turn the box</div>
   <div class="gl-tag">${esc(b.tier)} box</div><div class="gl-sub">${esc(b.skin)} · real watches up to ${money(b.max)}</div>
   <button type="button" class="gl-cta" id="glOpen">OPEN YOUR GIFT <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
   <div class="gl-fine">Already paid for by ${esc(g.from.split(' ')[0])} · every watch authenticated &amp; insured</div>`;
  scr.appendChild(el);
+ const gb=el.querySelector('.gl-box'),gh=el.querySelector('.gl-hint');
+ const mount=()=>{try{window.MB3D.viewer(gb,b,{ready:()=>{gb.classList.add('three');gh.classList.add('on')},moved:()=>gh.classList.add('gone')})}catch(e){console.warn('gift 3D off',e)}};
+ if(window.MB3D&&window.MB3D.viewer)mount();else addEventListener('mb3d-ready',mount,{once:true});
  el.querySelector('#glOpen').onclick=()=>{try{SFX.tap()}catch(e){}el.classList.add('out');setTimeout(()=>el.remove(),500);
   if(curView!=='boxes')show('boxes');go(bi,1);window.__giftFree=bi;   // the sender already paid: the friend's open is free
   setTimeout(()=>openPicker(bi),350)}},0);   // same as the regular flow: choose your box from the ring, then it opens   // after the rest of the app script has set up its views
@@ -2534,6 +2544,43 @@ window.MB3D.reveal = function(boxEl, b){
     };
     requestAnimationFrame(step);
   }).catch(err => console.warn('3D reveal off:', err));
+};
+// ---- free 3D viewer (gift landing, 2026-11-19): drag to turn the box any way (yaw + tilt), inertia, slow idle spin ----
+window.MB3D.viewer = function(wrap, b, cb){
+  cb = cb || {};
+  const cv = document.createElement('canvas'); cv.className = 'v3d'; wrap.appendChild(cv);
+  const RV = new THREE.WebGLRenderer({canvas: cv, antialias: true, alpha: true});
+  RV.setPixelRatio(Math.min(devicePixelRatio, lowPower ? 1.5 : 2)); RV.setClearColor(0, 0);
+  RV.toneMapping = THREE.ACESFilmicToneMapping; RV.toneMappingExposure = 1.2; RV.outputColorSpace = THREE.SRGBColorSpace;
+  const SV = new THREE.Scene(); SV.environment = S.environment;
+  SV.add(key.clone(), rim.clone(), fill.clone()); { const sp = mkSpot(5.4, 2.6, 30); SV.add(sp, sp.target) }
+  const tilt = new THREE.Group(), spin = new THREE.Group(); tilt.add(spin); SV.add(tilt);
+  const CV = new THREE.PerspectiveCamera(30, 1, .1, 50); CV.position.set(0, 0, 5.4); CV.lookAt(0, 0, 0);
+  const glv = glowLayer(cv);
+  const fit = () => { const w = cv.clientWidth, h = cv.clientHeight; if(!w || !h) return; RV.setSize(w, h, false); glv.size(w, h); CV.aspect = w / h;
+    CV.position.z = Math.max(5.0, 5.0 / Math.min(1, CV.aspect * 1.15)); CV.updateProjectionMatrix() };
+  fit(); addEventListener('resize', fit);
+  let ok = false;
+  load(keyOf(b)).then(src => { if(!cv.isConnected) return; const h = src.clone(true);
+    const bb = new THREE.Box3().setFromObject(h), c = bb.getCenter(new THREE.Vector3()); h.position.sub(c); spin.add(h); ok = true; cb.ready && cb.ready() })
+    .catch(e => { console.warn('3D viewer off', e); cv.remove(); cb.fail && cb.fail() });
+  let yaw = -.62, pitch = .36, vy = 0, vp = 0, drag = false, lx = 0, ly = 0, lt = 0, idleAt = performance.now(), moved = 0;
+  const down = e => { drag = true; lx = e.clientX; ly = e.clientY; lt = performance.now(); vy = vp = 0; moved = 0; try{ wrap.setPointerCapture(e.pointerId) }catch(_){} };
+  const move = e => { if(!drag) return; const now = performance.now(), dx = e.clientX - lx, dy = e.clientY - ly, dt = Math.max(8, now - lt); lx = e.clientX; ly = e.clientY; lt = now;
+    const ky = dx * .009, kp = dy * .007; yaw += ky; pitch = Math.max(-1.35, Math.min(1.45, pitch + kp)); vy = ky / dt * 16; vp = kp / dt * 16; moved += Math.abs(dx) + Math.abs(dy);
+    if(moved > 6 && cb.moved) { cb.moved(); cb.moved = null } };
+  const up = () => { if(!drag) return; drag = false; idleAt = performance.now() };
+  wrap.addEventListener('pointerdown', down); wrap.addEventListener('pointermove', move); wrap.addEventListener('pointerup', up); wrap.addEventListener('pointercancel', up);
+  const clk = new THREE.Clock();
+  const step = () => {
+    if(!cv.isConnected){ removeEventListener('resize', fit); glv.dispose(); RV.dispose(); RV.forceContextLoss(); return }
+    requestAnimationFrame(step); const dt = Math.min(clk.getDelta(), .05);
+    if(!drag){ yaw += vy; pitch = Math.max(-1.35, Math.min(1.45, pitch + vp)); vy *= Math.pow(.05, dt); vp *= Math.pow(.05, dt);     // fling, then ease out
+      if(performance.now() - idleAt > 2200){ yaw += dt * .35; pitch += (.36 - pitch) * Math.min(1, dt * .8) } }            // idle: slow turn, back to a 3/4 view from above
+    spin.rotation.y = yaw; tilt.rotation.x = pitch;
+    if(ok){ RV.render(SV, CV); glv.render(SV, CV, .35) } };
+  requestAnimationFrame(step);
+  return { get ready(){ return ok } };
 };
 // ---- pick-your-box carousel: N clones on a ring, a spotlight on the front slot, drag to turn, snaps to a box ----
 window.MB3D.picker = function(pk, b, cb){
