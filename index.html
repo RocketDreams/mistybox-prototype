@@ -1105,8 +1105,12 @@ html,body{overscroll-behavior:none}
 .reveal .holo .hlay .hi .sp{display:none!important}
 .reveal .holo .hlay .ht{gap:2px!important;margin-top:4px!important}
 .reveal .holo .hlay .ht em{order:-1;opacity:1!important;font:900 italic 32px/1 Montserrat!important;letter-spacing:-.5px;margin:0 0 4px!important}
-.reveal .holo .hlay .ht span,.reveal .holo .hlay .ht b,.reveal .holo .hlay .ht i{opacity:0!important;max-height:0;overflow:hidden;transition:opacity .5s ease .15s,max-height .5s ease}
-.reveal .holo.lock .hlay.cur .ht span,.reveal .holo.lock .hlay.cur .ht b,.reveal .holo.lock .hlay.cur .ht i{opacity:1!important;max-height:24px}
+.reveal .holo .hlay .ht span,.reveal .holo .hlay .ht b,.reveal .holo .hlay .ht i{display:none}
+.reveal .holo.lock .hlay.cur .ht span,.reveal .holo.lock .hlay.cur .ht b,.reveal .holo.lock .hlay.cur .ht i{display:block;animation:htIn .5s ease .1s both}
+@keyframes htIn{from{opacity:0}to{opacity:1}}
+/* perf: no blurred glow while spinning (re-drawn for every card that enters); glow back on the locked winner; each card paints on its own */
+.reveal .holo:not(.lock) .ht{text-shadow:none!important}
+.reveal .holo .hlay{contain:layout paint style;backface-visibility:hidden}
 /* background colour (Preferences) */
 #scr .mbx-bgs{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:6px}
 #scr .mbx-bgs button{display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 4px;border-radius:14px;background:#141418;border:1px solid var(--mb-line);color:#fff;font:700 12px Montserrat,sans-serif}
@@ -1914,7 +1918,7 @@ function openBox(bi){const b=BOXES[bi];scr.scrollTop=0;const GIFT=window.__giftF
  // position along the strip (in watches): eases out so it starts at a steady pace and glides to a stop on the winner
  const stripAt=t=>{const u=Math.min(RUN,Math.max(0,t-T_HOLO-.35)),d=DTOT*(1-Math.pow(1-u/RUN,PW+1));return P0+(WI-P0)*Math.min(1,d/DTOT)};   // speed V0*(1-u/RUN)^PW: fast start, long smooth slow-down, stops exactly on the winner
  const layStrip=p=>{for(let q=0;q<LY.length;q++){const d=q-p,a=Math.abs(d);if(a>1.7){LY[q].style.visibility='hidden';continue}LY[q].style.visibility='';
-   LY[q].style.transform=`translateX(${d*SP}px) scale(${1-Math.min(.42,a*.38)})`;LY[q].style.opacity=String(a<=1?1-a*.3:Math.max(0,.7*(1.7-a)/.7));LY[q].style.zIndex=String(100-Math.round(a*10));LY[q].style.setProperty('--tx',String(Math.max(0,1-a*1.6)))}
+   LY[q].style.transform=`translateX(${d*SP}px) scale(${1-Math.min(.42,a*.38)})`;LY[q].style.opacity=String(a<=1?1-a*.3:Math.max(0,.7*(1.7-a)/.7));LY[q].style.zIndex=String(100-Math.round(a*10))}
   const c=Math.round(p);if(c!==lastC){if(lastC>=0&&LY[lastC])LY[lastC].classList.remove('cur');LY[c]&&LY[c].classList.add('cur');if(lastC>=0)SFX.tick(.7);lastC=c}};
  // carousel: the new watch slides in from the right, the current one slides out to the left (inside the cone)
  const show=(x,final,dur)=>{if(final){holo.classList.add('lock');holo.style.setProperty('--tc',RC[x.tier])}return;const o=LY[cur];cur=(cur+1)%LY.length;const n=LY[cur];const d=Math.max(.12,Math.min(.42,dur||.3));
