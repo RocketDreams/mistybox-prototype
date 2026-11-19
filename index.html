@@ -1887,7 +1887,8 @@ function openBox(bi){const b=BOXES[bi];scr.scrollTop=0;const GIFT=window.__giftF
  rv.style.setProperty('--rc',b.accent);rv.style.setProperty('--hc','#7fe9ff');
  const pool=[...new Map(b.items.map(x=>[x.id,x])).values()].filter(x=>x.id!==win.id).sort(()=>Math.random()-.5);
  // swap schedule: fast flicker that slows down, ends on the winner
- const T_SHAKE=5.6,T_OPEN=4.95,T_BEAM=5.4,T_HOLO=6.5,ACC=4.4,DEC=1.35,V0=1.1,VMAX=12,NSTRIP=Math.ceil(1.4+V0*ACC+(VMAX-V0)*ACC/3+VMAX*DEC/2),RUN=ACC+DEC;const seq=[];const T_LOCK=T_HOLO+.35+RUN,T_CLOSE=T_LOCK+.5,T_DONE=T_CLOSE+1.2;
+ const T_SHAKE=5.6,T_OPEN=4.95,T_BEAM=5.4,T_HOLO=6.5,V0=7.2,RUN=5.6,PW=1.6,DTOT=V0*RUN/(PW+1),NSTRIP=Math.ceil(1.4+DTOT),T_CUT=T_HOLO+.35+RUN-1.5;   // carousel (2026-11-19): starts fast, slows the whole way so the last near-misses crawl past
+ const seq=[];const T_LOCK=T_HOLO+.35+RUN,T_CLOSE=T_LOCK+.5,T_DONE=T_CLOSE+1.2;
  rv.innerHTML=`<div class="rv-amb"></div><div class="rv-floor" style="top:${boxY+70}px"></div>
   <div class="holo-beam back" id="hBeamB" style="left:${hX}px;top:${hY+4}px"><i></i><b class="core"></b></div><div class="holo-beam" id="hBeam" style="left:${hX}px;top:${hY+4}px"><i></i><b class="core"></b><s class="cap"></s></div><div class="holo-pad" id="hPad" style="left:${hX}px;top:${hY+2}px"></div>
   <div class="holo-glow" id="hGlow" style="left:${hX}px;top:${hY}px"></div><canvas class="holo-pt back" id="hPtB" width="${W}" height="${H}"></canvas><canvas class="holo-pt" id="hPt" width="${W}" height="${H}"></canvas>
@@ -1905,8 +1906,7 @@ function openBox(bi){const b=BOXES[bi];scr.scrollTop=0;const GIFT=window.__giftF
  $('#hStrip').innerHTML=STRIP.map((x,q)=>`<div class="hlay" data-q="${q}"><div class="hi"><img src="${x.img}" alt=""><em class="sp">${money(x.price)}</em></div><div class="ht"><span>${x.tier.toUpperCase()}</span><b>${esc(x.brand)}</b><i>${esc(x.model)}</i><em>${money(x.price)}</em></div></div>`).join('');
  const LY=[...holo.querySelectorAll('.hlay')];let cur=0;const SP=128,P0=1.4;let lastC=-1;
  // position along the strip (in watches): eases out so it starts at a steady pace and glides to a stop on the winner
- const DTOT=V0*ACC+(VMAX-V0)*ACC/3+VMAX*DEC/2;
- const stripAt=t=>{const u=Math.max(0,t-T_HOLO-.35);let d;if(u<=ACC)d=V0*u+(VMAX-V0)*u*u*u/(3*ACC*ACC);else{const w=Math.min(DEC,u-ACC);d=V0*ACC+(VMAX-V0)*ACC/3+VMAX*(w-w*w/(2*DEC))}return P0+(WI-P0)*Math.min(1,d/DTOT)};
+ const stripAt=t=>{const u=Math.min(RUN,Math.max(0,t-T_HOLO-.35)),d=DTOT*(1-Math.pow(1-u/RUN,PW+1));return P0+(WI-P0)*Math.min(1,d/DTOT)};   // speed V0*(1-u/RUN)^PW: fast start, long smooth slow-down, stops exactly on the winner
  const layStrip=p=>{for(let q=0;q<LY.length;q++){const d=q-p,a=Math.abs(d);if(a>1.7){LY[q].style.visibility='hidden';continue}LY[q].style.visibility='';
    LY[q].style.transform=`translateX(${d*SP}px) scale(${1-Math.min(.42,a*.38)})`;LY[q].style.opacity=String(a<=1?1-a*.3:Math.max(0,.7*(1.7-a)/.7));LY[q].style.zIndex=String(100-Math.round(a*10));LY[q].style.setProperty('--tx',String(Math.max(0,1-a*1.6)))}
   const c=Math.round(p);if(c!==lastC){if(lastC>=0&&LY[lastC])LY[lastC].classList.remove('cur');LY[c]&&LY[c].classList.add('cur');if(lastC>=0)SFX.tick(.7);lastC=c}};
@@ -1918,7 +1918,7 @@ function openBox(bi){const b=BOXES[bi];scr.scrollTop=0;const GIFT=window.__giftF
   o.classList.remove('cur');n.classList.add('cur');if(final){holo.classList.add('lock');holo.style.setProperty('--tc',RC[x.tier])}};
  // decode every hologram image up front so swaps never stall
  const PRE=[win,...pool.slice(0,40)].map(x=>{const im=new Image();im.src=x.img;return im.decode?im.decode().catch(()=>{}):Promise.resolve()});
- const MUS={stop(){},cut(){}};let TEN=SFX.buildup(T_HOLO+.35+ACC);let t0=performance.now(),k=0,phase=0,done=false,spin=0,vel=0,last=t0;
+ const MUS={stop(){},cut(){}};let TEN=SFX.buildup(T_CUT);let t0=performance.now(),k=0,phase=0,done=false,spin=0,vel=0,last=t0;
  const pc=$('#hPt'),pg=pc.getContext('2d'),pcB=$('#hPtB'),pgB=pcB.getContext('2d'),PT=[];let emit=0,acc=0,burst=0;
  // geometry of the open box on screen (from the 3D render): centre, front-wall top edge, depth of the inside
  let GEO=null;const L=()=>{const q=rv.getBoundingClientRect(),k=q.width/rv.offsetWidth||1;return{x:v=>(v-q.left)/k,y:v=>(v-q.top)/k,s:v=>v/k}};
@@ -1954,7 +1954,7 @@ function openBox(bi){const b=BOXES[bi];scr.scrollTop=0;const GIFT=window.__giftF
   if(phase===1.5&&t>=T_BEAM){phase=2;centre();$('#hPad').classList.add('on');beam.classList.add('on');$('#hBeamB').classList.add('on');emit=2.2;rv.classList.add('holo-on');$('#hGlow').classList.add('on');SFX.charge&&SFX.charge()}
   // 4) holograms project out of the open box and cycle
   if(phase===2&&t>=T_HOLO){phase=3;layStrip(stripAt(t));holo.classList.add('on')}
-  if(phase===3){layStrip(stripAt(t));if(TEN&&t>=T_HOLO+.35+ACC){TEN.cut();TEN=null;SFX.brake()}
+  if(phase===3){layStrip(stripAt(t));if(TEN&&t>=T_CUT){TEN.cut();TEN=null;SFX.brake()}
    if(t>=T_LOCK){phase=4;TEN&&TEN.cut();TEN=null;layStrip(WI);show(win,true);SFX.reveal(win.tier);rv.style.setProperty('--rc',RC[win.tier]);emit=4;try{navigator.vibrate&&navigator.vibrate([20,40,40])}catch(e){}}}
   // 5) the chosen watch: transition to its screen
   if(phase===4&&t>=T_CLOSE){phase=5;closeup()}
