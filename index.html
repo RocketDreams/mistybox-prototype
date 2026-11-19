@@ -1287,7 +1287,7 @@ u|Invicta|Pro Diver White Dial|249|invicta-pro-diver-white-dial
 c|Fossil|Minimalist Slim (Light Brown)|120|fossil-minimalist-slim-threehand-light-brown-leather-watch
 c|Fossil|Minimalist Three-Hand (Beige)|120|fossil-minimalist-threehand-brown-leather-watch-beige
 c|Casio|GA100-1A4|120|casio-ga1001a4`},
- {tier:'Legacy',key:'gold',price:500,min:200,max:39500,skin:'Black Leather',cube:'leather',img:'assets/3d/cube_leather-box.webp',led:'assets/3d/none.png',w:240,w1:'#ff7a1a',w2:'#ffc02e',accent:'#ff5a1f',glow:'rgba(255,106,20,.55)',c1:'#ffe2a3',c2:'#ffbf55',c3:'#f39a2c',ctat:'#1c0f04',cglow:'rgba(255,150,40,.55)',
+ {tier:'Legacy',key:'gold',price:500,min:200,max:39500,skin:'Prismatic Enamel',cube:'prism',img:'assets/3d/cube_prism-box.webp',led:'assets/3d/none.png',w:240,w1:'#ff7a1a',w2:'#ffc02e',accent:'#ff5a1f',glow:'rgba(255,106,20,.55)',c1:'#ffe2a3',c2:'#ffbf55',c3:'#f39a2c',ctat:'#1c0f04',cglow:'rgba(255,150,40,.55)',
   odds:{common:[57.12,'$200 – $272'],uncommon:[23.82,'$280 – $475'],rare:[9.92,'$500 – $595'],epic:[5.56,'$620 – $850'],legendary:[2.79,'$895 – $1.5K'],grail:[.79,'$1.6K – $39.5K']},
   items:`g|Rolex|GMT-Master II (Pepsi)|39500|rolex-gmt-master-ii-pepsi
 g|Vacheron Constantin|Overseas Chronograph|38399|vacheron-constantin-overseas-chronograph
@@ -2177,7 +2177,7 @@ const h=location.hash.slice(1);if(['showroom','collection','leaderboard','accoun
 (()=>{const boot=document.getElementById('boot'),bar=boot.querySelector('.bt-bar i'),pct=document.getElementById('bootPct');
  const T0=performance.now();let shown=0;
  const set=v=>{v=Math.max(shown,Math.min(1,v));shown=v;bar.style.width=(v*100).toFixed(1)+'%';pct.textContent=Math.round(v*100)+'%'};
- const CUBE_GLB={alu:'case.glb',carbon:'case_carbon.glb',zebra:'case_carbon.glb',zebrafur:'case_carbon.glb',hearts:'case_hearts.glb',hoops:'case_hoops.glb',leather:'case_leather.glb',redleather:'case_leather.glb'};
+ const CUBE_GLB={alu:'case.glb',carbon:'case_carbon.glb',zebra:'case_carbon.glb',zebrafur:'case_carbon.glb',hearts:'case_hearts.glb',hoops:'case_hoops.glb',leather:'case_leather.glb',redleather:'case_leather.glb',prism:'case_prism.glb'};
  const imgs=new Set(['assets/logo-white.png','assets/wallet-plus.png','assets/mk/logo.png','assets/mk/bg.jpg','assets/mk/bg_top.jpg','assets/mk/bg_bot.jpg','assets/mk/i_star.png','assets/mk/i_gift.png',
    'assets/mk/n_boxes.png','assets/mk/n_showroom.png','assets/mk/n_collection.png','assets/mk/n_leaderboard.png','assets/mk/n_account.png']);
  const three=new Set(), opt=new Set();
@@ -2298,7 +2298,7 @@ function glowLayer(baseCanvas){
 const loader = new GLTFLoader(), cache = {}, models = {};
 function keyOf(b){const m=/3d\/(\w+)-box/.exec(b.img);return m?m[1]:'agent'}
 // ---- the new cube boxes: one model family, skinned per box (materials ported from cube.html) ----
-const CUBE_GLB = {alu: 'case.glb', carbon: 'case_carbon.glb', zebra: 'case_carbon.glb', zebrafur: 'case_carbon.glb', hearts: 'case_hearts.glb', hoops: 'case_hoops.glb', leather: 'case_leather.glb', redleather: 'case_leather.glb'};   // v2 case model (Sharon, 2026-11-16)
+const CUBE_GLB = {alu: 'case.glb', carbon: 'case_carbon.glb', zebra: 'case_carbon.glb', zebrafur: 'case_carbon.glb', hearts: 'case_hearts.glb', hoops: 'case_hoops.glb', leather: 'case_leather.glb', redleather: 'case_leather.glb', prism: 'case_prism.glb'};   // v2 case model (Sharon, 2026-11-16)
 const CUBE_SCALE = 1.15, cubeSrc = {}, TL = new THREE.TextureLoader();
 let ROOM = null;   // bright studio reflections for the cube boxes (chrome would read black in the app's dark scene)
 function studioEnv(){   // equirect canvas (works in every renderer: three PMREMs it per context): softboxes on a grey studio
@@ -2341,6 +2341,9 @@ function cubeMat(skin, name, src){
   if(skin === 'hoops') S_ = {...chrome(), HoopsPanel: MP({map: src && src.map, roughness: .55, clearcoat: .15, clearcoatRoughness: .2}),
     HoopsBadge: MP({map: src && src.map, roughness: .3, clearcoat: .6, clearcoatRoughness: .08}), HoopsStripes: MP({map: src && src.map, roughness: .3, clearcoat: .5}),
     RedPost: MP({color: 0xc8101e, metalness: .5, roughness: .22, clearcoat: 1, clearcoatRoughness: .04}), RedVelvet: MP({color: 0x2a0205, roughness: .95, sheen: 1, sheenColor: 0x900a18, sheenRoughness: .6})};
+  if(skin === 'prism') S_ = {ChromeRail: M_({color: 0x6a6561, metalness: 1, roughness: .3, roughnessMap: BRUSH}), ChromeBlock: M_({color: 0x6a6561, metalness: 1, roughness: .32}),
+    BlackRail: M_({color: 0x6a6561, metalness: 1, roughness: .3, roughnessMap: BRUSH}), BlackBlock: M_({color: 0x6a6561, metalness: 1, roughness: .32}),
+    HingeChrome: M_({color: 0xd8dadf, metalness: 1, roughness: .14}), BoltChrome: M_({color: 0xeceef2, metalness: 1, roughness: .06}), InteriorBlack: M_({color: 0x0b0b0d, roughness: .95})};   // prismatic Legacy (2026-11-19): graphite frame, silver bolts
   if(skin === 'leather' || skin === 'redleather') S_ = {...chrome(), LeatherBlack: MP({map: skin === 'redleather' ? T.lred : T.lcol, roughnessMap: T.lrough, roughness: 1, normalMap: T.lnrm,
     normalScale: new THREE.Vector2(.55, .55), clearcoat: .12, clearcoatRoughness: .35, envMapIntensity: .6}),
     StitchThread: M_({color: skin === 'redleather' ? 0xe6d6b0 : 0xa8a8a4, roughness: .8}), BlackSuede: MP({color: 0x050506, roughness: .95, sheen: .6, sheenColor: 0x333336}), LeatherUnder: M_({color: 0x080809, roughness: .8})};
@@ -2362,6 +2365,7 @@ function loadCube(skin){
     const root = g.scene.clone(true), furry = [];
     root.traverse(o => { if(!o.isMesh) return; const nm = o.material.name; if(skin === 'zebrafur' && nm === 'CarbonPanel') furry.push(o);
       const m = cubeMat(skin, nm, o.material); if(m && o.material.normalMap && !m.normalMap && /Rail|AluPanel/.test(nm)){ m.normalMap = o.material.normalMap; m.normalScale = o.material.normalScale.clone() }   // keep the model's bevel detail
+      if(!m && /^PrismEnamel/.test(nm)){ ROOM = ROOM || studioEnv(); const em = o.material; em.envMap = ROOM; em.envMapIntensity = .55; if('clearcoat' in em){ em.clearcoat = 1; em.clearcoatRoughness = .04 } em.roughness = .22; em.metalness = 0 }   // baked glossy enamel + clear coat
       if(m){ ROOM = ROOM || studioEnv(); m.envMap = ROOM; if(m.metalness >= .9) m.envMapIntensity = 1.1; o.material = m } });   // chrome needs bright reflections in the app's dark studio
     furry.forEach(furShells);
     root.scale.setScalar(CUBE_SCALE);
