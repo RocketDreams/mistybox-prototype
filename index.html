@@ -769,6 +769,23 @@ html,body{overscroll-behavior:none}
 #scr .glnd .gl-card .x{position:absolute;top:14px;right:14px;width:40px;height:40px;border-radius:50%;border:1px solid rgba(255,255,255,.22);background:#141418;color:#fff;display:grid;place-items:center;cursor:pointer}
 #scr .glnd .gl-card .ok{margin-top:22px;width:100%;height:52px;border:0;cursor:pointer;background:var(--mb-chrome-btn);color:#0b0d12;font:italic 900 17px/1 Montserrat,sans-serif;clip-path:polygon(14px 0,100% 0,100% calc(100% - 14px),calc(100% - 14px) 100%,0 100%,0 14px)}
 @media (prefers-reduced-motion:reduce){#scr .glnd .gl-env,#scr .glnd .gl-env::after{animation:none}}
+
+/* gift result: claim in the app */
+#scr .mbx-rv.giftrv .gclaim{margin:14px 20px 0;padding:18px 18px 16px;border-radius:22px;background:linear-gradient(180deg,rgba(23,23,28,.92),rgba(10,10,13,.92));border:1px solid rgba(255,255,255,.16);text-align:center}
+#scr .mbx-rv.giftrv .gc-k{font:italic 900 22px/1.05 Montserrat,sans-serif;text-transform:uppercase;background:var(--mb-chrome);-webkit-background-clip:text;background-clip:text;color:transparent;padding:0 3px}
+#scr .mbx-rv.giftrv .gclaim p{margin:8px 0 0;font:600 14px/1.45 Montserrat,sans-serif;color:#e4e6ea}
+#scr .mbx-rv.giftrv .gc-store{margin:16px auto 0;display:inline-flex;align-items:center;gap:10px;height:56px;padding:0 22px 0 16px;border-radius:14px;background:#000;color:#fff;border:1.5px solid #a6a6a6;text-decoration:none;box-shadow:0 8px 24px rgba(0,0,0,.5)}
+#scr .mbx-rv.giftrv .gc-store span{display:flex;flex-direction:column;align-items:flex-start;line-height:1}
+#scr .mbx-rv.giftrv .gc-store small{font:500 11px/1 -apple-system,"SF Pro Text",Helvetica,Arial,sans-serif;letter-spacing:.2px}
+#scr .mbx-rv.giftrv .gc-store b{margin-top:3px;font:600 22px/1 -apple-system,"SF Pro Display",Helvetica,Arial,sans-serif;letter-spacing:-.4px}
+#scr .mbx-rv.giftrv .gc-store:active{transform:translateY(1px)}
+#scr .mbx-rv.giftrv .gc-fine{margin-top:12px;font:600 11px/1.4 Montserrat,sans-serif;color:var(--mb-text-3)}
+#scr .rv-detail.mbx-rv.giftrv{justify-content:flex-start!important;padding:calc(env(safe-area-inset-top,0px) + 30px) 20px calc(env(safe-area-inset-bottom,0px) + 18px)!important}
+#scr .rv-detail.mbx-rv.giftrv>*{flex:none}
+#scr .mbx-rv.giftrv .mbx-big{height:min(32vh,270px);margin-bottom:2px}
+#scr .mbx-rv.giftrv .mbx-price{font-size:50px}
+#scr .mbx-rv.giftrv .dfrom{margin-top:6px}
+#scr .mbx-rv.giftrv .gclaim{margin:12px 0 0;width:100%;max-width:360px;padding:16px 16px 14px}
 @keyframes glFloat{0%,100%{transform:translateY(0) rotate(-1deg)}50%{transform:translateY(-10px) rotate(1deg)}}
 @media (prefers-reduced-motion:reduce){#scr .glnd .gl-box img{animation:none}}
 </style><link rel="stylesheet" href="assets/mb2.css"><style>
@@ -1857,7 +1874,7 @@ function OBOX(b){const G=GEO[b.key==='icy'?'crown':'std'],sm=G.seam,pt=p=>`${p[0
 
 /* opening v2: the closed box spins on its axis and strains to open while it projects holograms of the watches inside;
    they cycle, slow down and lock on the winner, then the lid opens and that watch rises out of the box */
-function openBox(bi){const b=BOXES[bi];scr.scrollTop=0;if(window.__giftFree===bi)window.__giftFree=null;else S.bal-=b.price;   // a gift's first open is already paid for
+function openBox(bi){const b=BOXES[bi];scr.scrollTop=0;const GIFT=window.__giftFree===bi?window.__gift:null;if(GIFT)window.__giftFree=null;else S.bal-=b.price;   // a gift's first open is already paid for; its result screen sends the friend to the App Store
  S.pts+=b.price*5;save();paintBal();
  const win=draw(b);lastWin={id:win.id,box:bi};
  const rv=$('#reveal'),W=scr.clientWidth,H=scr.clientHeight,cx=W/2,boxY=Math.min(H-140,Math.max(H*.58,512));
@@ -1946,9 +1963,9 @@ function openBox(bi){const b=BOXES[bi];scr.scrollTop=0;if(window.__giftFree===bi
    const info=document.createElement('div');info.className='rv-detail';info.style.setProperty('--rc',RC[win.tier]);
    info.classList.add('mbx-rv');info.innerHTML=`<div class="mbx-big"><img class="dimg" id="dImg" src="${win.img}" alt="${esc(win.brand)} ${esc(win.model)}"></div>
     ${rar(win.tier)}<div class="mbx-brand">${esc(win.brand)}</div><div class="mbx-price">${money(win.price)}</div><div class="mbx-model">${esc(win.model)}</div>
-    <p class="dfrom">Revealed from ${esc(b.skin)} · ${b.tier} box · authenticated &amp; insured</p>
-    <div class="acts"><div class="mbx-acts"><button class="cta sm" id="rSell">SELL ${money(win.price*.9)}</button><button class="btn" id="rKeep">VAULT</button></div><div class="mbx-links"><button type="button" class="lnk" id="rShip">Ship to me</button><button type="button" class="lnk" id="rAgain">Open another · ${money(b.price)}</button></div></div>`;
-   info.classList.add('pre','on');rv.appendChild(info);INFO=info;
+    ${GIFT?giftClaimHTML(GIFT):`<p class="dfrom">Revealed from ${esc(b.skin)} · ${b.tier} box · authenticated &amp; insured</p>
+    <div class="acts"><div class="mbx-acts"><button class="cta sm" id="rSell">SELL ${money(win.price*.9)}</button><button class="btn" id="rKeep">VAULT</button></div><div class="mbx-links"><button type="button" class="lnk" id="rShip">Ship to me</button><button type="button" class="lnk" id="rAgain">Open another · ${money(b.price)}</button></div></div>`}`;
+   info.classList.add('pre','on');if(GIFT)info.classList.add('giftrv');rv.appendChild(info);INFO=info;
    const di=info.querySelector('#dImg');di.style.visibility='hidden';const fr=di.getBoundingClientRect();
   CU=document.createElement('img');CU.className='rv-close';CU.src=win.img;CU.alt='';
   const kk=sr.width/rv.offsetWidth||1;CU.style.cssText=`left:${(r.left-sr.left)/kk}px;top:${(r.top-sr.top)/kk}px;width:${r.width/kk}px;height:${r.height/kk}px`;rv.appendChild(CU);
@@ -1962,12 +1979,23 @@ function openBox(bi){const b=BOXES[bi];scr.scrollTop=0;if(window.__giftFree===bi
    requestAnimationFrame(()=>info.classList.remove('pre'));
    pushTick({who:'You',tier:win.tier,box:b.tier,i:win});
    const close=st=>{done=true;S.col.unshift({id:win.id,st,t:Date.now(),trk:st==='shipped'?'UPS · 1Z'+Math.random().toString(36).slice(2,9).toUpperCase():undefined});save();rv.classList.remove('on');rv.innerHTML='';scr.classList.remove('rv-on');renderCol();renderLB()};
+   if(GIFT){giftClaimWire(info);return}   // gift: no sell/vault/open-another here, the friend claims it in the app
    info.querySelector('#rKeep').onclick=()=>{close('vault');toast(`${win.model} is in your vault`)};
    info.querySelector('#rSell').onclick=()=>{S.bal+=win.price*.9;close('sold');paintBal();SFX.coin();setTimeout(()=>openSold(win),200)};
    info.querySelector('#rShip').onclick=()=>{close('vault');openShip(S.col[0])};
    info.querySelector('#rAgain').onclick=()=>{close('vault');setTimeout(()=>openBuy(bi),200)};
 }
 }
+/* gift result: claim in the app (viral loop) */
+const MB_APP_STORE='';   // set to the App Store listing URL once the app is live
+const APPLE_SVG='<svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor" aria-hidden="true"><path d="M16.37 12.6c-.02-2.25 1.84-3.33 1.92-3.38-1.05-1.53-2.68-1.74-3.26-1.77-1.38-.14-2.71.82-3.41.82-.71 0-1.79-.8-2.95-.78-1.51.02-2.91.89-3.69 2.24-1.58 2.73-.4 6.77 1.13 8.98.75 1.08 1.64 2.3 2.81 2.25 1.13-.05 1.56-.73 2.92-.73 1.36 0 1.75.73 2.94.71 1.22-.02 1.99-1.1 2.73-2.19.86-1.25 1.21-2.47 1.23-2.53-.03-.01-2.35-.9-2.37-3.56zM14.14 5.98c.62-.76 1.05-1.8.93-2.85-.9.04-2.0.6-2.65 1.36-.58.67-1.09 1.75-.95 2.77 1 .08 2.03-.51 2.67-1.28z"/></svg>';
+function giftClaimHTML(g){const fn=esc(g.from.split(' ')[0]);
+ return `<p class="dfrom">A gift from ${esc(g.from)} · authenticated &amp; insured</p>
+  <div class="gclaim"><div class="gc-k">This watch is yours</div><p>To claim your gift from ${fn}, download the MistyBox app.</p>
+  <a class="gc-store" id="gcStore" href="${MB_APP_STORE||'#'}" target="_blank" rel="noopener" aria-label="Download MistyBox on the App Store">${APPLE_SVG}<span><small>Download on the</small><b>App Store</b></span></a>
+  <div class="gc-fine">Open the app with the same link and your watch is waiting in your vault.</div></div>`}
+function giftClaimWire(info){const a=info.querySelector('#gcStore');if(!a)return;
+ a.onclick=e=>{try{SFX.tap()}catch(_){}if(!MB_APP_STORE){e.preventDefault();toast('MistyBox is coming soon to the App Store')}}}
 function openBoxV1(bi){const b=BOXES[bi];scr.scrollTop=0;S.bal-=b.price;S.pts+=b.price*5;save();paintBal();
  const win=draw(b);lastWin={id:win.id,box:bi};
  const rv=$('#reveal'),W=scr.clientWidth,H=scr.clientHeight,cx=W/2,boxY=H*.54,ringY=boxY-24,R=Math.min(170,W*.43),O=4;
@@ -2246,7 +2274,7 @@ setTimeout(()=>{const id=new URLSearchParams(location.search).get('gift'),g=id&&
  const mount=()=>{try{window.MB3D.viewer(gb,b,{ready:()=>{gb.classList.add('three');gh.classList.add('on')},moved:()=>gh.classList.add('gone')})}catch(e){console.warn('gift 3D off',e)}};
  if(window.MB3D&&window.MB3D.viewer)mount();else addEventListener('mb3d-ready',mount,{once:true});
  el.querySelector('#glOpen').onclick=()=>{try{SFX.tap()}catch(e){}el.classList.add('out');setTimeout(()=>el.remove(),500);
-  if(curView!=='boxes')show('boxes');go(bi,1);window.__giftFree=bi;   // the sender already paid: the friend's open is free
+  if(curView!=='boxes')show('boxes');go(bi,1);window.__giftFree=bi;window.__gift=g;   // the sender already paid: the friend's open is free
   setTimeout(()=>openPicker(bi),350)}},0);   // same as the regular flow: choose your box from the ring, then it opens   // after the rest of the app script has set up its views
 
 </script>
