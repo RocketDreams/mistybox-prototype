@@ -1887,7 +1887,7 @@ function openBox(bi){const b=BOXES[bi];scr.scrollTop=0;const GIFT=window.__giftF
  rv.style.setProperty('--rc',b.accent);rv.style.setProperty('--hc','#7fe9ff');
  const pool=[...new Map(b.items.map(x=>[x.id,x])).values()].filter(x=>x.id!==win.id).sort(()=>Math.random()-.5);
  // swap schedule: fast flicker that slows down, ends on the winner
- const T_SHAKE=5.6,T_OPEN=4.95,T_BEAM=5.4,T_HOLO=6.5,V0=9.2,RUN=5.6,PW=2,DTOT=V0*RUN/(PW+1),NSTRIP=Math.ceil(1.4+DTOT),T_CUT=T_HOLO+.35+RUN-1.5;   // carousel (2026-11-19): starts fast, slows the whole way so the last near-misses crawl past
+ const T_SHAKE=5.6,T_OPEN=4.95,T_BEAM=5.4,T_HOLO=6.5,V0=11.5,RUN=7.6,PW=1.7,DTOT=V0*RUN/(PW+1),NSTRIP=Math.ceil(1.4+DTOT),T_CUT=T_HOLO+.35+RUN-1.5;   // carousel (2026-11-19): starts fast, slows the whole way so the last near-misses crawl past
  const seq=[];const T_LOCK=T_HOLO+.35+RUN,T_CLOSE=T_LOCK+.5,T_DONE=T_CLOSE+1.2;
  rv.innerHTML=`<div class="rv-amb"></div><div class="rv-floor" style="top:${boxY+70}px"></div>
   <div class="holo-beam back" id="hBeamB" style="left:${hX}px;top:${hY+4}px"><i></i><b class="core"></b></div><div class="holo-beam" id="hBeam" style="left:${hX}px;top:${hY+4}px"><i></i><b class="core"></b><s class="cap"></s></div><div class="holo-pad" id="hPad" style="left:${hX}px;top:${hY+2}px"></div>
@@ -2278,9 +2278,10 @@ setTimeout(()=>{const id=new URLSearchParams(location.search).get('gift'),g=id&&
  addEventListener('keydown',e=>{if(e.key==='Escape'&&note.classList.contains('on'))noteOn(false)});
  const mount=()=>{try{window.MB3D.viewer(gb,b,{ready:()=>{gb.classList.add('three');gh.classList.add('on')},moved:()=>gh.classList.add('gone')})}catch(e){console.warn('gift 3D off',e)}};
  if(window.MB3D&&window.MB3D.viewer)mount();else addEventListener('mb3d-ready',mount,{once:true});
- el.querySelector('#glOpen').onclick=()=>{try{SFX.tap()}catch(e){}el.classList.add('out');setTimeout(()=>el.remove(),500);
+ el.querySelector('#glOpen').onclick=()=>{try{SFX.tap()}catch(e){}
   if(curView!=='boxes')show('boxes');go(bi,1);window.__giftFree=bi;window.__gift=g;   // the sender already paid: the friend's open is free
-  setTimeout(()=>openPicker(bi),350)}},0);   // same as the regular flow: choose your box from the ring, then it opens   // after the rest of the app script has set up its views
+  openPicker(bi);const x=$('#pick .pk-x');if(x)x.remove();   // straight into the box ring over the gift page; no way back into the main app
+  setTimeout(()=>el.remove(),700)}},0);   // remove the gift page only once the ring covers it (no flash of the home screen)   // same as the regular flow: choose your box from the ring, then it opens   // after the rest of the app script has set up its views
 
 </script>
 
