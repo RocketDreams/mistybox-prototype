@@ -2902,54 +2902,6 @@ frame();
  });
 })();
 </script>
-<script>
-/* "popcorn" sound set (2026-11-20, Sharon; rollback tag pre-popcorn): every sound is a short bouncy analog-synth 'pop'
-   (square wave, tiny pitch blip, staccato decay) in the spirit of early Moog pop. Original melodies only, built on the
-   pedal-tone bounce (melody notes alternating with a repeated A). Overrides the soft piano set above. */
-(()=>{const NT=m=>440*Math.pow(2,(m-69)/12),on=()=>S.sound&&ac();
- // one pop: square + sub sine, 6% pitch blip down into the note, fast filter snap, ~0.1 s
- function pop(m,st,vel=.5,dur=.11,dst,rev){if(!AC)return;const f=NT(m),g=AC.createGain(),lp=AC.createBiquadFilter();lp.type='lowpass';lp.Q.value=3;
-  lp.frequency.setValueAtTime(1800+vel*3200,st);lp.frequency.exponentialRampToValueAtTime(700,st+dur);
-  g.gain.setValueAtTime(0,st);g.gain.linearRampToValueAtTime(vel*.085,st+.002);g.gain.exponentialRampToValueAtTime(.0005,st+dur);
-  const o=AC.createOscillator();o.type='square';o.frequency.setValueAtTime(f*1.06,st);o.frequency.exponentialRampToValueAtTime(f,st+.014);
-  const s2=AC.createOscillator(),sg=AC.createGain();s2.type='sine';s2.frequency.value=f/2;sg.gain.value=.6;
-  o.connect(lp);s2.connect(sg).connect(lp);lp.connect(g);if(dst)g.connect(dst);else out(g,rev);o.start(st);s2.start(st);o.stop(st+dur+.03);s2.stop(st+dur+.03)}
- function hat(st,vel,dst){if(!AC)return;const sr=AC.sampleRate,b=SFX._hb||(SFX._hb=(()=>{const x=AC.createBuffer(1,Math.floor(sr*.06),sr),d=x.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;return x})());
-  const n=AC.createBufferSource();n.buffer=b;const f=AC.createBiquadFilter();f.type='highpass';f.frequency.value=7000;const g=AC.createGain();g.gain.setValueAtTime(vel*.05,st);g.gain.exponentialRampToValueAtTime(.0005,st+.04);
-  n.connect(f).connect(g).connect(dst);n.start(st);n.stop(st+.06)}
- // the carousel tune: melody notes bouncing off a repeated A (pedal tone), one note per watch that passes
- const MEL=[76,69,74,69,72,69,74,69,76,69,79,69,77,69,76,69,74,69,72,69,71,69,72,69,74,69,71,69,67,69,64,69];
- const PENTA=[69,72,74,76,79,81,84,86,88,91];let tickN=0,lastTick=0,clickN=0;
- Object.assign(SFX,{
-  tap(){if(!on())return;pop(84,AC.currentTime,.4,.08)},
-  click(){if(!on())return;pop(PENTA[clickN++%6]+12,AC.currentTime,.3,.06)},
-  sw(){if(!on())return;const t=AC.currentTime;pop(76,t,.4,.08);pop(81,t+.07,.4,.1)},
-  tick(v){if(!on())return;const t=AC.currentTime;if(t-lastTick>.6)tickN=0;lastTick=t;pop(MEL[tickN%MEL.length]+12,t,.25+.3*(v||.6),.1);tickN++},
-  charge(){if(!on())return;const t=AC.currentTime;[69,72,76,81].forEach((m,i)=>pop(m+12,t+i*.06,.4,.09))},
-  open(){if(!on())return;const t=AC.currentTime;[69,72,76,81,84,88].forEach((m,i)=>pop(m+12,t+i*.05,.45,.1,null,i>3))},
-  burst(){},thunder(){},air(){},
-  // popcorn popping: one high pop per watch leaving the box, random pentatonic, a few with a tiny echo
-  poofs(ds){if(!on())return;const t=AC.currentTime+.02;ds.forEach((d,i)=>pop(PENTA[Math.floor(Math.random()*PENTA.length)]+12,t+d,.22+Math.random()*.22,.07,null,i%6===0))},
-  swish(){if(!on())return;const t=AC.currentTime;[64,67,71,76].forEach((m,i)=>pop(m+12,t+i*.035,.3,.06))},
-  whoosh(){if(!on())return;const t=AC.currentTime;[57,64,69,76].forEach((m,i)=>pop(m+12,t+i*.04,.3,.07))},
-  // reveal jingle: longer and higher for rarer watches, ends on a short chord stab
-  reveal(tier){if(!on())return;const t=AC.currentTime,k=Math.max(0,Math.min(5,TIERS.length-1-TIERS.indexOf(tier)));
-   const run=[[72,76,81],[72,76,79,84],[71,74,79,83,86],[72,76,79,84,88,91],[69,72,76,81,84,88,93],[69,72,76,79,81,84,88,91,93]][k],sp=.075;
-   run.forEach((m,i)=>pop(m+12,t+i*sp,.5,.1,null,i%2===1));const e=t+run.length*sp+.04,ch=k>=3?[69,73,76,81]:[69,72,76,81];
-   ch.forEach(m=>pop(m+12,e,.42,.32,null,true))},
-  coin(){if(!on())return;const t=AC.currentTime;pop(95,t,.35,.07);pop(100,t+.07,.35,.12,null,true)},
-  // the opening's music bed: bouncing octave bass (A A' G G' E E'...) + offbeat hats, look-ahead scheduled, faded on cut
-  buildup(dur){if(!on())return{cut(){}};const t0=AC.currentTime+.05,bus=AC.createGain();bus.gain.setValueAtTime(0,t0);bus.gain.linearRampToValueAtTime(1,t0+1.2);out(bus);
-   const BASS=[45,57,45,57,43,55,40,52, 45,57,45,57,41,53,43,55],E8=60/128/2;let n=0,stop=false;
-   const sched=()=>{if(stop)return;const ahead=AC.currentTime+.3;while(t0+n*E8<ahead){const st=t0+n*E8,el=st-t0;
-     pop(BASS[n%BASS.length],st,.55,.12,bus);if(el>2.5&&n%2===1)hat(st,.6,bus);if(el>5.4&&n%4===2)hat(st,.35,bus);n++}};
-   sched();const iv=setInterval(sched,90);
-   return{cut(){if(stop)return;stop=true;clearInterval(iv);const c=AC.currentTime;bus.gain.cancelScheduledValues(c);bus.gain.setValueAtTime(bus.gain.value,c);bus.gain.linearRampToValueAtTime(0,c+.2)}}},
-  brake(){if(!on())return;const t=AC.currentTime;[88,84,81,76,72,69].forEach((m,i)=>pop(m+12,t+i*.08+i*i*.006,.35-.03*i,.1))},
-  tension(){return{cut(){}}}
- });
-})();
-</script>
 
 <script>
 /* electronic tension for the hologram carousel: synth plucks locked to each watch passing (rising arp), a supersaw pad whose filter opens, a soft sub pulse and a rising noise wash */
