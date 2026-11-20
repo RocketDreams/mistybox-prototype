@@ -1925,14 +1925,14 @@ function openBox(bi){const b=BOXES[bi];scr.scrollTop=0;const GIFT=window.__giftF
  // ---- canvas carousel (2026-11-19, Safari smoothness): while spinning, the watches are drawn on ONE canvas from pre-tinted
  // bitmaps (prepared during the box spin); at the lock it hands over to the DOM cards (full colour, name, close-up flight).
  const HC=holo.querySelector('.hc'),HCV=document.createElement('canvas');HCV.className='hcv';HC.appendChild(HCV);const HG=HCV.getContext('2d');
- const CDPR=Math.min(2,devicePixelRatio||1),TINT=new Map();let CV_ON=false,CG=null;
- const tint=src=>new Promise(res=>{const im=new Image();im.onload=()=>{try{const k=Math.min(164/im.naturalWidth,172/im.naturalHeight,1),w=Math.round(im.naturalWidth*k),h=Math.round(im.naturalHeight*k),
+ const CDPR=Math.min(2,devicePixelRatio||1),TINT=window.__mbTint||(window.__mbTint=new Map());   // shared across openings (perf: no new canvases per open)let CV_ON=false,CG=null;
+ const tint=src=>TINT.has(src)?Promise.resolve():new Promise(res=>{const im=new Image();im.onload=()=>{try{const k=Math.min(164/im.naturalWidth,172/im.naturalHeight,1),w=Math.round(im.naturalWidth*k),h=Math.round(im.naturalHeight*k),
     c=document.createElement('canvas');c.width=Math.round(w*CDPR);c.height=Math.round(h*CDPR);const g=c.getContext('2d');g.drawImage(im,0,0,c.width,c.height);
     const d=g.getImageData(0,0,c.width,c.height),a=d.data;for(let i=0;i<a.length;i+=4){const l=Math.pow((a[i]*.3+a[i+1]*.59+a[i+2]*.11)/255,.75);   // bright cyan hologram, white highlights (matches the old CSS filter)
      a[i]=Math.min(255,18+215*l*l);a[i+1]=Math.min(255,92+200*l);a[i+2]=Math.min(255,104+190*l);a[i+3]=a[i+3]*.9}
     g.putImageData(d,0,0);TINT.set(src,{c,w,h})}catch(e){}res()};im.onerror=()=>res();im.src=src});
  // one image at a time, spread over the box spin, so the opening never stalls
- const CV_READY=(async()=>{const U=[...new Set(STRIP.map(x=>x.img))];for(const u of U){await tint(u);await new Promise(r=>setTimeout(r,0))}return U.every(u=>TINT.has(u))})();
+ const CV_READY=(async()=>{const U=[...new Set(STRIP.map(x=>x.img))];for(const u of U){if(TINT.has(u))continue;await tint(u);await new Promise(r=>setTimeout(r,0))}return U.every(u=>TINT.has(u))})();
  let CV_OK=false;CV_READY.then(v=>{CV_OK=v});
  const cvGeom=()=>{const L0=LY[0],hi=L0.querySelector('.hi'),em=L0.querySelector('.ht em'),st=L0.offsetParent||HC,cs=getComputedStyle(em);
    const W2=HC.offsetWidth,H2=HC.offsetHeight;HCV.width=Math.round(W2*CDPR);HCV.height=Math.round(H2*CDPR);
@@ -2024,7 +2024,7 @@ function openBox(bi){const b=BOXES[bi];scr.scrollTop=0;const GIFT=window.__giftF
    const di=info.querySelector('#dImg');di.style.visibility='';if(CU){CU.remove();CU=null}
    requestAnimationFrame(()=>info.classList.remove('pre'));
    pushTick({who:'You',tier:win.tier,box:b.tier,i:win});
-   const close=st=>{done=true;S.col.unshift({id:win.id,st,t:Date.now(),trk:st==='shipped'?'UPS · 1Z'+Math.random().toString(36).slice(2,9).toUpperCase():undefined});save();rv.classList.remove('on');rv.innerHTML='';scr.classList.remove('rv-on');renderCol();renderLB()};
+   const close=st=>{done=true;S.col.unshift({id:win.id,st,t:Date.now(),trk:st==='shipped'?'UPS · 1Z'+Math.random().toString(36).slice(2,9).toUpperCase():undefined});save();rv.classList.remove('on');rv.querySelectorAll('canvas:not(.rv3d):not(.glowl)').forEach(c=>{c.width=c.height=0});rv.innerHTML='';scr.classList.remove('rv-on');renderCol();renderLB()};
    if(GIFT){giftClaimWire(info);return}   // gift: no sell/vault/open-another here, the friend claims it in the app
    info.querySelector('#rKeep').onclick=()=>{close('vault');toast(`${win.model} is in your vault`)};
    info.querySelector('#rSell').onclick=()=>{S.bal+=win.price*.9;close('sold');paintBal();SFX.coin();setTimeout(()=>openSold(win),200)};
@@ -2136,7 +2136,7 @@ function openBoxV1(bi){const b=BOXES[bi];scr.scrollTop=0;S.bal-=b.price;S.pts+=b
    di.style.transition='none';di.style.transform=`translate(${fromX}px,${fromY}px) scale(${k})`;void di.offsetWidth;
    we.classList.add('zoom');we.style.transform=`translate(${cx}px,${H*.36}px) scale(6)`;requestAnimationFrame(()=>{info.classList.add('on');di.style.transition='';di.style.transform=''});SFX.swish();
    pushTick({who:'You',tier:win.tier,box:b.tier,i:win});
-   const close=st=>{done=true;S.col.unshift({id:win.id,st,t:Date.now(),trk:st==='shipped'?'UPS · 1Z'+Math.random().toString(36).slice(2,9).toUpperCase():undefined});save();rv.classList.remove('on');rv.innerHTML='';scr.classList.remove('rv-on');renderCol();renderLB()};
+   const close=st=>{done=true;S.col.unshift({id:win.id,st,t:Date.now(),trk:st==='shipped'?'UPS · 1Z'+Math.random().toString(36).slice(2,9).toUpperCase():undefined});save();rv.classList.remove('on');rv.querySelectorAll('canvas:not(.rv3d):not(.glowl)').forEach(c=>{c.width=c.height=0});rv.innerHTML='';scr.classList.remove('rv-on');renderCol();renderLB()};
    info.querySelector('#rKeep').onclick=()=>{close('vault');toast(`${win.model} is in your vault`)};
    info.querySelector('#rSell').onclick=()=>{S.bal+=win.price*.9;close('sold');paintBal();SFX.coin();setTimeout(()=>openSold(win),200)};
    info.querySelector('#rShip').onclick=()=>{close('vault');openShip(S.col[0])};
@@ -2428,6 +2428,7 @@ function byRule(m){const n=m.name||'',col=(m.color||new THREE.Color(1,1,1)).clon
   return null}
 
 const BLACK = new THREE.MeshBasicMaterial({color: 0x000000});
+const POOL = {};   // perf (2026-11-20): picker + reveal reuse one WebGL renderer each instead of 2 new contexts per opening (Safari frees them slowly)
 function glowLayer(baseCanvas){
   const gc = document.createElement('canvas'); gc.className = baseCanvas.className + ' glowl'; gc.id = baseCanvas.id ? baseCanvas.id + 'g' : '';
   gc.setAttribute('aria-hidden', 'true'); baseCanvas.after(gc);
@@ -2438,7 +2439,7 @@ function glowLayer(baseCanvas){
     canvas: gc,
     size(w, h){ RG.setSize(w, h, false); if(comp) comp.setSize(w, h) },
     render(scene, camera, strength){
-      if(!comp || sceneRef !== scene || camRef !== camera){ sceneRef = scene; camRef = camera;
+      if(!comp || sceneRef !== scene || camRef !== camera){ sceneRef = scene; camRef = camera; if(comp){ comp.passes.forEach(p => p.dispose && p.dispose()); comp.dispose() }
         comp = new EffectComposer(RG); comp.addPass(new RenderPass(scene, camera));
         comp.bloom = new UnrealBloomPass(new THREE.Vector2(1, 1), .6, .18, .05); comp.addPass(comp.bloom); comp.addPass(new OutputPass());
         // glow -> real transparency: opacity from brightness, so everything outside the light stays see-through
@@ -2607,10 +2608,11 @@ window.MB3D.reveal = function(boxEl, b){
   const k = keyOf(b), accent = new THREE.Color(b.accent || '#ffffff');
   load(k).then(src => {
     if(!boxEl.isConnected) return;
-    const cv2 = document.createElement('canvas'); cv2.className = 'rv3d'; ob.appendChild(cv2);
-    const R2 = new THREE.WebGLRenderer({canvas: cv2, antialias: true, alpha: true});
-    R2.setPixelRatio(Math.min(devicePixelRatio, lowPower ? 1.5 : 2)); R2.setClearColor(0, 0);
-    R2.toneMapping = THREE.ACESFilmicToneMapping; R2.toneMappingExposure = 1.2; R2.outputColorSpace = THREE.SRGBColorSpace;
+    const P = POOL.reveal || (POOL.reveal = (() => { const cv = document.createElement('canvas'); cv.className = 'rv3d';
+      const r = new THREE.WebGLRenderer({canvas: cv, antialias: true, alpha: true});
+      r.setPixelRatio(Math.min(devicePixelRatio, lowPower ? 1.5 : 2)); r.setClearColor(0, 0);
+      r.toneMapping = THREE.ACESFilmicToneMapping; r.toneMappingExposure = 1.2; r.outputColorSpace = THREE.SRGBColorSpace; return {cv, R: r, gl: glowLayer(cv), gen: 0} })());
+    const gen = ++P.gen, cv2 = P.cv, R2 = P.R; ob.appendChild(cv2);
     const S2 = new THREE.Scene(); S2.environment = S.environment;
     S2.add(key.clone(), rim.clone(), fill.clone()); { const sp2 = mkSpot(5.4, 2.6, 30); S2.add(sp2, sp2.target) }
     const holder = src.clone(true); holder.position.z += BL.zfix;
@@ -2628,13 +2630,13 @@ window.MB3D.reveal = function(boxEl, b){
 
     const spill = new THREE.PointLight(accent, 0, 3, 1.6); spill.position.set(ctr.x, box3.max.y + .5, ctr.z + .15); S2.add(spill);
     const C2 = frontCam();   // straight-on view of the box (slightly from above so the opening reads)
-    const gl2 = glowLayer(cv2);
+    const gl2 = P.gl; cv2.after(gl2.canvas);
     const fit = () => { const w = cv2.clientWidth, h = cv2.clientHeight; if(w && h){ R2.setSize(w, h, false); gl2.size(w, h);
       const a = w / h, Hc = 1000 / a; C2.fov = 2 * Math.atan(1.28 / 6.2 / a) * 180 / Math.PI; C2.aspect = a; C2.setViewOffset(1000, Hc, 0, -.165 * Hc, 1000, Hc); C2.updateProjectionMatrix() } };
     fit(); boxEl.classList.add('three');
     const t0 = performance.now(); let openAt = 0;
     const step = now => {
-      if(!cv2.isConnected){ gl2.dispose(); R2.dispose(); R2.forceContextLoss(); return }
+      if(P.gen !== gen || !boxEl.isConnected){ if(P.gen === gen){ cv2.remove(); gl2.canvas.remove() } leds.forEach(m => m.dispose()); return }   // pooled: stop, keep the context
       requestAnimationFrame(step);
       const t = (now - t0) / 1000, open = boxEl.classList.contains('lidopen');
       if(open && !openAt) openAt = now;
@@ -2695,17 +2697,18 @@ window.MB3D.viewer = function(wrap, b, cb){
 // ---- pick-your-box carousel: N clones on a ring, a spotlight on the front slot, drag to turn, snaps to a box ----
 window.MB3D.picker = function(pk, b, cb){
   const N = 8, RAD = 2.45, STEP = Math.PI * 2 / N, k = keyOf(b);
-  const cv3 = document.createElement('canvas'); pk.insertBefore(cv3, pk.querySelector('.vig'));
-  const R3 = new THREE.WebGLRenderer({canvas: cv3, antialias: true, alpha: true});
-  R3.setPixelRatio(Math.min(devicePixelRatio, lowPower ? 1.5 : 2)); R3.setClearColor(0, 0);
-  R3.toneMapping = THREE.ACESFilmicToneMapping; R3.toneMappingExposure = 1.25; R3.outputColorSpace = THREE.SRGBColorSpace;
+  const P = POOL.pick || (POOL.pick = (() => { const cv = document.createElement('canvas');
+    const r = new THREE.WebGLRenderer({canvas: cv, antialias: true, alpha: true});
+    r.setPixelRatio(Math.min(devicePixelRatio, lowPower ? 1.5 : 2)); r.setClearColor(0, 0);
+    r.toneMapping = THREE.ACESFilmicToneMapping; r.toneMappingExposure = 1.25; r.outputColorSpace = THREE.SRGBColorSpace; return {cv, R: r, gl: glowLayer(cv), gen: 0} })());
+  const gen = ++P.gen, cv3 = P.cv, R3 = P.R; pk.insertBefore(cv3, pk.querySelector('.vig'));
   const S3 = new THREE.Scene(); S3.environment = S.environment; S3.environmentIntensity = .28;
   S3.add(new THREE.HemisphereLight(0x5a62ff, 0x040308, .45));
   const sp = new THREE.SpotLight(0xc9c4ff, 34, 16, .3, .75, 1.3); sp.position.set(0, 4.4, RAD + 3.6); sp.target.position.set(0, .55, RAD); S3.add(sp, sp.target);
   const back = new THREE.DirectionalLight(0x6c72ff, 1.1); back.position.set(0, 3, -4); S3.add(back);
   const ring = new THREE.Group(); S3.add(ring);
   const C3 = new THREE.PerspectiveCamera(38, 1, .1, 80);
-  const gl3 = glowLayer(cv3);
+  const gl3 = P.gl; cv3.after(gl3.canvas);
   const fit = () => { const w = cv3.clientWidth, h = cv3.clientHeight; if(!w || !h) return; R3.setSize(w, h, false); gl3.size(w, h); C3.aspect = w / h;
     const d = Math.max(6, 1.55 / (Math.tan(19 * Math.PI / 180) * C3.aspect)); C3.position.set(0, .62 + d * .2, RAD + d); C3.lookAt(0, .62, RAD); C3.updateProjectionMatrix() };
   fit(); addEventListener('resize', fit);
@@ -2726,7 +2729,8 @@ window.MB3D.picker = function(pk, b, cb){
   pk.addEventListener('pointerdown', down); pk.addEventListener('pointermove', move); pk.addEventListener('pointerup', up); pk.addEventListener('pointercancel', up);
   const clk = new THREE.Clock();
   const step = () => {
-    if(!cv3.isConnected){ removeEventListener('resize', fit); gl3.dispose(); R3.dispose(); R3.forceContextLoss(); return }
+    if(P.gen !== gen || !cv3.isConnected){ removeEventListener('resize', fit); pk.removeEventListener('pointerdown', down); pk.removeEventListener('pointermove', move); pk.removeEventListener('pointerup', up); pk.removeEventListener('pointercancel', up);
+      if(P.gen === gen){ cv3.remove(); gl3.canvas.remove() } return }   // pooled: stop, keep the context
     requestAnimationFrame(step);
     const dt = Math.min(clk.getDelta(), .05), t = clk.elapsedTime;
     if(!drag) rot += (target - rot) * Math.min(1, dt * 7.5);
