@@ -789,6 +789,9 @@ html,body{overscroll-behavior:none}
 #scr .mbx-rv.giftrv .gclaim{position:relative;overflow:hidden;isolation:isolate;border:0!important;background:none!important;box-shadow:0 0 34px rgba(176,60,255,.35),0 0 60px rgba(60,224,255,.18)}
 #scr .mbx-rv.giftrv .gclaim::before{content:"";position:absolute;left:50%;top:50%;width:200%;aspect-ratio:1;transform:translate(-50%,-50%);background:conic-gradient(#ff3cac,#ff8a3c,#ffe03c,#3cff8a,#3ce0ff,#5a6cff,#b03cff,#ff3cac);animation:gcSpin 5s linear infinite;z-index:-2}
 #scr .mbx-rv.giftrv .gclaim::after{content:"";position:absolute;inset:2.5px;border-radius:19.5px;z-index:-1;background:radial-gradient(110% 70% at 15% 0%,rgba(255,60,172,.30),transparent 60%),radial-gradient(110% 70% at 85% 0%,rgba(90,108,255,.32),transparent 60%),radial-gradient(100% 60% at 50% 115%,rgba(60,224,255,.26),transparent 62%),linear-gradient(180deg,#17122a,#0b0a12)}
+/* cut corners like the buttons (top-left + bottom-right), Sharon 2026-11-20 */
+#scr .mbx-rv.giftrv .gclaim{border-radius:0!important;box-shadow:none!important;clip-path:polygon(22px 0,100% 0,100% calc(100% - 22px),calc(100% - 22px) 100%,0 100%,0 22px)}
+#scr .mbx-rv.giftrv .gclaim::after{border-radius:0!important;clip-path:polygon(21px 0,100% 0,100% calc(100% - 21px),calc(100% - 21px) 100%,0 100%,0 21px)}
 @keyframes gcSpin{to{transform:translate(-50%,-50%) rotate(360deg)}}
 #scr .mbx-rv.giftrv .gc-k{font-size:25px!important;background:none!important;color:#fff!important;-webkit-text-fill-color:#fff;text-shadow:0 0 14px rgba(176,60,255,.55),0 0 26px rgba(60,224,255,.3)}   /* white title (Sharon, 2026-11-20) */
 @keyframes gcShine{to{background-position:-200% 0}}
