@@ -2639,21 +2639,8 @@ function size(){ const w = cv.clientWidth, h = cv.clientHeight; if(!w || !h) ret
 addEventListener('resize', size); size();
 
 let shown = -1, active = null, swapT = 1, swapAt = 0, pending = null, tiltX = 0, tiltY = 0, tx = 0, ty = 0;
-// gyro: tilting the phone turns the box (camera orbits it). Calibrated to how the phone is held when it starts.
-const GY = {x: 0, y: 0, sx: 0, sy: 0, base: null, on: false};
-function onOrient(e){ if(e.beta == null || e.gamma == null) return;
-  const portraitUp = (screen.orientation ? screen.orientation.angle : (window.orientation || 0)) % 180 === 0;
-  const a = portraitUp ? e.gamma : e.beta, b = portraitUp ? e.beta : e.gamma;
-  if(!GY.base) GY.base = {a, b};
-  GY.base.a += (a - GY.base.a) * .004; GY.base.b += (b - GY.base.b) * .004;      // slowly re-centre to the resting grip
-  GY.x = Math.max(-1, Math.min(1, (a - GY.base.a) / 25)); GY.y = Math.max(-1, Math.min(1, (b - GY.base.b) / 25)); GY.on = true }
-function startGyro(){ if(GY.started) return; GY.started = true; addEventListener('deviceorientation', onOrient) }
-if(typeof DeviceOrientationEvent !== 'undefined'){
-  startGyro();   // listen right away; on iOS events only start once the tap below grants permission
-  if(typeof DeviceOrientationEvent.requestPermission === 'function'){   // iOS: ask on the first tap
-    const ask = () => { DeviceOrientationEvent.requestPermission().then(r => { if(r === 'granted') startGyro() }).catch(() => {}) };
-    document.addEventListener('touchend', ask, {once: true, passive: true}); document.addEventListener('click', ask, {once: true});
-  } else startGyro() }   // Android & others: no prompt needed (desktops simply never send events)
+// gyro removed 2026-11-22 (no motion-permission prompt); GY stays at rest so the box keeps its idle sway
+const GY = {x: 0, y: 0, sx: 0, sy: 0, on: false};
 window.__GY = GY;
 hero.addEventListener('pointermove', e => { const r = hero.getBoundingClientRect(); tx = ((e.clientX - r.left) / r.width - .5); ty = ((e.clientY - r.top) / r.height - .5) });
 hero.addEventListener('pointerleave', () => { tx = ty = 0 });
