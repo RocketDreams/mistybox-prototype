@@ -1238,7 +1238,7 @@ html,body{overscroll-behavior:none}
  <div class="navfade" aria-hidden="true"></div>
 
  <div class="top" id="top">
-  <div class="hd"><div class="hl"><button class="burger" id="burger" aria-label="Menu"><i></i><i></i><i></i></button><img class="mklogo" src="assets/mk/logo.png" alt="MistyBox"></div>
+  <div class="hd"><div class="hl"><button class="burger" id="burger" aria-label="Menu"><i></i><i></i><i></i></button><img class="mklogo" src="assets/logo-white.png" alt="MistyBox"></div>
    <button class="wallet" id="walletBtn" aria-label="Add funds"><span class="dot"></span><span id="bal">$0</span><span class="plus"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span></button></div>
   <div class="ticker"><div class="lbl"><i></i>TOP REVEALS</div><div class="run" id="tick"></div></div>
   <div class="mdw"><div class="mb-drawer" id="dwCats">
@@ -3212,6 +3212,8 @@ function coinsToWallet(from,ob,nb,then){
  try{SFX.coin()}catch(e){}}
 </script>
 <style id="hex-css">
+#scr .mklogo,#scr .top .hd img.mklogo{mix-blend-mode:normal!important;object-fit:contain;object-position:left center;filter:none}
+#scr[data-bg=white] .mklogo,#scr[data-bg=white] .top .hd img.mklogo{filter:invert(1)!important}
 /* honeycomb background (2026-11-22, trial): translucent purple cells that light up and fade at random; replaces the feathers + ribbons */
 #scr.hexbg[data-bg=black] .bg canvas#ct,#scr.hexbg[data-bg=black] .bg canvas#swc,#scr.hexbg[data-bg=black] .bg .wisps{display:none!important}
 #scr.hexbg[data-bg=black] .bg{background:#050407!important}
