@@ -678,8 +678,8 @@ html,body{overscroll-behavior:none}
 /* box-details transition */
 #name{perspective:420px}
 #name .ch{display:inline-block;text-align:center;white-space:pre;background:inherit;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
-#name.in{animation:nmIn .5s cubic-bezier(.2,.8,.2,1) both;will-change:transform,opacity}
-@keyframes nmIn{from{opacity:0;transform:translate3d(calc(var(--d,1) * 34px),0,0)}to{opacity:1;transform:translate3d(0,0,0)}}
+#name.in{animation:nmIn .45s ease-out both}
+@keyframes nmIn{from{opacity:0;transform:translate3d(calc(var(--d,1) * 10px),0,0)}to{opacity:1;transform:translate3d(0,0,0)}}
 #name .ch.sc{-webkit-text-fill-color:rgba(205,210,220,.5)}
 @keyframes chIn{from{opacity:0;transform:translate3d(calc(var(--d) * 26px),0,0) rotateY(calc(var(--d) * -70deg)) scale(.8)}to{opacity:1;transform:translate3d(0,0,0)}}
 #name{position:relative}
@@ -1742,8 +1742,7 @@ function paintBox(){const b=BOXES[cur];$('#name').textContent=TITLE(b);fitTitle(
  $('#insideTop').innerHTML=b.items.filter(i=>i.tier==='grail').slice(0,2).concat(b.items.filter(i=>i.tier==='legendary').slice(0,1)).map(rowHTML).join('');
  $$('.bcard').forEach((c,i)=>c.classList.toggle('cur',i===cur));}
 function rowHTML(i){return `<button class="row" data-w="${i.id}" data-b="${i.box}"><img src="${i.img}" alt="" loading="lazy"><div class="n">${esc(i.brand)} ${esc(i.model)}<br>${rar(i.tier)}</div><div class="p">${money(i.price)}</div></button>`}
-/* box-details transition: the name decodes letter by letter (scramble -> chrome lock) with a 3D swing in the swipe
-   direction and a light sweep; min / max / price roll to their new values; the frame lines' glint runs across. */
+/* box-details transition: the name simply fades in (classic, no letter scramble); min / max / price roll to their new values; the frame lines' glint runs across. */
 let DFX=0;
 function detFx(pb,dir){const tok=++DFX,b=BOXES[cur],h=$('#name'),RM=matchMedia('(prefers-reduced-motion: reduce)').matches;if(RM||!h)return;
  const roll=(el,from,to,fmt,ms,delay)=>{if(!el||from===to)return;const t0=performance.now()+delay;el.textContent=fmt(from);
@@ -1751,15 +1750,7 @@ function detFx(pb,dir){const tok=++DFX,b=BOXES[cur],h=$('#name'),RM=matchMedia('
  roll($('#minV'),pb.min,b.min,money,700,60);roll($('#maxV'),pb.max,b.max,money,900,120);roll($('#buyT'),pb.price,b.price,v=>'OPEN FOR '+money(v),800,180);
  const vals=$('.vals'),cta=$('#buy');[vals,cta].forEach(el=>{if(!el)return;el.classList.remove('roll');void el.offsetWidth;el.classList.add('roll')});
  $$('.gline').forEach(g=>{g.style.setProperty('--gf',dir>0?'0%':'100%');g.classList.remove('go');void g.offsetWidth;g.classList.add('go')});
- const T=TITLE(b),G='ABCDEFGHKLMNPRSTUVWXYZ0123456789#$%&@';h.classList.remove('shine','in');h.style.setProperty('--d',dir);
- h.innerHTML=[...T].map((c,i)=>`<span class="ch" style="--i:${i};--d:${dir}">${c===' '?'&nbsp;':esc(c)}</span>`).join('');fitTitle();
- const sp=[...h.children],wd=sp.map(x=>x.offsetWidth);sp.forEach((x,i)=>{x.style.width=wd[i]+'px';if(T[i]!==' ')x.classList.add('sc')});void h.offsetWidth;h.classList.add('in');
- const t0=performance.now(),lockAt=i=>140+i*60;
- const tick=now=>{if(tok!==DFX)return;const el=now-t0;let done=true;
-  sp.forEach((x,i)=>{if(T[i]===' '||!x.classList.contains('sc'))return;if(el>=lockAt(i)){x.textContent=T[i];x.classList.remove('sc')}else{done=false;if(Math.random()<.5)x.textContent=G[Math.random()*G.length|0]}});
-  if(!done){setTimeout(()=>requestAnimationFrame(tick),70);return}
-  setTimeout(()=>{if(tok!==DFX)return;h.classList.remove('shine');void h.offsetWidth;h.classList.add('shine')},300)};
- requestAnimationFrame(tick)}
+ h.classList.remove('shine','in');h.style.setProperty('--d',dir);void h.offsetWidth;h.classList.add('in')}
 function go(n,dir){n=(n+BOXES.length)%BOXES.length;if(n===cur)return;dir=dir||(n>cur?1:-1);const pb=BOXES[cur];
  const old=slides[cur],nw=slides[n];nw.className='slide '+(dir>0?'enter-r':'enter-l');nw.offsetWidth;
  old.className='slide '+(dir>0?'out-l':'out-r');nw.className='slide cur burst';setTimeout(()=>nw.classList.remove('burst'),950);
