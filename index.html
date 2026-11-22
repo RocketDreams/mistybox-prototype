@@ -1192,6 +1192,10 @@ html,body{overscroll-behavior:none}
 #boot .sp-tag{position:absolute;left:50%;top:calc(100% + 24px);transform:translateX(-50%);white-space:nowrap;padding-left:12px;font:700 10px/1 Montserrat,system-ui,sans-serif;letter-spacing:12px;text-transform:uppercase;color:#9196a1;opacity:0}
 #boot .bt-bar,#boot .bt-txt{transition:opacity .3s ease}
 #boot.sp-on .bt-bar,#boot.sp-on .bt-txt{opacity:0}
+#boot.tap{cursor:pointer}#boot.tap .bt-bar{opacity:0}
+#boot.tap .bt-txt{color:#fff;letter-spacing:4px;animation:btTap 1.6s ease-in-out infinite}
+@keyframes btTap{0%,100%{opacity:.45}50%{opacity:1}}
+#boot.sp-on .bt-txt{animation:none}
 #boot.sp-go .sp-w img{transition:transform .75s cubic-bezier(.16,.84,.24,1);transform:none}
 #boot.sp-go .sp-tag{transition:opacity .8s .4s ease,letter-spacing 1.2s .4s cubic-bezier(.16,.84,.24,1),padding 1.2s .4s cubic-bezier(.16,.84,.24,1);opacity:1;letter-spacing:4px;padding-left:4px}
 @media (prefers-reduced-motion:reduce){#boot.sp-go .sp-w img,#boot.sp-go .sp-tag{transition:none}}
@@ -2406,7 +2410,18 @@ setTimeout(()=>{const id=new URLSearchParams(location.search).get('gift'),g=id&&
  const fonts=()=>Promise.all(['900 italic 20px Montserrat','800 italic 20px Montserrat','800 20px Montserrat','700 20px Montserrat','600 20px Montserrat','500 20px Montserrat','800 italic 20px Poppins','700 20px Poppins','600 20px Poppins','400 20px Poppins'].map(f=>document.fonts.load(f).catch(()=>{}))).then(()=>document.fonts.ready);
  const finish=()=>{if(boot.classList.contains('done'))return;set(1);window.__mbBooted=true;const wait=Math.max(0,900-(performance.now()-T0));
    const end=()=>{boot.classList.add('done');setTimeout(()=>boot.remove(),700);dispatchEvent(new Event('mb-booted'))};
-   setTimeout(()=>{try{splash(end)}catch(e){console.warn('splash',e);end()}},wait+200)};
+   // gate: browsers only allow sound after a tap, so at 100% we ask for one; the tap unlocks audio and starts the splash with its sound
+   setTimeout(()=>{const txt=boot.querySelector('.bt-txt');txt.textContent='Tap to enter';boot.classList.add('tap');boot.setAttribute('role','button');boot.setAttribute('aria-label','Tap to enter MistyBox');boot.tabIndex=0;
+     const go=e=>{if(e&&e.type==='keydown'&&!/^(Enter| )$/.test(e.key))return;boot.removeEventListener('click',go);removeEventListener('keydown',go);boot.classList.remove('tap');
+       try{splashSnd()}catch(err){console.warn('splash sound',err)}try{splash(end)}catch(err){console.warn('splash',err);end()}};
+     boot.addEventListener('click',go);addEventListener('keydown',go)},wait+200)};
+ // splash sound, timed to the animation: airy riser while the mark spins (0-.9 s) -> watch-clasp click + low thump as it locks in as the O
+ // -> two soft swishes as the letters slide out -> a gentle shimmer chord under the tagline
+ const splashSnd=()=>{try{if(typeof S!=='undefined'&&!S.sound)return}catch(e){}const c=ac();if(!c)return;const t=c.currentTime+.03,L=t+.88;
+   nz(t,.95,'bandpass',260,2600,1.1,.11,.75,true);osc('sine',190,560,t,.9,.035,.7,true);
+   osc('sine',150,46,L,.5,.34,.004);nz(L,.05,'highpass',2600,5200,.8,.2,.001);osc('triangle',2093,2093,L,.6,.045,.002,true);osc('sine',3136,3136,L+.012,.7,.025,.002,true);
+   nz(L+.04,.5,'bandpass',3000,900,.9,.06,.05,true);nz(L+.11,.45,'bandpass',2600,800,.9,.05,.05,true);
+   osc('triangle',164.8,164.8,L+.3,2.6,.05,.5,true);[659.3,830.6,987.8,1318.5,1480].forEach((f,i)=>osc('sine',f,f,L+.38+i*.075,2.3,.03,.04,true))};
  // splash: FLIP the loading mark into the O of the wordmark (one spin on the way), letters slide out from behind it, tagline settles
  const splash=end=>{const m=boot.querySelector('.bt-mark'),slot=boot.querySelector('.sp-slot'),RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
    boot.classList.add('sp-on');m.style.animation='none';const a=m.getBoundingClientRect();slot.appendChild(m);const b=m.getBoundingClientRect();
