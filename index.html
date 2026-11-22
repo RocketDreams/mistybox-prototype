@@ -1368,7 +1368,7 @@ const RC={grail:'#ff4d6d',legendary:'#ffb02e',epic:'#b36bff',rare:'#4aa8ff',unco
 const TIERS=['grail','legendary','epic','rare','uncommon','common'];
 const T1={g:'grail',l:'legendary',e:'epic',r:'rare',u:'uncommon',c:'common'};
 const BOXES=[
- {tier:'Heritage',key:'bronze',price:50,min:20,max:1175,skin:'Red Leather',cube:'redleather',img:'assets/3d/cube_redleather-box.webp',led:'assets/3d/none.png',w:240,w1:'#ff9ad5',w2:'#9be8cf',accent:'#ff9ad5',glow:'rgba(255,140,210,.55)',c1:'#ffb3dc',c2:'#d9b8ff',c3:'#9be8cf',ctat:'#2a1340',cglow:'rgba(255,160,220,.45)',
+ {tier:'Heritage',key:'bronze',price:50,min:20,max:1175,skin:'Purple Leather',cube:'purpleleather',img:'assets/3d/cube_purpleleather-box.webp',led:'assets/3d/none.png',w:240,w1:'#9b6bff',w2:'#c9b2ff',accent:'#a78bfa',glow:'rgba(123,79,214,.55)',c1:'#d9c8ff',c2:'#b79cff',c3:'#8a63e6',ctat:'#1a0d33',cglow:'rgba(123,79,214,.45)',
   odds:{common:[50.56,'$20 – $22'],uncommon:[27.47,'$25 – $60'],rare:[11.45,'$50 – $60'],epic:[6.42,'$62 – $85'],legendary:[3.18,'$89 – $115'],grail:[.92,'$120 – $1,175']},
   items:`g|Tissot|PRX Damascus Steel|1175|tissot-prx-damascus-steel-38mm
 g|Tissot|PRX Carbon (Black/Black)|1150|tissot-prx-carbon-40-5mm-black-black
@@ -2484,12 +2484,12 @@ setTimeout(()=>{const id=new URLSearchParams(location.search).get('gift'),g=id&&
 (()=>{const boot=document.getElementById('boot'),bar=boot.querySelector('.bt-bar i'),pct=document.getElementById('bootPct');
  const T0=performance.now();let shown=0;
  const set=v=>{v=Math.max(shown,Math.min(1,v));shown=v;bar.style.width=(v*100).toFixed(1)+'%';pct.textContent=Math.round(v*100)+'%'};
- const CUBE_GLB={alu:'case.glb',carbon:'case_carbon.glb',zebra:'case_carbon.glb',zebrafur:'case_carbon.glb',hearts:'case_hearts.glb',hoops:'case_hoops.glb',leather:'case_leather.glb',redleather:'case_leather.glb',prism:'case_prism.glb'};
+ const CUBE_GLB={alu:'case.glb',carbon:'case_carbon.glb',zebra:'case_carbon.glb',zebrafur:'case_carbon.glb',hearts:'case_hearts.glb',hoops:'case_hoops.glb',leather:'case_leather.glb',purpleleather:'case_leather.glb',prism:'case_prism.glb'};
  const imgs=new Set(['assets/logo-white.png','assets/wallet-plus.png','assets/mk/logo.png','assets/mk/bg.jpg','assets/mk/bg_top.jpg','assets/mk/bg_bot.jpg','assets/mk/i_star.png','assets/mk/i_gift.png',
    'assets/mk/n_boxes.png','assets/mk/n_showroom.png','assets/mk/n_collection.png','assets/mk/n_leaderboard.png','assets/mk/n_account.png']);
  const three=new Set(), opt=new Set();
  BOXES.forEach(b=>{imgs.add(b.img);if(b.led&&!/none\.png$/.test(b.led))imgs.add(b.led);
-   if(b.cube){three.add('assets/3d/'+CUBE_GLB[b.cube]);if(/leather/.test(b.cube))['leather_col.jpg','leather_red_col.jpg','leather_rough.jpg','leather_nrm.jpg'].forEach(f=>three.add('assets/3d/'+f));if(/zebra/.test(b.cube))three.add('assets/3d/zebra_fur.jpg')}
+   if(b.cube){three.add('assets/3d/'+CUBE_GLB[b.cube]);if(/leather/.test(b.cube))['leather_col.jpg','leather_purple_col.jpg','leather_rough.jpg','leather_nrm.jpg'].forEach(f=>three.add('assets/3d/'+f));if(/zebra/.test(b.cube))three.add('assets/3d/zebra_fur.jpg')}
    else{const m=/3d\/(\w+)-box/.exec(b.img);if(m){three.add('assets/3d/'+m[1]+'.glb');['_front','lid_front','side_front'].forEach(x=>opt.add('assets/3d/'+m[1]+x+'.png'))}}});
  ALL.forEach(i=>imgs.add(i.img));
  const list=[...three].map(u=>({u,w:2e6})).concat([...opt].map(u=>({u,w:4e5,opt:1})),[...imgs].map(u=>({u,w:6e4})));
@@ -2626,7 +2626,7 @@ function glowLayer(baseCanvas){
 const loader = new GLTFLoader(), cache = {}, models = {};
 function keyOf(b){const m=/3d\/(\w+)-box/.exec(b.img);return m?m[1]:'agent'}
 // ---- the new cube boxes: one model family, skinned per box (materials ported from cube.html) ----
-const CUBE_GLB = {alu: 'case.glb', carbon: 'case_carbon.glb', zebra: 'case_carbon.glb', zebrafur: 'case_carbon.glb', hearts: 'case_hearts.glb', hoops: 'case_hoops.glb', leather: 'case_leather.glb', redleather: 'case_leather.glb', prism: 'case_prism.glb'};   // v2 case model (Sharon, 2026-11-16)
+const CUBE_GLB = {alu: 'case.glb', carbon: 'case_carbon.glb', zebra: 'case_carbon.glb', zebrafur: 'case_carbon.glb', hearts: 'case_hearts.glb', hoops: 'case_hoops.glb', leather: 'case_leather.glb', purpleleather: 'case_leather.glb', prism: 'case_prism.glb'};   // v2 case model (Sharon, 2026-11-16)
 const CUBE_SCALE = 1.15, cubeSrc = {}, TL = new THREE.TextureLoader();
 let ROOM = null;   // bright studio reflections for the cube boxes (chrome would read black in the app's dark scene)
 function studioEnv(){   // equirect canvas (works in every renderer: three PMREMs it per context): softboxes on a grey studio
@@ -2648,7 +2648,7 @@ function cubeTex(){ if(CT) return CT;
   const noise = (() => { const n = 512, c = document.createElement('canvas'); c.width = c.height = n; const g = c.getContext('2d'), d = g.createImageData(n, n);
     for(let i = 0; i < n * n; i++){ const v = Math.random() * 255 | 0; d.data[4 * i] = d.data[4 * i + 1] = d.data[4 * i + 2] = v; d.data[4 * i + 3] = 255 }
     g.putImageData(d, 0, 0); const t = new THREE.CanvasTexture(c); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(3, 3); t.magFilter = t.minFilter = THREE.NearestFilter; t.generateMipmaps = false; return t })();
-  return CT = {carbon, zebra, noise, lcol: tex('leather_col.jpg', true), lred: tex('leather_red_col.jpg', true), lrough: tex('leather_rough.jpg'), lnrm: tex('leather_nrm.jpg')} }
+  return CT = {carbon, zebra, noise, lcol: tex('leather_col.jpg', true), lred: tex('leather_purple_col.jpg', true), lrough: tex('leather_rough.jpg'), lnrm: tex('leather_nrm.jpg')} }
 const M_ = (o) => new THREE.MeshStandardMaterial(o), MP = (o) => new THREE.MeshPhysicalMaterial(o);
 const chrome = () => ({ChromeRail: M_({color: 0xe6e8ec, metalness: 1, roughness: .18, roughnessMap: BRUSH}), ChromeBlock: M_({color: 0xe2e4e8, metalness: 1, roughness: .2}),
   BlackRail: M_({color: 0xe6e8ec, metalness: 1, roughness: .18, roughnessMap: BRUSH}), BlackBlock: M_({color: 0xe2e4e8, metalness: 1, roughness: .2}),
@@ -2672,9 +2672,9 @@ function cubeMat(skin, name, src){
   if(skin === 'prism') S_ = {ChromeRail: M_({color: 0x6a6561, metalness: 1, roughness: .3, roughnessMap: BRUSH}), ChromeBlock: M_({color: 0x6a6561, metalness: 1, roughness: .32}),
     BlackRail: M_({color: 0x6a6561, metalness: 1, roughness: .3, roughnessMap: BRUSH}), BlackBlock: M_({color: 0x6a6561, metalness: 1, roughness: .32}),
     HingeChrome: M_({color: 0xd8dadf, metalness: 1, roughness: .14}), BoltChrome: M_({color: 0xeceef2, metalness: 1, roughness: .06}), InteriorBlack: M_({color: 0x0b0b0d, roughness: .95})};   // prismatic Legacy (2026-11-19): graphite frame, silver bolts
-  if(skin === 'leather' || skin === 'redleather') S_ = {...chrome(), LeatherBlack: MP({map: skin === 'redleather' ? T.lred : T.lcol, roughnessMap: T.lrough, roughness: 1, normalMap: T.lnrm,
+  if(skin === 'leather' || skin === 'purpleleather') S_ = {...chrome(), LeatherBlack: MP({map: skin === 'purpleleather' ? T.lred : T.lcol, roughnessMap: T.lrough, roughness: 1, normalMap: T.lnrm,
     normalScale: new THREE.Vector2(.55, .55), clearcoat: .12, clearcoatRoughness: .35, envMapIntensity: .6}),
-    StitchThread: M_({color: skin === 'redleather' ? 0xe6d6b0 : 0xa8a8a4, roughness: .8}), BlackSuede: MP({color: 0x050506, roughness: .95, sheen: .6, sheenColor: 0x333336}), LeatherUnder: M_({color: 0x080809, roughness: .8})};
+    StitchThread: M_({color: skin === 'purpleleather' ? 0xe4dcf5 : 0xa8a8a4, roughness: .8}), BlackSuede: MP({color: 0x050506, roughness: .95, sheen: .6, sheenColor: 0x333336}), LeatherUnder: M_({color: 0x080809, roughness: .8})};
   return S_[name] || base[name] || null }
 function furShells(o){
   const T = cubeTex(), N = 18, L = .011;
