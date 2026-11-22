@@ -1598,7 +1598,7 @@ function startSwoosh(){if(SWON)return;SWON=1;
    const gr=g.createLinearGradient(x0+ox,y0+oy,x1+ox,y1+oy);const pp=.28+.5*(((ts/PER)*.8+k*.37)%1);   // a light sheen travelling along the swoosh
    gr.addColorStop(0,'rgba(150,150,158,0)');gr.addColorStop(.14,`rgba(150,150,158,${al*.6})`);gr.addColorStop(pp-.13,`rgba(160,160,168,${al})`);gr.addColorStop(pp,`rgba(225,225,235,${Math.min(.75,al*2.1)})`);gr.addColorStop(pp+.13,`rgba(170,170,180,${al})`);gr.addColorStop(.93,`rgba(185,185,195,${al*.8})`);gr.addColorStop(1,'rgba(185,185,195,0)');
    g.fillStyle=gr;g.fill();g.beginPath();g.moveTo(T[0][0],T[0][1]);for(const q of T)g.lineTo(q[0],q[1]);g.lineWidth=Math.max(.6,.8*U);g.strokeStyle=gr;g.globalAlpha=.6;g.stroke();g.globalAlpha=1})};
- const step=t=>{requestAnimationFrame(step);if(t-last<33||document.hidden||document.querySelector('.pk-on,.rv-on'))return;last=t;draw(RM?0:t)};   // frozen during the box picker + opening (perf, esp. Safari)
+ const step=t=>{requestAnimationFrame(step);if(!c.offsetWidth||t-last<33||document.hidden||document.querySelector('.pk-on,.rv-on'))return;last=t;draw(RM?0:t)};   // frozen during the box picker + opening (perf, esp. Safari)
  draw(0);requestAnimationFrame(step)}
 /* embers: small sparks drifting up (own canvas, cheap) */
 let EMB=null,FIRE_BOT=0;
@@ -3065,16 +3065,19 @@ frame();
 /* ---- purple accent (2026-11-22): one colour breaks the black: primary CTA, Rarity, active tab ---- */
 :root{--mb-purple:#7b4fd6;--mb-purple-hi:#9168e8;--mb-purple-lo:#6a3fc4;--mb-purple-glow:rgba(140,90,255,.45)}
 #scr #buy.cta,#scr .pick .pk-go.cta,#auth #auGo.cta{color:#fff!important;border-radius:0!important;box-shadow:none!important;
- background:linear-gradient(180deg,var(--mb-purple-hi) 0%,var(--mb-purple) 46%,var(--mb-purple-lo) 100%)!important;
+ background:var(--mb-purple)!important;
  clip-path:polygon(16px 0,100% 0,100% calc(100% - 16px),calc(100% - 16px) 100%,0 100%,0 16px)!important;
- filter:drop-shadow(0 0 14px var(--mb-purple-glow)) drop-shadow(0 6px 14px rgba(0,0,0,.55))!important;text-shadow:0 1px 0 rgba(40,10,90,.35)}
+ filter:none!important;text-shadow:none!important}   /* solid flat purple: no gradient, no glow */
 #scr #buy.cta::before,#scr #buy.cta::after,#scr .pick .pk-go.cta::before,#auth #auGo.cta::before{display:none!important}
 #scr #buy.cta svg,#auth #auGo.cta svg{stroke:#fff}
-#scr #buy.cta:active,#scr .pick .pk-go.cta:active,#auth #auGo.cta:active{filter:drop-shadow(0 0 8px var(--mb-purple-glow))!important;transform:translateY(2px)}
+#scr #buy.cta:active,#scr .pick .pk-go.cta:active,#auth #auGo.cta:active{background:var(--mb-purple-lo)!important;transform:translateY(2px)}
 #scr .odds{border:1.5px solid var(--mb-purple)!important;background:rgba(18,10,34,.75)!important}
 #scr .odds img{filter:brightness(0) saturate(100%) invert(40%) sepia(62%) saturate(2400%) hue-rotate(244deg) brightness(95%)}
 #scr .nav button.on img{filter:brightness(0) saturate(100%) invert(40%) sepia(62%) saturate(2400%) hue-rotate(244deg) brightness(105%)}
 #scr .nav button.on:after{display:block!important;content:""!important;position:absolute;bottom:calc(-6*var(--U,1px))!important;width:calc(46*var(--U,1px))!important;height:3px!important;border-radius:2px;background:var(--mb-purple)!important;box-shadow:0 0 8px var(--mb-purple-glow)!important}
+/* botanical background (2026-11-22): one seamless black-on-black SVG tile, repeated at a fixed scale; replaces the ribbon canvases */
+#scr[data-bg=black] .bg{background:#080809 url(assets/leaf-tile.svg) 0 0/170px 170px repeat!important}
+#scr[data-bg=black] .bg canvas,#scr[data-bg=black] .bg .wisps{display:none!important}
 </style>
 <!-- ---------- FTUE (2026-11-22): guided first-run tour before login; first Open goes through sign-up ---------- -->
 <style id="ftue-css">
