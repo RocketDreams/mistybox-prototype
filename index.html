@@ -1495,8 +1495,9 @@ c|Timex|Peanuts x Marlin Americana|359|timex-peanuts-x-timex-marlin-automatic-am
  w1:'#3c82ff',w2:'#ff2840',accent:'#4f8cff',glow:'rgba(60,130,255,.55)',c1:'#e6f0ff',c2:'#ff3b4e',c3:'#3c82ff',ctat:'#060f2a',cglow:'rgba(255,60,80,.45)'})})();
 BOXES.forEach(b=>{if(b.cube&&!b.img.includes('/cube_'))delete b.cube});   // holiday specials copy a tier's contents, not its cube skin
 // new cube boxes beyond the five tiers (same contents/odds as the tier they price-match)
-[['silver','hearts','Hearts','Hearts Special'],['ruby','hoops','Hoops','Game Day Special'],['gold','alu','Aluminium','Aluminium Special']].forEach(([k,c,skin,tier])=>{
+[['gold','pinata','Piñata','Piñata Drop'],['silver','hearts','Hearts','Hearts Special'],['ruby','hoops','Hoops','Game Day Special'],['gold','alu','Aluminium','Aluminium Special']].forEach(([k,c,skin,tier])=>{
  const r=BOXES.find(b=>b.key===k&&b.cube);BOXES.push({...r,tier,key:c,cube:c,skin,img:'assets/3d/cube_'+c+'-box.webp',led:'assets/3d/none.png'})});
+{const pd=BOXES.find(b=>b.key==='pinata');pd.drop=true;Object.assign(pd,{w1:'#ff7a18',w2:'#19c3cf',accent:'#ffcc22',glow:'rgba(255,190,40,.45)',c1:'#fff3c4',c2:'#ffcc22',c3:'#2ebd52',ctat:'#1a1204',cglow:'rgba(255,200,40,.45)'})}   // limited-time drop
 BOXES.sort((a,b)=>(b.cube?1:0)-(a.cube?1:0));   // the new cube boxes lead the carousel, holiday specials follow
 BOXES.forEach((b,bi)=>{b.items=b.items.trim().split('\n').map(l=>{const[t,br,md,p,s]=l.split('|');return{tier:T1[t],brand:br,model:md,price:+p,img:'assets/watches/'+s+'.webp',id:s,box:bi}})});
 /* ---------- BAGS category (2026-11-22, demo): the themed specials (Santa, Christmas, …) hold designer bags instead of watches ---------- */
@@ -1846,7 +1847,7 @@ const slides=BOXES.map((b,i)=>{const sl=document.createElement('div');sl.classNa
  sl.innerHTML=`<div class="bob"><div class="tilt">${LBOX(b)}</div></div>`;track.appendChild(sl);
  const d=document.createElement('i');d.onclick=()=>go(i);dots.appendChild(d);return sl;});
 let cur=0;
-const SHORT={hearts:'Hearts',hoops:'Hoops',alu:'Aluminium',santa:'Santa',xmas:'Christmas',nye:'New Year',valentine:'Valentine',patrick:'Shamrock',eggs:'Easter',kings:'Kings',game:'Big Game'};
+const SHORT={pinata:'Piñata',hearts:'Hearts',hoops:'Hoops',alu:'Aluminium',santa:'Santa',xmas:'Christmas',nye:'New Year',valentine:'Valentine',patrick:'Shamrock',eggs:'Easter',kings:'Kings',game:'Big Game'};
 const TITLE=b=>(SHORT[b.key]||b.tier).toUpperCase();   // short names, no 'BOX'
 function fitTitle(){const h=$('#name');if(!h)return;h.style.fontSize='';const max=h.parentElement.clientWidth*.9;let fs=parseFloat(getComputedStyle(h).fontSize);
  for(let i=0;i<20&&h.scrollWidth>max&&fs>14;i++){fs*=.94;h.style.setProperty('font-size',fs+'px','important')}}
@@ -2484,12 +2485,12 @@ setTimeout(()=>{const id=new URLSearchParams(location.search).get('gift'),g=id&&
 (()=>{const boot=document.getElementById('boot'),bar=boot.querySelector('.bt-bar i'),pct=document.getElementById('bootPct');
  const T0=performance.now();let shown=0;
  const set=v=>{v=Math.max(shown,Math.min(1,v));shown=v;bar.style.width=(v*100).toFixed(1)+'%';pct.textContent=Math.round(v*100)+'%'};
- const CUBE_GLB={alu:'case.glb',carbon:'case_carbon.glb',zebra:'case_carbon.glb',zebrafur:'case_carbon.glb',hearts:'case_hearts.glb',hoops:'case_hoops.glb',leather:'case_leather.glb',greenleather:'case_leather.glb',prism:'case_prism.glb'};
+ const CUBE_GLB={alu:'case.glb',carbon:'case_carbon.glb',zebra:'case_carbon.glb',zebrafur:'case_carbon.glb',pinata:'case_carbon.glb',hearts:'case_hearts.glb',hoops:'case_hoops.glb',leather:'case_leather.glb',greenleather:'case_leather.glb',prism:'case_prism.glb'};
  const imgs=new Set(['assets/logo-white.png','assets/wallet-plus.png','assets/mk/logo.png','assets/mk/bg.jpg','assets/mk/bg_top.jpg','assets/mk/bg_bot.jpg','assets/mk/i_star.png','assets/mk/i_gift.png',
    'assets/mk/n_boxes.png','assets/mk/n_showroom.png','assets/mk/n_collection.png','assets/mk/n_leaderboard.png','assets/mk/n_account.png']);
  const three=new Set(), opt=new Set();
  BOXES.forEach(b=>{imgs.add(b.img);if(b.led&&!/none\.png$/.test(b.led))imgs.add(b.led);
-   if(b.cube){three.add('assets/3d/'+CUBE_GLB[b.cube]);if(/leather/.test(b.cube))['leather_col.jpg','leather_green_col.jpg','leather_rough.jpg','leather_nrm.jpg'].forEach(f=>three.add('assets/3d/'+f));if(/zebra/.test(b.cube))three.add('assets/3d/zebra_fur.jpg')}
+   if(b.cube){three.add('assets/3d/'+CUBE_GLB[b.cube]);if(/leather/.test(b.cube))['leather_col.jpg','leather_green_col.jpg','leather_rough.jpg','leather_nrm.jpg'].forEach(f=>three.add('assets/3d/'+f));if(/zebra/.test(b.cube))three.add('assets/3d/zebra_fur.jpg');if(b.cube==='pinata')['pinata_col.jpg','pinata_bump.jpg'].forEach(f=>three.add('assets/3d/'+f))}
    else{const m=/3d\/(\w+)-box/.exec(b.img);if(m){three.add('assets/3d/'+m[1]+'.glb');['_front','lid_front','side_front'].forEach(x=>opt.add('assets/3d/'+m[1]+x+'.png'))}}});
  ALL.forEach(i=>imgs.add(i.img));
  const list=[...three].map(u=>({u,w:2e6})).concat([...opt].map(u=>({u,w:4e5,opt:1})),[...imgs].map(u=>({u,w:6e4})));
@@ -2626,7 +2627,7 @@ function glowLayer(baseCanvas){
 const loader = new GLTFLoader(), cache = {}, models = {};
 function keyOf(b){const m=/3d\/(\w+)-box/.exec(b.img);return m?m[1]:'agent'}
 // ---- the new cube boxes: one model family, skinned per box (materials ported from cube.html) ----
-const CUBE_GLB = {alu: 'case.glb', carbon: 'case_carbon.glb', zebra: 'case_carbon.glb', zebrafur: 'case_carbon.glb', hearts: 'case_hearts.glb', hoops: 'case_hoops.glb', leather: 'case_leather.glb', greenleather: 'case_leather.glb', prism: 'case_prism.glb'};   // v2 case model (Sharon, 2026-11-16)
+const CUBE_GLB = {alu: 'case.glb', carbon: 'case_carbon.glb', zebra: 'case_carbon.glb', zebrafur: 'case_carbon.glb', pinata: 'case_carbon.glb', hearts: 'case_hearts.glb', hoops: 'case_hoops.glb', leather: 'case_leather.glb', greenleather: 'case_leather.glb', prism: 'case_prism.glb'};   // v2 case model (Sharon, 2026-11-16)
 const CUBE_SCALE = 1.15, cubeSrc = {}, TL = new THREE.TextureLoader();
 let ROOM = null;   // bright studio reflections for the cube boxes (chrome would read black in the app's dark scene)
 function studioEnv(){   // equirect canvas (works in every renderer: three PMREMs it per context): softboxes on a grey studio
@@ -2648,7 +2649,7 @@ function cubeTex(){ if(CT) return CT;
   const noise = (() => { const n = 512, c = document.createElement('canvas'); c.width = c.height = n; const g = c.getContext('2d'), d = g.createImageData(n, n);
     for(let i = 0; i < n * n; i++){ const v = Math.random() * 255 | 0; d.data[4 * i] = d.data[4 * i + 1] = d.data[4 * i + 2] = v; d.data[4 * i + 3] = 255 }
     g.putImageData(d, 0, 0); const t = new THREE.CanvasTexture(c); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(3, 3); t.magFilter = t.minFilter = THREE.NearestFilter; t.generateMipmaps = false; return t })();
-  return CT = {carbon, zebra, noise, lcol: tex('leather_col.jpg', true), lred: tex('leather_green_col.jpg', true), lrough: tex('leather_rough.jpg'), lnrm: tex('leather_nrm.jpg')} }
+  return CT = {carbon, zebra, noise, lcol: tex('leather_col.jpg', true), lred: tex('leather_green_col.jpg', true), lrough: tex('leather_rough.jpg'), lnrm: tex('leather_nrm.jpg'), pinata: (t => (t.repeat.set(.8, 2), t))(tex('pinata_col.jpg', true)), pinataB: (t => (t.repeat.set(.8, 2), t))(tex('pinata_bump.jpg'))} }
 const M_ = (o) => new THREE.MeshStandardMaterial(o), MP = (o) => new THREE.MeshPhysicalMaterial(o);
 const chrome = () => ({ChromeRail: M_({color: 0xe6e8ec, metalness: 1, roughness: .18, roughnessMap: BRUSH}), ChromeBlock: M_({color: 0xe2e4e8, metalness: 1, roughness: .2}),
   BlackRail: M_({color: 0xe6e8ec, metalness: 1, roughness: .18, roughnessMap: BRUSH}), BlackBlock: M_({color: 0xe2e4e8, metalness: 1, roughness: .2}),
@@ -2660,6 +2661,7 @@ function cubeMat(skin, name, src){
     InteriorBlack: M_({color: 0x0b0b0d, roughness: .95}), HingeSteel: M_({color: 0xa8abb1, metalness: 1, roughness: .22})};
   let S_ = {};
   if(skin === 'carbon') S_ = {...chrome(), CarbonPanel: MP({map: T.carbon, metalness: .1, roughness: .4, clearcoat: .8, clearcoatRoughness: .12})};   // silver frame so the black box stands out (Sharon, 2026-11-23)
+  if(skin === 'pinata') S_ = {...chrome(), CarbonPanel: M_({map: T.pinata, bumpMap: T.pinataB, bumpScale: 3, roughness: .82, metalness: 0, envMapIntensity: .35})};   // Piñata drop: rainbow paper fringe (2026-11-23)
   if(skin === 'zebra') S_ = {...chrome(), CarbonPanel: M_({map: T.zebra, roughness: .95, envMapIntensity: .55})};
   if(skin === 'zebrafur') S_ = {...chrome(), CarbonPanel: M_({map: T.zebra, color: 0x8a8a8a, roughness: .95})};
   if(skin === 'hearts') S_ = {...chrome(), HeartsPanel: MP({map: src && src.map, color: 0xd8d8d8, roughness: .35, clearcoat: .6, clearcoatRoughness: .1}),
@@ -3599,4 +3601,23 @@ if(document.getElementById('boot'))addEventListener('mb-booted',go,{once:true});
 #scr#scr #promo{background:linear-gradient(#0b0b0e,#0b0b0e) padding-box,var(--mb-steel-frame) border-box!important;border:1.5px solid transparent!important}
 #scr#scr #copyCode .pill{border-radius:0!important;--cut:7px;clip-path:polygon(var(--cut) 0,100% 0,100% calc(100% - var(--cut)),calc(100% - var(--cut)) 100%,0 100%,0 var(--cut))!important}
 </style>
+<style id="drop-css">
+/* Limited-time drop badge (Piñata, 2026-11-23) */
+#dropTag{position:absolute;left:50%;top:calc(6px + var(--st,0px));transform:translateX(-50%);z-index:5;display:none;align-items:center;gap:10px;padding:7px 14px 7px 12px;
+ background:linear-gradient(135deg,#f4f5f7,#8e939b 40%,#e9ebee 70%,#7e838b);--cut:10px;clip-path:polygon(var(--cut) 0,100% 0,100% calc(100% - var(--cut)),calc(100% - var(--cut)) 100%,0 100%,0 var(--cut));isolation:isolate;pointer-events:none}
+#dropTag::before{content:"";position:absolute;inset:1.5px;z-index:-1;background:#0b0c0e;clip-path:polygon(calc(var(--cut) - .6px) 0,100% 0,100% calc(100% - var(--cut) + .6px),calc(100% - var(--cut) + .6px) 100%,0 100%,0 calc(var(--cut) - .6px))}
+#dropTag.on{display:flex}
+#dropTag i{width:8px;height:8px;border-radius:50%;background:#19b85f;box-shadow:0 0 8px #19b85f;animation:dropPulse 1.1s ease-in-out infinite}
+#scr#scr#scr #dropTag b{font-family:'Archivo',sans-serif!important;font-weight:900!important;font-size:11px!important;line-height:1!important;font-stretch:125%!important;letter-spacing:1px!important;color:#fff;text-transform:uppercase;white-space:nowrap}
+#scr#scr#scr #dropTag span{font-family:'Inter',sans-serif!important;font-weight:700!important;font-size:13px!important;line-height:1!important;color:#fff;font-variant-numeric:tabular-nums;letter-spacing:.3px!important;white-space:nowrap}
+@keyframes dropPulse{50%{opacity:.35;transform:scale(.8)}}
+@media (prefers-reduced-motion:reduce){#dropTag i{animation:none}}
+</style>
+<script>
+(()=>{const hero=document.getElementById('hero');if(!hero)return;const t=document.createElement('div');t.id='dropTag';t.setAttribute('role','status');t.innerHTML='<i></i><b>Limited drop</b><span id="dropT"></span>';hero.appendChild(t);
+ const end=()=>{let e=+(S.dropEnd||0);if(!e||e<Date.now()){e=Date.now()+(2*86400+23*3600+41*60)*1000;S.dropEnd=e;save()}return e};
+ const fmt=ms=>{const s=Math.max(0,ms/1000|0),d=s/86400|0,h=(s%86400)/3600|0,m=(s%3600)/60|0,x=s%60,p=n=>String(n).padStart(2,'0');return 'Ends in '+(d?d+'d ':'')+p(h)+':'+p(m)+':'+p(x)};
+ const tick=()=>{const b=BOXES[cur],on=!!(b&&b.drop&&(typeof curView==='undefined'||curView==='boxes'));t.classList.toggle('on',on);if(on)document.getElementById('dropT').textContent=fmt(end()-Date.now())};
+ setInterval(tick,1000);const og=window.go;if(typeof og==='function'){window.go=function(){const r=og.apply(this,arguments);setTimeout(tick,0);return r}}tick();window.MBDrop={tick,end}})();
+</script>
 </body></html>
