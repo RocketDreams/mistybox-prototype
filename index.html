@@ -3578,4 +3578,23 @@ if(document.getElementById('boot'))addEventListener('mb-booted',go,{once:true});
  new MutationObserver(m=>{if(m.some(r=>r.target.tagName==='BUTTON'))place(true)}).observe(nav,{subtree:true,attributes:true,attributeFilter:['class']});
  addEventListener('resize',()=>place(false));setTimeout(()=>place(false),0);setTimeout(()=>place(false),600);window.MBNavInd=place})();
 </script>
+<style id="lbcut-css">
+/* Leaderboard + Account (2026-11-22): cut-corner steel frames like the buttons, no rounded frames */
+#scr#scr :is(.seg,.pod,.ranks,.mecard,.ppb,.acard,.menu){position:relative;isolation:isolate;border:0!important;border-radius:0!important;box-shadow:none!important;
+ background:var(--mb-steel-frame)!important;clip-path:polygon(var(--cut) 0,100% 0,100% calc(100% - var(--cut)),calc(100% - var(--cut)) 100%,0 100%,0 var(--cut))!important}
+#scr#scr :is(.seg,.pod,.ranks,.mecard,.ppb,.acard,.menu)::before{display:block!important;content:""!important;position:absolute;inset:1.5px;z-index:-1;background:#111114;border:0;border-radius:0;
+ clip-path:polygon(calc(var(--cut) - .6px) 0,100% 0,100% calc(100% - var(--cut) + .6px),calc(100% - var(--cut) + .6px) 100%,0 100%,0 calc(var(--cut) - .6px))}
+#scr#scr :is(.ranks,.mecard,.ppb,.acard,.menu){--cut:16px}
+#scr#scr .pod{--cut:14px}
+#scr#scr .seg{--cut:12px}
+#scr#scr .mecard .acard{clip-path:none!important;background:none!important}
+#scr#scr .mecard .acard::before{display:none!important}
+#scr#scr .pod.first{background:linear-gradient(135deg,#f3dc8e 0%,#a8822f 40%,#e9c15a 70%,#7d5f1e 100%)!important}
+#scr#scr .pod.first::before{background:linear-gradient(180deg,#221b0c,#111114 65%)}
+#scr#scr .seg button{border-radius:0!important;--cut:9px;clip-path:polygon(var(--cut) 0,100% 0,100% calc(100% - var(--cut)),calc(100% - var(--cut)) 100%,0 100%,0 var(--cut))!important;box-shadow:none!important}
+#scr#scr #copyCode,#scr#scr #promo{position:relative;isolation:isolate;border:0!important;border-radius:0!important;box-shadow:none!important;--cut:12px;background:var(--mb-steel-frame)!important;clip-path:polygon(var(--cut) 0,100% 0,100% calc(100% - var(--cut)),calc(100% - var(--cut)) 100%,0 100%,0 var(--cut))!important}
+#scr#scr #copyCode::before{content:"";position:absolute;inset:1.5px;z-index:-1;background:#0b0b0e;clip-path:polygon(calc(var(--cut) - .6px) 0,100% 0,100% calc(100% - var(--cut) + .6px),calc(100% - var(--cut) + .6px) 100%,0 100%,0 calc(var(--cut) - .6px))}
+#scr#scr #promo{background:linear-gradient(#0b0b0e,#0b0b0e) padding-box,var(--mb-steel-frame) border-box!important;border:1.5px solid transparent!important}
+#scr#scr #copyCode .pill{border-radius:0!important;--cut:7px;clip-path:polygon(var(--cut) 0,100% 0,100% calc(100% - var(--cut)),calc(100% - var(--cut)) 100%,0 100%,0 var(--cut))!important}
+</style>
 </body></html>
