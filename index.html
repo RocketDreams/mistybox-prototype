@@ -3093,6 +3093,8 @@ frame();
 #ft .ft-do{display:flex;align-items:center;gap:8px;font:700 12px/1 Montserrat,sans-serif;letter-spacing:.6px;color:#a9d0ff;text-transform:uppercase}
 #ft .ft-do i{width:8px;height:8px;border-radius:50%;background:#a9d0ff;box-shadow:0 0 10px #a9d0ff;animation:ftBlink 1s ease-in-out infinite}
 @keyframes ftBlink{50%{opacity:.25}}
+#ft .ft-t.ftsw,#ft .ft-b.ftsw{animation:ftSw .4s cubic-bezier(.2,.8,.3,1)}
+@keyframes ftSw{0%{opacity:0;transform:translateY(6px)}100%{opacity:1;transform:none}}
 /* welcome card */
 #ft .ft-bub.ftw{width:318px;padding:26px 22px 18px;text-align:center}
 #ft .ft-bub.ftw .ft-mk{display:block;width:74px;margin:0 auto 14px;filter:drop-shadow(0 0 22px rgba(140,180,255,.55));animation:ftFloat 3.2s ease-in-out infinite}
@@ -3210,17 +3212,25 @@ scr.appendChild(ft);
 const spot=ft.querySelector('.ft-spot'),catcher=ft.querySelector('.ft-catch'),bub=ft.querySelector('.ft-bub'),hand=ft.querySelector('.ft-hand');
 const ln=ft.querySelector('.ln'),hd=ft.querySelector('.hd'),dot=ft.querySelector('circle');
 
+const BOXN=4,BOXL=[
+ m=>`Packed with <b>real, authenticated luxury watches</b> worth up to <b>${m}</b>. Tap the arrow to see what’s next!`,
+ m=>`Level up! Watches worth up to <b>${m}</b> in this beauty.`,
+ m=>`Now we’re talking. Up to <b>${m}</b> of pure luxury inside!`,
+ m=>`Serious collector territory: up to <b>${m}</b> in a single box. And there are even more to explore!`];
+let seen=new Set(),lastCur=-1;
+const boxName=()=>{const b=BOXES[cur];return /box$/i.test(b.tier)||/^the /i.test(b.tier)?b.tier:b.tier+' box'};
 const STEPS=[
  {hero:1},
- {sel:'#hero',r:30,pad:-12,t:'This is a box',b:'Every box holds <b>real, authenticated luxury watches</b>. Each box has its own collection.'},
- {sel:'#next',r:'50%',pad:8,t:'Browse the boxes',b:'Tap the arrow (or swipe) to see the next box.',act:'box',hint:'Tap the arrow'},
- {sel:'#inside4',r:16,pad:4,t:'Peek inside',b:'A taste of the watches waiting in <b>this</b> box.'},
- {sel:'.vals',r:16,pad:6,t:'Know your range',b:'<b>Floor</b> is the lowest-value watch inside, <b>Max</b> the most valuable. <b>Rarity</b> shows the full breakdown.'},
- {sel:'#walletBtn',r:22,pad:6,t:'Your balance',b:'Your wallet lives here. Top it up any time with <b>+</b>.'},
- {sel:'#nav [data-v="collection"]',r:18,pad:2,t:'Your vault',b:'Every watch you unbox lands here. <b>Ship it home</b> or <b>sell it back</b> instantly.'},
- {sel:'#buy',r:14,pad:6,t:'Open your first box',b:()=>S.user?'Tap here to pick your box and open it.':'Tap here to pick your box. We’ll set up your account first, it takes 10 seconds.',act:'buy',hint:'Tap Open'}
+ {sel:'#hero',r:30,pad:-12,act:'browse',arrowTo:'#next',t:()=>boxName(),b:()=>BOXL[Math.min(seen.size,BOXN)-1](money(BOXES[cur].max)),hint:()=>`Tap the arrow · ${Math.min(seen.size,BOXN)}/${BOXN}`},
+ {sel:'#inside4',r:16,pad:4,t:'Sneak peek',b:'Look at these beauties! A taste of the real watches waiting in <b>this</b> box.'},
+ {sel:'.vals',r:16,pad:6,t:'Know the value',b:'<b>Floor</b> is the lowest-value watch inside. <b>Max</b> is the showstopper. Tap <b>Rarity</b> for the full breakdown!'},
+ {sel:'#walletBtn',r:22,pad:6,t:'Your wallet',b:'Your balance lives right here. Top up in seconds with the <b>+</b>.'},
+ {sel:'#nav [data-v="collection"]',r:18,pad:2,t:'Your vault',b:'Every watch you unbox lands here. <b>Ship it to your door</b> or <b>sell it back</b> instantly. Your call!'},
+ {sel:'#buy',r:14,pad:6,t:'Your moment!',b:()=>'Tap Open, pick your box and unbox your very first watch!'+(S.user?'':' We’ll set up your account first, just 10 seconds.'),act:'buy',hint:'Tap Open'}
 ];
-const N=STEPS.length-1;let i=-1,watch=0,boxAt=0;
+const N=STEPS.length-1;let i=-1,watch=0;
+const val=v=>typeof v==='function'?v():v;
+const pending=st=>st.act==='buy'||(st.act==='browse'&&seen.size<BOXN);
 
 function rel(el){const s=scr.getBoundingClientRect(),k=s.width/scr.offsetWidth||1,r=el.getBoundingClientRect();
  return {x:(r.left-s.left)/k,y:(r.top-s.top)/k,w:r.width/k,h:r.height/k}}
@@ -3235,12 +3245,13 @@ function place(animateArrow){const st=STEPS[i];if(!st)return;const W=scr.offsetW
  const r0=rel(el),p=st.pad||0,r={x:r0.x-p,y:r0.y-p,w:r0.w+2*p,h:r0.h+2*p};
  Object.assign(spot.style,{left:r.x+'px',top:r.y+'px',width:r.w+'px',height:r.h+'px',borderRadius:st.r==='50%'?'50%':(st.r||16)+'px'});
  hole(st.act?r:null);
- const bw=bub.offsetWidth,bh=bub.offsetHeight,cx=r.x+r.w/2,below=(r.y+r.h/2)<H*.5,gap=74;
+ const tgEl=st.arrowTo&&document.querySelector(st.arrowTo),tg=tgEl?rel(tgEl):r;
+ const bw=bub.offsetWidth,bh=bub.offsetHeight,cx=r.x+r.w/2,below=(r.y+r.h/2)<H*.5,gap=st.arrowTo?40:74;
  const bx=Math.max(14,Math.min(W-bw-14,cx-bw/2)),by=below?Math.min(H-bh-20,r.y+r.h+gap):Math.max(50,r.y-gap-bh);
  bub.style.left=bx+'px';bub.style.top=by+'px';bub.classList.toggle('up',!below);
  // curved chrome arrow from the bubble to the target, with a spark running along it
- const sx=Math.max(bx+40,Math.min(bx+bw-40,cx+(cx<W/2?40:-40))),sy=below?by-6:by+bh+6;
- const ex=cx,ey=below?r.y+r.h+10:r.y-10,sw=(cx<W/2?1:-1)*Math.min(70,Math.abs(ey-sy)*.9+20);
+ const tx=tg.x+tg.w/2,sx=Math.max(bx+40,Math.min(bx+bw-40,tx+(tx<W/2?40:-40))),sy=below?by-6:by+bh+6;
+ const ex=tx,ey=below?tg.y+tg.h+10:tg.y-10,sw=(tx<W/2?1:-1)*Math.min(70,Math.abs(ey-sy)*.9+20);
  const c1x=sx+sw,c1y=sy+(ey-sy)*.15,c2x=ex+sw*.6,c2y=ey-(ey-sy)*.55;
  ln.setAttribute('d',`M${sx},${sy} C${c1x},${c1y} ${c2x},${c2y} ${ex},${ey}`);
  const ang=Math.atan2(ey-c2y,ex-c2x),L=11,a1=ang+2.6,a2=ang-2.6;
@@ -3249,28 +3260,35 @@ function place(animateArrow){const st=STEPS[i];if(!st)return;const W=scr.offsetW
   hd.style.opacity=0;void ln.getBoundingClientRect();
   setTimeout(()=>{ln.style.transition='stroke-dashoffset .5s cubic-bezier(.6,0,.3,1)';ln.style.strokeDashoffset=0;
    setTimeout(()=>{hd.style.strokeDasharray='none';hd.style.strokeDashoffset=0;hd.style.transition='opacity .2s';hd.style.opacity=1;dot.style.display=''},480)},560)}
- if(st.act){hand.style.left=(r0.x+r0.w*.5)+'px';hand.style.top=(r0.y+r0.h*.55)+'px';hand.classList.add('on')}else hand.classList.remove('on')}
+ const hr=tgEl?tg:r0;
+ if(pending(st)){hand.style.left=(hr.x+hr.w*.5)+'px';hand.style.top=(hr.y+hr.h*.55)+'px';hand.classList.add('on')}else hand.classList.remove('on')}
 
+const NEXT=`<button class="ft-next" type="button">NEXT <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>`;
+function wire(){const nx=bub.querySelector('.ft-next');if(nx)nx.onclick=e=>{e.stopPropagation();step(1)};
+ bub.querySelector('.ft-skip').onclick=e=>{e.stopPropagation();end(true)};return nx}
+function foot(st){return `<button class="ft-skip" type="button">Skip tour</button>${pending(st)?`<span class="ft-do"><i></i>${val(st.hint)}</span>`:NEXT}`}
 function render(){const st=STEPS[i];bub.classList.remove('in','ftw');dot.style.display='none';ln.setAttribute('d','');hd.setAttribute('d','');
  if(st.hero){bub.classList.add('ftw');bub.innerHTML=`<img class="ft-mk" src="assets/mark.png" alt=""><h2 class="ft-t">Welcome to MistyBox</h2>
-  <p class="ft-b">Every box hides a <b>real luxury watch</b>. Let us show you around, it takes 30 seconds.</p>
-  <div class="ft-ft"><button class="ft-next" type="button">SHOW ME AROUND</button><button class="ft-skip" type="button">Skip the tour</button></div>`}
+  <p class="ft-b">Real luxury watches, sealed in stunning boxes and <b>waiting for you</b>. Ready for a quick tour?</p>
+  <div class="ft-ft"><button class="ft-next" type="button">LET’S GO</button><button class="ft-skip" type="button">Skip the tour</button></div>`}
  else{bub.innerHTML=`<div class="ft-prog">${Array.from({length:N},(_,k)=>`<i class="${k<i?'on':''}"></i>`).join('')}<span>${i}/${N}</span></div>
-  <h2 class="ft-t">${st.t}</h2><p class="ft-b">${typeof st.b==='function'?st.b():st.b}</p>
-  <div class="ft-ft"><button class="ft-skip" type="button">Skip tour</button>${st.act?`<span class="ft-do"><i></i>${st.hint}</span>`:`<button class="ft-next" type="button">NEXT <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>`}</div>`}
- const nx=bub.querySelector('.ft-next');if(nx)nx.onclick=e=>{e.stopPropagation();step(1)};
- bub.querySelector('.ft-skip').onclick=e=>{e.stopPropagation();end(true)};
- place(true);setTimeout(()=>{bub.classList.add('in');(nx||bub.querySelector('.ft-skip')).focus({preventScroll:true})},st.hero?120:420)}
+  <h2 class="ft-t">${val(st.t)}</h2><p class="ft-b">${val(st.b)}</p><div class="ft-ft">${foot(st)}</div>`}
+ const nx=wire();place(true);setTimeout(()=>{bub.classList.add('in');(nx||bub.querySelector('.ft-skip')).focus({preventScroll:true})},st.hero?120:420)}
+// browse step: refresh the bubble in place for each new box (the box itself stays lit)
+function refresh(){const st=STEPS[i];const t=bub.querySelector('.ft-t'),b=bub.querySelector('.ft-b');
+ [t,b].forEach(x=>{x.classList.remove('ftsw');void x.offsetWidth;x.classList.add('ftsw')});
+ t.textContent=val(st.t);b.innerHTML=val(st.b);bub.querySelector('.ft-ft').innerHTML=foot(st);const nx=wire();
+ if(!pending(st)){hand.classList.remove('on');try{SFX.coin()}catch(e){}nx&&nx.focus({preventScroll:true})}}
 
 function step(d){const n=i+d;if(n>N)return;i=n;try{i>1?SFX.swish():SFX.tap()}catch(e){}
- const st=STEPS[i];if(st.act==='box')boxAt=cur;render()}
+ const st=STEPS[i];if(st.act==='browse'){seen=new Set([cur]);lastCur=cur}render()}
 function end(skipped){cancelAnimationFrame(watch);ft.classList.remove('on');hand.classList.remove('on');views.style.overflow='';S.ftue=skipped?'skipped':'done';save();
  if(skipped)toast('Tour skipped. Replay it any time from Account.')}
 function start(){if(ft.classList.contains('on'))return;views.scrollTop=0;views.style.overflow='hidden';ft.classList.add('on');i=-1;step(1);loop()}
 function loop(){watch=requestAnimationFrame(loop);const st=STEPS[i];if(!st)return;
- if(st.act==='box'&&boxAt>=0&&cur!==boxAt){boxAt=-1;const at=i;setTimeout(()=>{if(i===at)step(1)},550)}}
+ if(st.act==='browse'&&cur!==lastCur){lastCur=cur;seen.add(cur);refresh()}}
 // taps on the dim layer: advance info steps, nudge the hand on "do it" steps
-catcher.addEventListener('click',()=>{const st=STEPS[i];if(!st||st.hero)return;if(st.act){hand.classList.remove('on','nudge');void hand.offsetWidth;hand.classList.add('nudge');setTimeout(()=>{hand.classList.remove('nudge');hand.classList.add('on')},460);return}step(1)});
+catcher.addEventListener('click',()=>{const st=STEPS[i];if(!st||st.hero)return;if(pending(st)){hand.classList.remove('on','nudge');void hand.offsetWidth;hand.classList.add('nudge');setTimeout(()=>{hand.classList.remove('nudge');hand.classList.add('on')},460);return}step(1)});
 // the real Open button during the tour: finish the tour, then sign-up, then the box picker
 document.getElementById('buy').addEventListener('click',()=>{if(!ft.classList.contains('on')||!STEPS[i]||STEPS[i].act!=='buy')return;end(false);gate(()=>openBuy(cur))});
 ft.addEventListener('keydown',e=>{if(e.key==='Escape')end(true)});
