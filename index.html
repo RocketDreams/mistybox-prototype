@@ -2659,8 +2659,7 @@ function cubeMat(skin, name, src){
     AluBlock: M_({color: 0xd4d7dc, metalness: 1, roughness: .3}), BoltSteel: M_({color: 0x9a9da3, metalness: 1, roughness: .18}), BoltChrome: M_({color: 0xe8e9ec, metalness: 1, roughness: .08}),
     InteriorBlack: M_({color: 0x0b0b0d, roughness: .95}), HingeSteel: M_({color: 0xa8abb1, metalness: 1, roughness: .22})};
   let S_ = {};
-  if(skin === 'carbon') S_ = {CarbonPanel: MP({map: T.carbon, metalness: .1, roughness: .4, clearcoat: .8, clearcoatRoughness: .12}), BlackRail: M_({color: 0x1a1a1d, metalness: 1, roughness: .3}),
-    BlackBlock: M_({color: 0x1c1c20, metalness: 1, roughness: .32}), HingeDark: M_({color: 0x45464a, metalness: 1, roughness: .25})};
+  if(skin === 'carbon') S_ = {...chrome(), CarbonPanel: MP({map: T.carbon, metalness: .1, roughness: .4, clearcoat: .8, clearcoatRoughness: .12})};   // silver frame so the black box stands out (Sharon, 2026-11-23)
   if(skin === 'zebra') S_ = {...chrome(), CarbonPanel: M_({map: T.zebra, roughness: .95, envMapIntensity: .55})};
   if(skin === 'zebrafur') S_ = {...chrome(), CarbonPanel: M_({map: T.zebra, color: 0x8a8a8a, roughness: .95})};
   if(skin === 'hearts') S_ = {...chrome(), HeartsPanel: MP({map: src && src.map, color: 0xd8d8d8, roughness: .35, clearcoat: .6, clearcoatRoughness: .1}),
