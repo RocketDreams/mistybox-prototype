@@ -1590,13 +1590,13 @@ function startSwoosh(){if(SWON)return;SWON=1;
   SWL.forEach(([X0,Y0,X1,Y1,CX,CY,TH,AL,PER],k)=>{
    const w=6.2832/PER,s1=Math.sin(ts*w+k*1.7),s2=Math.cos(ts*w*.7+k),
     x0=X0*U,y0=Y(Y0),x1=X1*U,y1=Y(Y1),L=Math.hypot(x1-x0,y1-y0),ux=(x1-x0)/L,uy=(y1-y0)/L,
-    sh=42*U*s1,ox=ux*sh,oy=uy*sh,cx=CX*U+ox-uy*20*U*s2,cy=Y(CY)+oy+ux*20*U*s2,al=.6*AL*(.78+.22*Math.sin(ts*w*1.3+k*2.3)),th=TH*U*(.92+.08*s2);
+    sh=42*U*s1,ox=ux*sh,oy=uy*sh,cx=CX*U+ox-uy*20*U*s2,cy=Y(CY)+oy+ux*20*U*s2,al=.75*AL*(.78+.22*Math.sin(ts*w*1.3+k*2.3)),th=TH*U*(.92+.08*s2);
    const N=48,C=[],T=[];
    for(let i=0;i<=N;i++){const q=i/N,u=1-q;C.push([u*u*(x0+ox)+2*u*q*cx+q*q*(x1+ox),u*u*(y0+oy)+2*u*q*cy+q*q*(y1+oy)])}
    for(let i=0;i<=N;i++){const q=i/N,a=C[Math.max(0,i-1)],b=C[Math.min(N,i+1)],dx=b[0]-a[0],dy=b[1]-a[1],l=Math.hypot(dx,dy)||1,hw=th*Math.pow(Math.sin(Math.PI*Math.pow(q,.8)),1.4);T.push([C[i][0]+dy/l*hw,C[i][1]-dx/l*hw])}
    g.beginPath();g.moveTo(C[0][0],C[0][1]);for(const q of T)g.lineTo(q[0],q[1]);for(let i=N;i>=0;i--)g.lineTo(C[i][0],C[i][1]);g.closePath();
    const gr=g.createLinearGradient(x0+ox,y0+oy,x1+ox,y1+oy);const pp=.28+.5*(((ts/PER)*.8+k*.37)%1);   // a light sheen travelling along the swoosh
-   gr.addColorStop(0,'rgba(150,150,158,0)');gr.addColorStop(.14,`rgba(150,150,158,${al*.6})`);gr.addColorStop(pp-.13,`rgba(160,160,168,${al})`);gr.addColorStop(pp,`rgba(225,225,235,${Math.min(.75,al*2.1)})`);gr.addColorStop(pp+.13,`rgba(170,170,180,${al})`);gr.addColorStop(.93,`rgba(185,185,195,${al*.8})`);gr.addColorStop(1,'rgba(185,185,195,0)');
+   gr.addColorStop(0,'rgba(123,79,214,0)');gr.addColorStop(.14,`rgba(123,79,214,${al*.6})`);gr.addColorStop(pp-.13,`rgba(132,88,224,${al})`);gr.addColorStop(pp,`rgba(190,160,255,${Math.min(.7,al*2)})`);gr.addColorStop(pp+.13,`rgba(140,98,230,${al})`);gr.addColorStop(.93,`rgba(150,110,236,${al*.8})`);gr.addColorStop(1,'rgba(150,110,236,0)');
    g.fillStyle=gr;g.fill();g.beginPath();g.moveTo(T[0][0],T[0][1]);for(const q of T)g.lineTo(q[0],q[1]);g.lineWidth=Math.max(.6,.8*U);g.strokeStyle=gr;g.globalAlpha=.6;g.stroke();g.globalAlpha=1})};
  const step=t=>{requestAnimationFrame(step);if(t-last<33||document.hidden||document.querySelector('.pk-on,.rv-on'))return;last=t;draw(RM?0:t)};   // frozen during the box picker + opening (perf, esp. Safari)
  draw(0);requestAnimationFrame(step)}
