@@ -3142,6 +3142,33 @@ function coinsToWallet(from,ob,nb,then){
   requestAnimationFrame(step)}
  try{SFX.coin()}catch(e){}}
 </script>
+<style id="hex-css">
+/* honeycomb background (2026-11-22, trial): translucent purple cells that light up and fade at random; replaces the feathers + ribbons */
+#scr.hexbg[data-bg=black] .bg canvas#ct,#scr.hexbg[data-bg=black] .bg canvas#swc,#scr.hexbg[data-bg=black] .bg .wisps{display:none!important}
+#scr.hexbg[data-bg=black] .bg{background:#050407!important}
+.bg canvas#hexbg{position:absolute;inset:0;width:100%!important;height:100%!important;display:none;pointer-events:none;-webkit-mask-image:none!important;mask-image:none!important;opacity:1!important}
+#scr.hexbg[data-bg=black] .bg canvas#hexbg{display:block!important}
+</style>
+<script>
+(()=>{const bg=scr.querySelector('.bg');if(!bg)return;scr.classList.add('hexbg');
+ const c=document.createElement('canvas');c.id='hexbg';c.setAttribute('aria-hidden','true');bg.prepend(c);
+ const g=c.getContext('2d'),RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
+ const R=21,GAP=1.6,HW=Math.sqrt(3)*R;let W=0,H=0,dpr=1,cells=[],last=0;
+ const hexPath=(x,y,r)=>{g.beginPath();for(let k=0;k<6;k++){const a=Math.PI/180*(60*k-30);const px=x+r*Math.cos(a),py=y+r*Math.sin(a);k?g.lineTo(px,py):g.moveTo(px,py)}g.closePath()};
+ function build(){dpr=Math.min(2,devicePixelRatio||1);W=scr.clientWidth;H=scr.clientHeight;c.width=Math.round(W*dpr);c.height=Math.round(H*dpr);cells=[];
+  for(let row=-1,y=-R;y<H+R*2;row++,y+=R*1.5)for(let x=(row&1?HW/2:0)-HW;x<W+HW;x+=HW)
+   cells.push({x,y,h:258+Math.random()*30,s:45+Math.random()*30,l:22+Math.random()*26,base:.035+Math.random()*.05,a:0,glow:0,t0:0,dur:0,peak:0})}
+ function light(now){const n=Math.max(1,Math.round(cells.length*.012));for(let i=0;i<n;i++){const k=cells[Math.random()*cells.length|0];
+   if(k.dur&&now-k.t0<k.dur)continue;k.t0=now;k.dur=1400+Math.random()*2200;k.peak=.16+Math.random()*.2}}
+ function draw(now){g.setTransform(dpr,0,0,dpr,0,0);g.clearRect(0,0,W,H);
+  for(const k of cells){let gl=0;if(k.dur){const u=(now-k.t0)/k.dur;if(u>=1)k.dur=0;else gl=k.peak*Math.sin(Math.PI*u)**2}   // soft rise and fall
+   const a=k.base+gl;hexPath(k.x,k.y,R-GAP);g.fillStyle=`hsla(${k.h},${k.s}%,${k.l+gl*60}%,${a})`;g.fill();
+   g.lineWidth=.6;g.strokeStyle=`hsla(${k.h},70%,70%,${.045+gl*.5})`;g.stroke()}}
+ let nextLight=0;
+ const step=now=>{requestAnimationFrame(step);if(now-last<42||document.hidden||!c.offsetWidth||document.querySelector('.pk-on,.rv-on'))return;last=now;
+  if(!RM&&now>nextLight){light(now);nextLight=now+110+Math.random()*160}draw(now)};
+ build();draw(0);requestAnimationFrame(step);addEventListener('resize',()=>{build();draw(performance.now())})})();
+</script>
 <!-- ---------- FTUE (2026-11-22): guided first-run tour before login; first Open goes through sign-up ---------- -->
 <style id="ftue-css">
 #ft{position:absolute;inset:0;z-index:40;display:none;pointer-events:none;font-family:Montserrat,Poppins,sans-serif;color:#fff}
