@@ -1179,9 +1179,25 @@ html,body{overscroll-behavior:none}
 @keyframes btPulse{0%,100%{transform:scale(1);filter:drop-shadow(0 0 0 rgba(255,255,255,0))}50%{transform:scale(1.04);filter:drop-shadow(0 0 14px rgba(255,255,255,.35))}}
 @keyframes btDrift{to{transform:translate3d(6px,-6px,0) scale(1.03)}}
 @media (prefers-reduced-motion:reduce){#boot .bt-sw,#boot .bt-mark{animation:none}}
+/* splash (2026-11-22): when loading ends the box mark spins into its slot as the O of MISTYBOX, the letters slide out of it, then the tagline */
+#boot .sp{position:absolute;left:50%;top:50%;--w:min(76vw,300px);width:var(--w);height:calc(var(--w)*.14008);transform:translate(-50%,-50%);pointer-events:none}
+#boot .sp-w{position:absolute;top:0;bottom:0;overflow:hidden}
+#boot .sp-w img{position:absolute;top:0;height:100%;width:var(--w);max-width:none}
+#boot .sp-l{left:0;width:calc(var(--w)*.70603)}
+#boot .sp-l img{left:0;transform:translate3d(calc(var(--w)*.71),0,0)}
+#boot .sp-r{left:calc(var(--w)*.86554);right:0}
+#boot .sp-r img{left:calc(var(--w)*-.86554);transform:translate3d(calc(var(--w)*-.135),0,0)}
+#boot .sp-slot{position:absolute;top:0;height:100%;left:calc(var(--w)*.70603);width:calc(var(--w)*.15951)}
+#boot .sp-slot .bt-mark{position:absolute;inset:0;width:100%;height:100%;animation:none}
+#boot .sp-tag{position:absolute;left:50%;top:calc(100% + 24px);transform:translateX(-50%);white-space:nowrap;padding-left:12px;font:700 10px/1 Montserrat,system-ui,sans-serif;letter-spacing:12px;text-transform:uppercase;color:#9196a1;opacity:0}
+#boot .bt-bar,#boot .bt-txt{transition:opacity .3s ease}
+#boot.sp-on .bt-bar,#boot.sp-on .bt-txt{opacity:0}
+#boot.sp-go .sp-w img{transition:transform .75s cubic-bezier(.16,.84,.24,1);transform:none}
+#boot.sp-go .sp-tag{transition:opacity .8s .4s ease,letter-spacing 1.2s .4s cubic-bezier(.16,.84,.24,1),padding 1.2s .4s cubic-bezier(.16,.84,.24,1);opacity:1;letter-spacing:4px;padding-left:4px}
+@media (prefers-reduced-motion:reduce){#boot.sp-go .sp-w img,#boot.sp-go .sp-tag{transition:none}}
 </style></head>
 <body>
-<div id="boot" role="status" aria-live="polite" aria-label="Loading MistyBox"><div class="bt-sw"></div><div class="bt-glow"></div><img class="bt-mark" src="assets/mark.png" alt="MistyBox"><div class="bt-bar"><i></i></div><div class="bt-txt">Loading <span id="bootPct">0%</span></div></div>
+<div id="boot" role="status" aria-live="polite" aria-label="Loading MistyBox"><div class="bt-sw"></div><div class="bt-glow"></div><img class="bt-mark" src="assets/mark.png" alt="MistyBox"><div class="bt-bar"><i></i></div><div class="bt-txt">Loading <span id="bootPct">0%</span></div><div class="sp" aria-hidden="true"><div class="sp-w sp-l"><img src="assets/logo-white.png" alt=""></div><div class="sp-slot"></div><div class="sp-w sp-r"><img src="assets/logo-white.png" alt=""></div><div class="sp-tag">Luxury Shopping Reinvented</div></div></div>
 <div class="stage-glow" id="sg"></div>
 <button class="snd" id="snd" type="button"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path id="sndw" d="M15.5 8.5a5 5 0 0 1 0 7M19 5a10 10 0 0 1 0 14"/></svg><span id="sndt">Sound on</span></button>
 <div class="phone" id="phone"><div class="screen" id="scr">
@@ -2389,7 +2405,16 @@ setTimeout(()=>{const id=new URLSearchParams(location.search).get('gift'),g=id&&
  const ready3d=new Promise(res=>{if(window.__mb3d)return res(window.__mb3d);addEventListener('mb3d-ready',()=>res(window.__mb3d),{once:true});addEventListener('mb3d-failed',()=>res(null),{once:true})});
  const fonts=()=>Promise.all(['900 italic 20px Montserrat','800 italic 20px Montserrat','800 20px Montserrat','700 20px Montserrat','600 20px Montserrat','500 20px Montserrat','800 italic 20px Poppins','700 20px Poppins','600 20px Poppins','400 20px Poppins'].map(f=>document.fonts.load(f).catch(()=>{}))).then(()=>document.fonts.ready);
  const finish=()=>{if(boot.classList.contains('done'))return;set(1);window.__mbBooted=true;const wait=Math.max(0,900-(performance.now()-T0));
-   setTimeout(()=>{boot.classList.add('done');setTimeout(()=>boot.remove(),700);dispatchEvent(new Event('mb-booted'))},wait+200)};
+   const end=()=>{boot.classList.add('done');setTimeout(()=>boot.remove(),700);dispatchEvent(new Event('mb-booted'))};
+   setTimeout(()=>{try{splash(end)}catch(e){console.warn('splash',e);end()}},wait+200)};
+ // splash: FLIP the loading mark into the O of the wordmark (one spin on the way), letters slide out from behind it, tagline settles
+ const splash=end=>{const m=boot.querySelector('.bt-mark'),slot=boot.querySelector('.sp-slot'),RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
+   boot.classList.add('sp-on');m.style.animation='none';const a=m.getBoundingClientRect();slot.appendChild(m);const b=m.getBoundingClientRect();
+   if(RM||!m.animate){boot.classList.add('sp-go');setTimeout(end,1300);return}
+   const dx=(a.left+a.width/2)-(b.left+b.width/2),dy=(a.top+a.height/2)-(b.top+b.height/2),k=a.width/b.width;
+   m.animate([{transform:`translate(${dx}px,${dy}px) scale(${k})`},{offset:.35,transform:`translate(${dx}px,${dy-6}px) scale(${k*1.08}) rotate(-10deg)`},{transform:'translate(0,0) scale(1) rotate(360deg)'}],{duration:950,easing:'cubic-bezier(.65,0,.25,1)',fill:'forwards'});
+   setTimeout(()=>{boot.classList.add('sp-go');m.animate([{filter:'drop-shadow(0 0 0 rgba(255,255,255,0))'},{filter:'drop-shadow(0 0 14px rgba(255,255,255,.9))'},{filter:'drop-shadow(0 0 0 rgba(255,255,255,0))'}],{duration:700,easing:'ease-out'})},880);
+   setTimeout(end,2900)};
  const all=window.__mbPrefetch.then(()=>Promise.race([ready3d,new Promise(r=>setTimeout(()=>r(null),20000))]))
    .then(m=>m?m.warmAll(f=>{p3=f;tick()}):null).catch(e=>console.warn('boot 3D warm-up:',e)).then(()=>{p3=1;tick();return fonts()});
  all.then(finish,finish);
