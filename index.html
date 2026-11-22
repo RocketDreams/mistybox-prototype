@@ -1499,6 +1499,75 @@ BOXES.forEach(b=>{if(b.cube&&!b.img.includes('/cube_'))delete b.cube});   // hol
  const r=BOXES.find(b=>b.key===k&&b.cube);BOXES.push({...r,tier,key:c,cube:c,skin,img:'assets/3d/cube_'+c+'-box.webp',led:'assets/3d/none.png'})});
 BOXES.sort((a,b)=>(b.cube?1:0)-(a.cube?1:0));   // the new cube boxes lead the carousel, holiday specials follow
 BOXES.forEach((b,bi)=>{b.items=b.items.trim().split('\n').map(l=>{const[t,br,md,p,s]=l.split('|');return{tier:T1[t],brand:br,model:md,price:+p,img:'assets/watches/'+s+'.webp',id:s,box:bi}})});
+/* ---------- BAGS category (2026-11-22, demo): the themed specials (Santa, Christmas, …) hold designer bags instead of watches ---------- */
+const BAG_LV={
+ A:`c|Longchamp|Le Pliage Medium|165|longchamp-le-pliage-medium
+c|Michael Kors|Hamilton Tote|198|michael-kors-hamilton
+u|Marc Jacobs|The Tote|275|marc-jacobs-the-tote
+u|Kate Spade|Knott Medium|348|kate-spade-knott
+r|Coach|Tabby 26|495|coach-tabby-26
+r|Tory Burch|Kira Chevron|498|tory-burch-kira
+e|Polène|Numéro Un|560|polene-numero-un
+e|Mansur Gavriel|Bucket Bag|695|mansur-gavriel-bucket
+l|Prada|Re-Edition 2005|1950|prada-re-edition-2005
+g|Gucci|Jackie 1961|3100|gucci-jackie-1961
+g|Celine|Triomphe Teen|3300|celine-triomphe-teen`,
+ B:`c|Marc Jacobs|The Tote|275|marc-jacobs-the-tote
+c|Kate Spade|Knott Medium|348|kate-spade-knott
+u|Coach|Tabby 26|495|coach-tabby-26
+u|Tory Burch|Kira Chevron|498|tory-burch-kira
+r|Polène|Numéro Un|560|polene-numero-un
+r|Mansur Gavriel|Bucket Bag|695|mansur-gavriel-bucket
+e|Prada|Re-Edition 2005|1950|prada-re-edition-2005
+e|Louis Vuitton|Neverfull MM|2030|louis-vuitton-neverfull-mm
+l|Gucci|Jackie 1961|3100|gucci-jackie-1961
+l|Loewe|Puzzle Small|3900|loewe-puzzle-small
+g|Dior|Lady Dior Medium|6500|dior-lady-dior-medium
+g|Chanel|Classic Flap (Beige)|10800|chanel-classic-flap-beige`,
+ C:`c|Polène|Numéro Un|560|polene-numero-un
+c|Mansur Gavriel|Bucket Bag|695|mansur-gavriel-bucket
+u|Prada|Re-Edition 2005|1950|prada-re-edition-2005
+u|Louis Vuitton|Speedy 30|1980|louis-vuitton-speedy-30
+r|Louis Vuitton|Neverfull MM|2030|louis-vuitton-neverfull-mm
+r|Goyard|Saint Louis PM|2200|goyard-saint-louis-pm
+e|Saint Laurent|Loulou Medium|2950|ysl-loulou-medium
+e|Bottega Veneta|Jodie|3000|bottega-veneta-jodie
+e|Celine|Triomphe Teen|3300|celine-triomphe-teen
+l|Dior|Saddle Oblique|4450|dior-saddle-oblique
+l|Dior|Lady Dior (Rose)|6200|dior-lady-dior-rose
+g|Chanel|Classic Flap Medium|10800|chanel-classic-flap-medium
+g|Chanel|2.55 Reissue|11700|chanel-2-55-reissue
+g|Hermès|Kelly 25 (Etoupe)|24500|hermes-kelly-25-etoupe`,
+ D:`c|Louis Vuitton|Speedy 30|1980|louis-vuitton-speedy-30
+c|Goyard|Saint Louis PM|2200|goyard-saint-louis-pm
+u|Saint Laurent|Loulou Medium|2950|ysl-loulou-medium
+u|Bottega Veneta|Jodie|3000|bottega-veneta-jodie
+r|Loewe|Puzzle Small|3900|loewe-puzzle-small
+r|Dior|Saddle Oblique|4450|dior-saddle-oblique
+e|Dior|Lady Dior Medium|6500|dior-lady-dior-medium
+e|Chanel|Classic Flap (Beige)|10800|chanel-classic-flap-beige
+l|Chanel|Classic Flap Medium|10800|chanel-classic-flap-medium
+l|Chanel|2.55 Reissue|11700|chanel-2-55-reissue
+g|Hermès|Kelly 28 (Rouge)|28000|hermes-kelly-28-rouge
+g|Hermès|Birkin 30 (Gold)|38500|hermes-birkin-30-gold`,
+ E:`c|Saint Laurent|Loulou Medium|2950|ysl-loulou-medium
+c|Dior|Saddle Oblique|4450|dior-saddle-oblique
+u|Dior|Lady Dior (Rose)|6200|dior-lady-dior-rose
+u|Dior|Lady Dior Medium|6500|dior-lady-dior-medium
+r|Chanel|Classic Flap Medium|10800|chanel-classic-flap-medium
+r|Chanel|2.55 Reissue|11700|chanel-2-55-reissue
+e|Hermès|Kelly 25 (Etoupe)|24500|hermes-kelly-25-etoupe
+e|Hermès|Kelly 28 (Rouge)|28000|hermes-kelly-28-rouge
+l|Hermès|Birkin 30 (Gold)|38500|hermes-birkin-30-gold
+l|Hermès|Birkin 35 (Noir)|41000|hermes-birkin-35-noir
+g|Hermès|Birkin 25 Himalaya|121500|hermes-birkin-25-himalaya`};
+const bmoney=v=>'$'+Math.round(v).toLocaleString('en-US');
+const BAG_BOX={valentine:['A',150],xmas:['B',400],eggs:['B',400],santa:['C',900],game:['C',900],nye:['D',2000],patrick:['E',5000],kings:['E',5000]};
+BOXES.forEach((b,bi)=>{const m=!b.cube&&BAG_BOX[b.key];b.cat=m?'bags':'watches';if(!m)return;
+ b.items=BAG_LV[m[0]].split('\n').map(l=>{const[t,br,md,p,sl]=l.split('|');return{tier:T1[t],brand:br,model:md,price:+p,img:'assets/bags/'+sl+'.svg',id:'bag-'+sl,box:bi,bag:true}});
+ b.price=m[1];b.min=Math.min(...b.items.map(i=>i.price));b.max=Math.max(...b.items.map(i=>i.price));
+ const odds={};for(const t of Object.keys(b.odds)){const ps=b.items.filter(i=>i.tier===t).map(i=>i.price);odds[t]=[b.odds[t][0],ps.length?(Math.min(...ps)===Math.max(...ps)?bmoney(Math.min(...ps)):bmoney(Math.min(...ps))+' – '+bmoney(Math.max(...ps))):'—']}
+ b.odds=odds});
 const ALL=(()=>{const m=new Map();BOXES.forEach(b=>b.items.forEach(i=>{if(!m.has(i.id))m.set(i.id,i)}));return[...m.values()].sort((a,b)=>b.price-a.price)})();
 
 /* ---------- helpers ---------- */
@@ -1830,7 +1899,7 @@ let gy=null;sheet.querySelector('.grab').addEventListener('pointerdown',e=>gy=e.
 function openOdds(bi){const b=BOXES[bi];
  openSheet('Rarity breakdown',`<div class="shead">${LBOX(b).replace('class="lbox ','class="lbox ').replace('<div class="lbox ','<div style="width:84px" class="lbox ')}<div><div class="k">${b.tier.toUpperCase()} BOX · ${esc(b.skin)}</div><div class="v">Min ${money(b.min)} · Max ${money(b.max)}</div><div class="v">Shopping for United States</div></div></div>
  ${['common','uncommon','rare','epic','legendary','grail'].map(t=>`<div class="otier" style="--rc:${RC[t]}"><div class="top1"><span>${t.toUpperCase()}</span><span>${b.odds[t][0]}%</span></div><div class="top2"><span>${b.odds[t][1]}</span></div><div class="bar"><i data-w="${Math.max(1.5,b.odds[t][0])}"></i></div></div>`).join('')}
- <p class="note" style="padding:6px 20px 0">The rarity mix of every box is fixed and independently verified. Every watch shown is in stock right now.</p>`,
+ <p class="note" style="padding:6px 20px 0">The rarity mix of every box is fixed and independently verified. Every item shown is in stock right now.</p>`,
  el=>setTimeout(()=>el.querySelectorAll('.bar i').forEach(i=>i.style.width=i.dataset.w+'%'),60))}
 $('#oddsBtn').onclick=()=>openOdds(cur);
 
@@ -3170,6 +3239,22 @@ function coinsToWallet(from,ob,nb,then){
  const step=now=>{requestAnimationFrame(step);if(now-last<42||document.hidden||!c.offsetWidth||document.querySelector('.pk-on,.rv-on'))return;last=now;
   if(!RM&&now>nextLight){light(now);nextLight=now+110+Math.random()*160}draw(now)};
  build();draw(0);requestAnimationFrame(step);addEventListener('resize',()=>{build();draw(performance.now())})})();
+</script>
+<script>
+/* categories (2026-11-22): the carousel only steps through boxes of the chosen category (Watches | Bags) */
+(()=>{let ACAT='watches';const _go=go,tab=document.querySelector('#dwCats .mb-drawer-tab');
+ const inCat=i=>(BOXES[i].cat||'watches')===ACAT;
+ go=function(n,dir){dir=dir||(n>cur?1:-1);const N=BOXES.length;let k=((n%N)+N)%N,guard=0;
+  while(!inCat(k)&&guard++<N)k=((k+dir)%N+N)%N;if(k===cur)return;return _go(k,dir)};
+ function pick(c){const btn=document.querySelector(`#cats .mb-cat[data-c="${c}"]`);
+  if(c!=='watches'&&c!=='bags'){toast(c.charAt(0).toUpperCase()+c.slice(1)+' are coming soon');return}
+  ACAT=c;document.querySelectorAll('#cats .mb-cat').forEach(b=>b.classList.toggle('on',b===btn));
+  const ic=btn.querySelector('svg'),old=tab.querySelector('svg:not(.chev)');if(ic&&old){const cl=ic.cloneNode(true);old.replaceWith(cl)}
+  tab.setAttribute('aria-label','Categories, '+(c==='bags'?'Bags':'Watches')+' selected');
+  const first=BOXES.findIndex((b,i)=>inCat(i));if(first>=0&&first!==cur)_go(first,1);
+  setTimeout(()=>{if(document.getElementById('dwCats').classList.contains('open'))tab.click()},350)}
+ document.getElementById('cats').addEventListener('click',e=>{const b=e.target.closest('.mb-cat');if(b)pick(b.dataset.c)});
+ window.MBCat={pick,get cat(){return ACAT}}})();
 </script>
 <!-- ---------- FTUE (2026-11-22): guided first-run tour before login; first Open goes through sign-up ---------- -->
 <style id="ftue-css">
