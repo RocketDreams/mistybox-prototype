@@ -727,8 +727,21 @@ html,body{overscroll-behavior:none}
 #scr .ipage .ip-sech{display:flex;align-items:center;gap:10px;margin:22px 0 10px}
 #scr .ipage .ip-sech .c{margin-left:auto;text-align:right;font:600 11px/1.35 Montserrat,sans-serif;color:var(--mb-text-2)}
 #scr .ipage .ip-sech .c b{display:block;font-weight:800;color:#fff}
-#scr .ipage .ip-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-#scr .ipage .ip-grid .mbx-mini{width:auto}
+/* what's-inside (2026-11-22): watches as rows in the chamfered steel-outline frame of the buttons; rarity tags as chamfered buttons */
+#scr .ipage .ip-grid{display:flex;flex-direction:column;gap:10px}
+#scr .ipage .ip-grid .mbx-mini{--cut:14px;position:relative;isolation:isolate;width:100%;display:grid;grid-template-columns:76px minmax(0,1fr) auto;align-items:center;column-gap:14px;padding:10px 18px 10px 10px;
+ border:0;border-radius:0;background:var(--mb-steel-frame);clip-path:polygon(var(--cut) 0,100% 0,100% calc(100% - var(--cut)),calc(100% - var(--cut)) 100%,0 100%,0 var(--cut))}
+#scr .ipage .ip-grid .mbx-mini::before{content:"";position:absolute;inset:1.5px;z-index:-1;background:radial-gradient(90px 80px at 48px 50%,#1c1c22,rgba(0,0,0,0)),linear-gradient(180deg,#141417,#070708);
+ clip-path:polygon(calc(var(--cut) - .6px) 0,100% 0,100% calc(100% - var(--cut) + .6px),calc(100% - var(--cut) + .6px) 100%,0 100%,0 calc(var(--cut) - .6px))}
+#scr .ipage .ip-grid .mbx-mini .im{grid-column:1;grid-row:1;width:76px;height:76px}
+#scr .ipage .ip-grid .mbx-mini img{height:76px}
+#scr .ipage .ip-grid .mbx-mini span{grid-column:2;grid-row:1;margin:0;font:600 13px/1.35 Montserrat,sans-serif;color:#d9dce3}
+#scr .ipage .ip-grid .mbx-mini b{grid-column:3;grid-row:1;margin:0;font-size:19px;white-space:nowrap}
+#scr .ipage .ip-grid .mbx-mini:active{transform:translateY(2px)}
+#scr .ipage .mb-tier{--cut:8px;height:26px;padding:0 14px!important;border-radius:0!important;box-shadow:none!important;clip-path:polygon(var(--cut) 0,100% 0,100% calc(100% - var(--cut)),calc(100% - var(--cut)) 100%,0 100%,0 var(--cut))}
+#scr .ipage .ip-jump button{border-radius:0}
+#scr .ipage .ip-jump button:has(.grail),#scr .ipage .ip-sech:has(.grail) .mb-tier{filter:none}
+#scr .ipage .ip-jump button:has(.grail){filter:drop-shadow(0 0 8px rgba(255,236,170,.45))}
 
 /* GIFT landing (2026-11-19): a friend opens the link, sees who sent it, then opens the box like a normal open (no charge) */
 #scr .glnd{position:absolute;inset:0;z-index:26;background:#000;overflow:hidden;display:flex;flex-direction:column;align-items:center;text-align:center;padding:calc(env(safe-area-inset-top,0px) + 56px) 24px calc(env(safe-area-inset-bottom,0px) + 34px);transition:opacity .45s ease,transform .45s ease}
