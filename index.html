@@ -3141,9 +3141,14 @@ frame();
 #scr #buy.cta svg,#auth #auGo.cta svg{stroke:#fff}
 #scr #buy.cta:active,#scr .pick .pk-go.cta:active,#auth #auGo.cta:active{background:var(--mb-purple-lo)!important;transform:translateY(2px)}
 #scr .odds{border:1.5px solid var(--mb-purple)!important;background:rgba(18,10,34,.75)!important}
-#scr .odds img{filter:brightness(0) saturate(100%) invert(40%) sepia(62%) saturate(2400%) hue-rotate(244deg) brightness(95%)}
-#scr .nav button.on img{filter:brightness(0) saturate(100%) invert(40%) sepia(62%) saturate(2400%) hue-rotate(244deg) brightness(105%)}
-#scr .nav button.on:after{display:block!important;content:""!important;position:absolute;bottom:calc(-6*var(--U,1px))!important;width:calc(46*var(--U,1px))!important;height:3px!important;border-radius:2px;background:var(--mb-purple)!important;box-shadow:0 0 8px var(--mb-purple-glow)!important}
+#scr .odds img{filter:none!important;background:var(--mb-purple-hi);object-position:-9999px 0;-webkit-mask:url(assets/mk/i_star.png) center/contain no-repeat;mask:url(assets/mk/i_star.png) center/contain no-repeat}
+#scr .nav button.on img{filter:none!important;background:var(--mb-purple-hi);object-position:-9999px 0;-webkit-mask-size:contain;mask-size:contain;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;-webkit-mask-position:center;mask-position:center}
+#scr .nav button.on[data-v=boxes] img{-webkit-mask-image:url(assets/mk/n_boxes.png);mask-image:url(assets/mk/n_boxes.png)}
+#scr .nav button.on[data-v=showroom] img{-webkit-mask-image:url(assets/mk/n_showroom.png);mask-image:url(assets/mk/n_showroom.png)}
+#scr .nav button.on[data-v=collection] img{-webkit-mask-image:url(assets/mk/n_collection.png);mask-image:url(assets/mk/n_collection.png)}
+#scr .nav button.on[data-v=leaderboard] img{-webkit-mask-image:url(assets/mk/n_leaderboard.png);mask-image:url(assets/mk/n_leaderboard.png)}
+#scr .nav button.on[data-v=account] img{-webkit-mask-image:url(assets/mk/n_account.png);mask-image:url(assets/mk/n_account.png)}
+#scr .nav button.on:after{display:none!important;content:""!important;position:absolute;bottom:calc(-6*var(--U,1px))!important;width:calc(46*var(--U,1px))!important;height:3px!important;border-radius:2px;background:var(--mb-purple)!important;box-shadow:0 0 8px var(--mb-purple-glow)!important}
 /* Vault page (2026-11-22): same cut-corner, steel-framed language as the rest of the app */
 #scr #colChips,#scr .mbx-sort,#scr .mb-icard,#scr .mb-timer{position:relative;isolation:isolate;border:0!important;border-radius:0!important;clip-path:polygon(var(--cut) 0,100% 0,100% calc(100% - var(--cut)),calc(100% - var(--cut)) 100%,0 100%,0 var(--cut))!important}
 #scr #colChips::before,#scr .mbx-sort::before,#scr .mb-icard::before,#scr .mb-timer::before{content:"";position:absolute;inset:1.5px;z-index:-1;clip-path:polygon(calc(var(--cut) - .6px) 0,100% 0,100% calc(100% - var(--cut) + .6px),calc(100% - var(--cut) + .6px) 100%,0 100%,0 calc(var(--cut) - .6px))}
@@ -3560,4 +3565,17 @@ if(document.getElementById('boot'))addEventListener('mb-booted',go,{once:true});
 #scr#scr#scr .nav button{font-weight:500!important}
 #scr#scr#scr .nav button.on{font-weight:600!important}
 </style>
+<style id="navind-css">
+#scr .nav .nav-ind{position:absolute;left:0;top:0;width:calc(46*var(--U,1px));height:3px;border-radius:2px;background:var(--mb-purple);box-shadow:0 0 8px var(--mb-purple-glow);pointer-events:none;transition:transform .28s cubic-bezier(.3,1.35,.5,1),opacity .2s;will-change:transform;z-index:2}
+#scr .nav .nav-ind.noanim{transition:none}
+</style>
+<script>
+(()=>{const nav=document.getElementById('nav');if(!nav)return;const ind=document.createElement('i');ind.className='nav-ind noanim';ind.setAttribute('aria-hidden','true');nav.appendChild(ind);
+ const U=()=>parseFloat(getComputedStyle(document.getElementById('scr')).getPropertyValue('--U'))||1;
+ const place=anim=>{const b=nav.querySelector('button.on');if(!b){ind.style.opacity=0;return}ind.style.opacity=1;if(!anim)ind.classList.add('noanim');
+  const tn=[...b.childNodes].find(n=>n.nodeType===3&&n.textContent.trim());let lb=b.offsetTop+b.offsetHeight-6;if(tn){const rg=document.createRange();rg.selectNodeContents(tn);lb=rg.getBoundingClientRect().bottom-nav.getBoundingClientRect().top}const x=b.offsetLeft+b.offsetWidth/2-ind.offsetWidth/2,y=Math.min(lb+7*U(),nav.clientHeight-4);ind.style.transform=`translate(${x}px,${y}px)`;
+  if(!anim)requestAnimationFrame(()=>requestAnimationFrame(()=>ind.classList.remove('noanim')))};
+ new MutationObserver(m=>{if(m.some(r=>r.target.tagName==='BUTTON'))place(true)}).observe(nav,{subtree:true,attributes:true,attributeFilter:['class']});
+ addEventListener('resize',()=>place(false));setTimeout(()=>place(false),0);setTimeout(()=>place(false),600);window.MBNavInd=place})();
+</script>
 </body></html>
