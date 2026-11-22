@@ -1495,9 +1495,10 @@ c|Timex|Peanuts x Marlin Americana|359|timex-peanuts-x-timex-marlin-automatic-am
  w1:'#3c82ff',w2:'#ff2840',accent:'#4f8cff',glow:'rgba(60,130,255,.55)',c1:'#e6f0ff',c2:'#ff3b4e',c3:'#3c82ff',ctat:'#060f2a',cglow:'rgba(255,60,80,.45)'})})();
 BOXES.forEach(b=>{if(b.cube&&!b.img.includes('/cube_'))delete b.cube});   // holiday specials copy a tier's contents, not its cube skin
 // new cube boxes beyond the five tiers (same contents/odds as the tier they price-match)
-[['gold','pinata','Piñata','Piñata Drop'],['silver','hearts','Hearts','Hearts Special'],['ruby','hoops','Hoops','Game Day Special'],['gold','alu','Aluminium','Aluminium Special']].forEach(([k,c,skin,tier])=>{
+[['gold','pinata','Piñata','Piñata Drop'],['gold','puzzle','Puzzle Cube','Puzzle Cube Drop'],['silver','hearts','Hearts','Hearts Special'],['ruby','hoops','Hoops','Game Day Special'],['gold','alu','Aluminium','Aluminium Special']].forEach(([k,c,skin,tier])=>{
  const r=BOXES.find(b=>b.key===k&&b.cube);BOXES.push({...r,tier,key:c,cube:c,skin,img:'assets/3d/cube_'+c+'-box.webp',led:'assets/3d/none.png'})});
-{const pd=BOXES.find(b=>b.key==='pinata');pd.drop=true;Object.assign(pd,{w1:'#ff7a18',w2:'#19c3cf',accent:'#ffcc22',glow:'rgba(255,190,40,.45)',c1:'#fff3c4',c2:'#ffcc22',c3:'#2ebd52',ctat:'#1a1204',cglow:'rgba(255,200,40,.45)'})}   // limited-time drop
+{const qd=BOXES.find(b=>b.key==='puzzle');qd.drop=true;qd.dropDur=(1*86400+6*3600+15*60)*1000;Object.assign(qd,{w1:'#ffd500',w2:'#0051ba',accent:'#ffd500',glow:'rgba(255,213,0,.4)',c1:'#fff6c2',c2:'#ffd500',c3:'#0051ba',ctat:'#14110a',cglow:'rgba(255,213,0,.45)'})}
+{const pd=BOXES.find(b=>b.key==='pinata');pd.drop=true;pd.dropDur=(2*86400+23*3600+41*60)*1000;Object.assign(pd,{w1:'#ff7a18',w2:'#19c3cf',accent:'#ffcc22',glow:'rgba(255,190,40,.45)',c1:'#fff3c4',c2:'#ffcc22',c3:'#2ebd52',ctat:'#1a1204',cglow:'rgba(255,200,40,.45)'})}   // limited-time drop
 BOXES.sort((a,b)=>(b.cube?1:0)-(a.cube?1:0));   // the new cube boxes lead the carousel, holiday specials follow
 BOXES.forEach((b,bi)=>{b.items=b.items.trim().split('\n').map(l=>{const[t,br,md,p,s]=l.split('|');return{tier:T1[t],brand:br,model:md,price:+p,img:'assets/watches/'+s+'.webp',id:s,box:bi}})});
 /* ---------- BAGS category (2026-11-22, demo): the themed specials (Santa, Christmas, …) hold designer bags instead of watches ---------- */
@@ -1847,7 +1848,7 @@ const slides=BOXES.map((b,i)=>{const sl=document.createElement('div');sl.classNa
  sl.innerHTML=`<div class="bob"><div class="tilt">${LBOX(b)}</div></div>`;track.appendChild(sl);
  const d=document.createElement('i');d.onclick=()=>go(i);dots.appendChild(d);return sl;});
 let cur=0;
-const SHORT={pinata:'Piñata',hearts:'Hearts',hoops:'Hoops',alu:'Aluminium',santa:'Santa',xmas:'Christmas',nye:'New Year',valentine:'Valentine',patrick:'Shamrock',eggs:'Easter',kings:'Kings',game:'Big Game'};
+const SHORT={pinata:'Piñata',puzzle:'Puzzle Cube',hearts:'Hearts',hoops:'Hoops',alu:'Aluminium',santa:'Santa',xmas:'Christmas',nye:'New Year',valentine:'Valentine',patrick:'Shamrock',eggs:'Easter',kings:'Kings',game:'Big Game'};
 const TITLE=b=>(SHORT[b.key]||b.tier).toUpperCase();   // short names, no 'BOX'
 function fitTitle(){const h=$('#name');if(!h)return;h.style.fontSize='';const max=h.parentElement.clientWidth*.9;let fs=parseFloat(getComputedStyle(h).fontSize);
  for(let i=0;i<20&&h.scrollWidth>max&&fs>14;i++){fs*=.94;h.style.setProperty('font-size',fs+'px','important')}}
@@ -2485,7 +2486,7 @@ setTimeout(()=>{const id=new URLSearchParams(location.search).get('gift'),g=id&&
 (()=>{const boot=document.getElementById('boot'),bar=boot.querySelector('.bt-bar i'),pct=document.getElementById('bootPct');
  const T0=performance.now();let shown=0;
  const set=v=>{v=Math.max(shown,Math.min(1,v));shown=v;bar.style.width=(v*100).toFixed(1)+'%';pct.textContent=Math.round(v*100)+'%'};
- const CUBE_GLB={alu:'case.glb',carbon:'case_carbon.glb',zebra:'case_carbon.glb',zebrafur:'case_carbon.glb',pinata:'case_carbon.glb',hearts:'case_hearts.glb',hoops:'case_hoops.glb',leather:'case_leather.glb',greenleather:'case_leather.glb',prism:'case_prism.glb'};
+ const CUBE_GLB={alu:'case.glb',carbon:'case_carbon.glb',zebra:'case_carbon.glb',zebrafur:'case_carbon.glb',pinata:'case_carbon.glb',puzzle:'case_carbon.glb',hearts:'case_hearts.glb',hoops:'case_hoops.glb',leather:'case_leather.glb',greenleather:'case_leather.glb',prism:'case_prism.glb'};
  const imgs=new Set(['assets/logo-white.png','assets/wallet-plus.png','assets/mk/logo.png','assets/mk/bg.jpg','assets/mk/bg_top.jpg','assets/mk/bg_bot.jpg','assets/mk/i_star.png','assets/mk/i_gift.png',
    'assets/mk/n_boxes.png','assets/mk/n_showroom.png','assets/mk/n_collection.png','assets/mk/n_leaderboard.png','assets/mk/n_account.png']);
  const three=new Set(), opt=new Set();
@@ -2627,7 +2628,7 @@ function glowLayer(baseCanvas){
 const loader = new GLTFLoader(), cache = {}, models = {};
 function keyOf(b){const m=/3d\/(\w+)-box/.exec(b.img);return m?m[1]:'agent'}
 // ---- the new cube boxes: one model family, skinned per box (materials ported from cube.html) ----
-const CUBE_GLB = {alu: 'case.glb', carbon: 'case_carbon.glb', zebra: 'case_carbon.glb', zebrafur: 'case_carbon.glb', pinata: 'case_carbon.glb', hearts: 'case_hearts.glb', hoops: 'case_hoops.glb', leather: 'case_leather.glb', greenleather: 'case_leather.glb', prism: 'case_prism.glb'};   // v2 case model (Sharon, 2026-11-16)
+const CUBE_GLB = {alu: 'case.glb', carbon: 'case_carbon.glb', zebra: 'case_carbon.glb', zebrafur: 'case_carbon.glb', pinata: 'case_carbon.glb', puzzle: 'case_carbon.glb', hearts: 'case_hearts.glb', hoops: 'case_hoops.glb', leather: 'case_leather.glb', greenleather: 'case_leather.glb', prism: 'case_prism.glb'};   // v2 case model (Sharon, 2026-11-16)
 const CUBE_SCALE = 1.15, cubeSrc = {}, TL = new THREE.TextureLoader();
 let ROOM = null;   // bright studio reflections for the cube boxes (chrome would read black in the app's dark scene)
 function studioEnv(){   // equirect canvas (works in every renderer: three PMREMs it per context): softboxes on a grey studio
@@ -2649,8 +2650,26 @@ function cubeTex(){ if(CT) return CT;
   const noise = (() => { const n = 512, c = document.createElement('canvas'); c.width = c.height = n; const g = c.getContext('2d'), d = g.createImageData(n, n);
     for(let i = 0; i < n * n; i++){ const v = Math.random() * 255 | 0; d.data[4 * i] = d.data[4 * i + 1] = d.data[4 * i + 2] = v; d.data[4 * i + 3] = 255 }
     g.putImageData(d, 0, 0); const t = new THREE.CanvasTexture(c); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(3, 3); t.magFilter = t.minFilter = THREE.NearestFilter; t.generateMipmaps = false; return t })();
-  return CT = {carbon, zebra, noise, lcol: tex('leather_col.jpg', true), lred: tex('leather_green_col.jpg', true), lrough: tex('leather_rough.jpg'), lnrm: tex('leather_nrm.jpg'), pinata: (t => (t.repeat.set(.8, 2), t))(tex('pinata_col.jpg', true)), pinataB: (t => (t.repeat.set(.8, 2), t))(tex('pinata_bump.jpg'))} }
+  const puzzle = (() => { const n = 384, c = document.createElement('canvas'); c.width = c.height = n; const g = c.getContext('2d'); g.fillStyle = '#050506'; g.fillRect(0, 0, n, n);
+    const cell = n / 3, pad = cell * .07, r = cell * .14;
+    for(let i = 0; i < 3; i++) for(let j = 0; j < 3; j++){ const x = i * cell + pad, y = j * cell + pad, w = cell - 2 * pad;
+      const gr = g.createLinearGradient(x, y, x + w, y + w); gr.addColorStop(0, '#ffffff'); gr.addColorStop(1, '#d9d9d9'); g.fillStyle = gr;
+      g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + w, r); g.arcTo(x + w, y + w, x, y + w, r); g.arcTo(x, y + w, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath(); g.fill() }
+    const t = new THREE.CanvasTexture(c); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; t.repeat.set(PUZ_REP[0], PUZ_REP[1]); t.offset.set(PUZ_REP[2], PUZ_REP[3]); return t })();
+  return CT = {puzzle, carbon, zebra, noise, lcol: tex('leather_col.jpg', true), lred: tex('leather_green_col.jpg', true), lrough: tex('leather_rough.jpg'), lnrm: tex('leather_nrm.jpg'), pinata: (t => (t.repeat.set(.8, 2), t))(tex('pinata_col.jpg', true)), pinataB: (t => (t.repeat.set(.8, 2), t))(tex('pinata_bump.jpg'))} }
 const M_ = (o) => new THREE.MeshStandardMaterial(o), MP = (o) => new THREE.MeshPhysicalMaterial(o);
+var PUZ_REP = window.PUZ_REP || [1.2, 1.2, .1, .1];
+function puzzleMat(T){   // Puzzle Cube drop (2026-11-23): white stickers tinted per face by the panel's own normal
+  const m = MP({map: T.puzzle, roughness: .28, metalness: 0, clearcoat: 1, clearcoatRoughness: .08, envMapIntensity: .6});
+  m.onBeforeCompile = sh => {
+    sh.vertexShader = 'varying vec3 vObjN;\n' + sh.vertexShader.replace('#include <beginnormal_vertex>', '#include <beginnormal_vertex>\n  vObjN = objectNormal;');
+    sh.fragmentShader = 'varying vec3 vObjN;\n' + sh.fragmentShader.replace('#include <map_fragment>', `#include <map_fragment>
+  { vec3 n = normalize(vObjN), a = abs(n); vec3 fc;
+    if(a.y > a.x && a.y > a.z) fc = n.y > 0. ? vec3(1., .62, 0.) : vec3(.92, .92, .9);
+    else if(a.x > a.z) fc = n.x > 0. ? vec3(1., .26, .0) : vec3(.86, .03, .04);
+    else fc = n.z > 0. ? vec3(0., .09, .52) : vec3(0., .38, .12);
+    diffuseColor.rgb *= fc; }`).replace('#include <emissivemap_fragment>', '#include <emissivemap_fragment>\n  totalEmissiveRadiance += diffuseColor.rgb * .22;') };
+  m.customProgramCacheKey = () => 'puzzle3'; return m }
 const chrome = () => ({ChromeRail: M_({color: 0xe6e8ec, metalness: 1, roughness: .18, roughnessMap: BRUSH}), ChromeBlock: M_({color: 0xe2e4e8, metalness: 1, roughness: .2}),
   BlackRail: M_({color: 0xe6e8ec, metalness: 1, roughness: .18, roughnessMap: BRUSH}), BlackBlock: M_({color: 0xe2e4e8, metalness: 1, roughness: .2}),
   HingeDark: M_({color: 0xd8dadf, metalness: 1, roughness: .14}), HingeChrome: M_({color: 0xd8dadf, metalness: 1, roughness: .14}), BoltChrome: M_({color: 0xe8e9ec, metalness: 1, roughness: .08})});
@@ -2661,6 +2680,7 @@ function cubeMat(skin, name, src){
     InteriorBlack: M_({color: 0x0b0b0d, roughness: .95}), HingeSteel: M_({color: 0xa8abb1, metalness: 1, roughness: .22})};
   let S_ = {};
   if(skin === 'carbon') S_ = {...chrome(), CarbonPanel: MP({map: T.carbon, metalness: .1, roughness: .4, clearcoat: .8, clearcoatRoughness: .12})};   // silver frame so the black box stands out (Sharon, 2026-11-23)
+  if(skin === 'puzzle') S_ = {...chrome(), CarbonPanel: puzzleMat(T)};
   if(skin === 'pinata') S_ = {...chrome(), CarbonPanel: M_({map: T.pinata, bumpMap: T.pinataB, bumpScale: 3, roughness: .82, metalness: 0, envMapIntensity: .35})};   // Piñata drop: rainbow paper fringe (2026-11-23)
   if(skin === 'zebra') S_ = {...chrome(), CarbonPanel: M_({map: T.zebra, roughness: .95, envMapIntensity: .55})};
   if(skin === 'zebrafur') S_ = {...chrome(), CarbonPanel: M_({map: T.zebra, color: 0x8a8a8a, roughness: .95})};
@@ -3615,10 +3635,10 @@ if(document.getElementById('boot'))addEventListener('mb-booted',go,{once:true});
 </style>
 <script>
 (()=>{const hero=document.getElementById('hero');if(!hero)return;const t=document.createElement('div');t.id='dropTag';t.setAttribute('role','status');t.innerHTML='<i></i><b>Limited drop</b><span id="dropT"></span>';hero.appendChild(t);
- const end=()=>{let e=+(S.dropEnd||0);if(!e||e<Date.now()){e=Date.now()+(2*86400+23*3600+41*60)*1000;S.dropEnd=e;save()}return e};
+ const end=b=>{const k='dropEnd_'+b.key;let e=+(S[k]||0);if(!e||e<Date.now()){e=Date.now()+(b.dropDur||259200000);S[k]=e;save()}return e};
  const fmt=ms=>{const s=Math.max(0,ms/1000|0),d=s/86400|0,h=(s%86400)/3600|0,m=(s%3600)/60|0,x=s%60,p=n=>String(n).padStart(2,'0');return 'Ends in '+(d?d+'d ':'')+p(h)+':'+p(m)+':'+p(x)};
  const place=()=>{const m=document.querySelector('.mdw'),hr=hero.getBoundingClientRect();if(!m)return;const mb=m.getBoundingClientRect().bottom;t.style.top=Math.max(6,mb-hr.top+4)+'px'};
- const tick=()=>{const b=BOXES[cur],open=!!document.querySelector('.mb-drawer-tab[aria-expanded="true"]'),on=!!(b&&b.drop&&!open&&(typeof curView==='undefined'||curView==='boxes'));t.classList.toggle('on',on);if(on){place();document.getElementById('dropT').textContent=fmt(end()-Date.now())}};
+ const tick=()=>{const b=BOXES[cur],open=!!document.querySelector('.mb-drawer-tab[aria-expanded="true"]'),on=!!(b&&b.drop&&!open&&(typeof curView==='undefined'||curView==='boxes'));t.classList.toggle('on',on);if(on){place();document.getElementById('dropT').textContent=fmt(end(b)-Date.now())}};
  document.addEventListener('click',()=>setTimeout(tick,30),true);addEventListener('resize',tick);
  setInterval(tick,1000);const og=window.go;if(typeof og==='function'){window.go=function(){const r=og.apply(this,arguments);setTimeout(tick,0);return r}}tick();window.MBDrop={tick,end}})();
 </script>
