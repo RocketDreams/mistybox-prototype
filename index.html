@@ -1301,7 +1301,7 @@ html,body{overscroll-behavior:none}
    <p class="mbx-vsub" id="colSub"></p>
    <div class="mbx-vbar"><button type="button" class="mbx-sort" id="colSort"><span id="colSortT">Sort</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button><span class="mbx-vsum" id="colSum"></span></div>
    <div class="grid" id="colGrid"></div>
-   <div class="mbx-sellwrap"><button type="button" class="cta sm mbx-sellall" id="sellAll"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4z"/></svg><span>SELL<br>ALL</span></button></div>
+   <div class="mbx-sellwrap"><button type="button" class="cta sm mbx-sellall" id="sellAll"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4z"/></svg><span>SELL ALL</span></button></div>
   </section>
 
   <!-- LEADERBOARD -->
@@ -3075,6 +3075,23 @@ frame();
 #scr .odds img{filter:brightness(0) saturate(100%) invert(40%) sepia(62%) saturate(2400%) hue-rotate(244deg) brightness(95%)}
 #scr .nav button.on img{filter:brightness(0) saturate(100%) invert(40%) sepia(62%) saturate(2400%) hue-rotate(244deg) brightness(105%)}
 #scr .nav button.on:after{display:block!important;content:""!important;position:absolute;bottom:calc(-6*var(--U,1px))!important;width:calc(46*var(--U,1px))!important;height:3px!important;border-radius:2px;background:var(--mb-purple)!important;box-shadow:0 0 8px var(--mb-purple-glow)!important}
+/* Vault page (2026-11-22): same cut-corner, steel-framed language as the rest of the app */
+#scr #colChips,#scr .mbx-sort,#scr .mb-icard,#scr .mb-timer{position:relative;isolation:isolate;border:0!important;border-radius:0!important;clip-path:polygon(var(--cut) 0,100% 0,100% calc(100% - var(--cut)),calc(100% - var(--cut)) 100%,0 100%,0 var(--cut))!important}
+#scr #colChips::before,#scr .mbx-sort::before,#scr .mb-icard::before,#scr .mb-timer::before{content:"";position:absolute;inset:1.5px;z-index:-1;clip-path:polygon(calc(var(--cut) - .6px) 0,100% 0,100% calc(100% - var(--cut) + .6px),calc(100% - var(--cut) + .6px) 100%,0 100%,0 calc(var(--cut) - .6px))}
+#scr #colChips{--cut:14px;background:var(--mb-steel-frame)!important}
+#scr #colChips::before{background:#111114}
+#scr #colChips .chip{position:relative;z-index:1;border-radius:0!important;--cut:10px;clip-path:polygon(var(--cut) 0,100% 0,100% calc(100% - var(--cut)),calc(100% - var(--cut)) 100%,0 100%,0 var(--cut))!important}
+#scr .mb-icard{--cut:16px;background:var(--mb-steel-frame)!important}
+#scr .mb-icard::before{background:radial-gradient(90px 80px at 50px 50%,#1c1c22,rgba(0,0,0,0)),linear-gradient(180deg,#141417,#070708)}
+#scr .mb-icard .icph{border-radius:0!important;--cut:10px;clip-path:polygon(var(--cut) 0,100% 0,100% calc(100% - var(--cut)),calc(100% - var(--cut)) 100%,0 100%,0 var(--cut))}
+#scr .mbx-sort,#scr .mb-timer{--cut:9px;background:linear-gradient(135deg,#c9ccd2 0%,#6f747c 40%,#b8bcc3 70%,#5d626c 100%)!important}
+#scr .mbx-sort::before,#scr .mb-timer::before{background:#141418}
+#scr .mb-timer.ok{background:linear-gradient(135deg,#7fe3b5,#2f9e6c)!important}
+#scr .mb-timer.ok::before{background:#0f1d17}
+#scr .mbx-sellall{white-space:nowrap!important;line-height:1!important}
+/* the header's transparent lower half no longer swallows taps meant for the page under it (e.g. the Vaulted/Shipped tabs) */
+#scr:not([data-view=boxes]) .top{pointer-events:none}
+#scr:not([data-view=boxes]) .top button,#scr:not([data-view=boxes]) .top a,#scr:not([data-view=boxes]) .top .mb-drawer{pointer-events:auto}
 </style>
 <!-- ---------- FTUE (2026-11-22): guided first-run tour before login; first Open goes through sign-up ---------- -->
 <style id="ftue-css">
