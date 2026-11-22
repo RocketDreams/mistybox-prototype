@@ -3603,7 +3603,7 @@ if(document.getElementById('boot'))addEventListener('mb-booted',go,{once:true});
 </style>
 <style id="drop-css">
 /* Limited-time drop badge (Piñata, 2026-11-23) */
-#dropTag{position:absolute;left:50%;top:calc(6px + var(--st,0px));transform:translateX(-50%);z-index:5;display:none;align-items:center;gap:10px;padding:7px 14px 7px 12px;
+#dropTag{position:absolute;left:50%;top:6px;transform:translateX(-50%);z-index:5;display:none;align-items:center;gap:10px;padding:7px 14px 7px 12px;
  background:linear-gradient(135deg,#f4f5f7,#8e939b 40%,#e9ebee 70%,#7e838b);--cut:10px;clip-path:polygon(var(--cut) 0,100% 0,100% calc(100% - var(--cut)),calc(100% - var(--cut)) 100%,0 100%,0 var(--cut));isolation:isolate;pointer-events:none}
 #dropTag::before{content:"";position:absolute;inset:1.5px;z-index:-1;background:#0b0c0e;clip-path:polygon(calc(var(--cut) - .6px) 0,100% 0,100% calc(100% - var(--cut) + .6px),calc(100% - var(--cut) + .6px) 100%,0 100%,0 calc(var(--cut) - .6px))}
 #dropTag.on{display:flex}
@@ -3617,7 +3617,9 @@ if(document.getElementById('boot'))addEventListener('mb-booted',go,{once:true});
 (()=>{const hero=document.getElementById('hero');if(!hero)return;const t=document.createElement('div');t.id='dropTag';t.setAttribute('role','status');t.innerHTML='<i></i><b>Limited drop</b><span id="dropT"></span>';hero.appendChild(t);
  const end=()=>{let e=+(S.dropEnd||0);if(!e||e<Date.now()){e=Date.now()+(2*86400+23*3600+41*60)*1000;S.dropEnd=e;save()}return e};
  const fmt=ms=>{const s=Math.max(0,ms/1000|0),d=s/86400|0,h=(s%86400)/3600|0,m=(s%3600)/60|0,x=s%60,p=n=>String(n).padStart(2,'0');return 'Ends in '+(d?d+'d ':'')+p(h)+':'+p(m)+':'+p(x)};
- const tick=()=>{const b=BOXES[cur],on=!!(b&&b.drop&&(typeof curView==='undefined'||curView==='boxes'));t.classList.toggle('on',on);if(on)document.getElementById('dropT').textContent=fmt(end()-Date.now())};
+ const place=()=>{const m=document.querySelector('.mdw'),hr=hero.getBoundingClientRect();if(!m)return;const mb=m.getBoundingClientRect().bottom;t.style.top=Math.max(6,mb-hr.top+4)+'px'};
+ const tick=()=>{const b=BOXES[cur],open=!!document.querySelector('.mb-drawer-tab[aria-expanded="true"]'),on=!!(b&&b.drop&&!open&&(typeof curView==='undefined'||curView==='boxes'));t.classList.toggle('on',on);if(on){place();document.getElementById('dropT').textContent=fmt(end()-Date.now())}};
+ document.addEventListener('click',()=>setTimeout(tick,30),true);addEventListener('resize',tick);
  setInterval(tick,1000);const og=window.go;if(typeof og==='function'){window.go=function(){const r=og.apply(this,arguments);setTimeout(tick,0);return r}}tick();window.MBDrop={tick,end}})();
 </script>
 </body></html>
