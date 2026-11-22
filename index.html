@@ -2109,7 +2109,7 @@ function openBox(bi){const b=BOXES[bi];scr.scrollTop=0;const GIFT=window.__giftF
    const close=st=>{done=true;S.col.unshift({id:win.id,st,t:Date.now(),trk:st==='shipped'?'UPS · 1Z'+Math.random().toString(36).slice(2,9).toUpperCase():undefined});save();rv.classList.remove('on');rv.querySelectorAll('canvas:not(.rv3d):not(.glowl)').forEach(c=>{c.width=c.height=0});rv.innerHTML='';scr.classList.remove('rv-on');renderCol();renderLB()};
    if(GIFT){giftClaimWire(info);return}   // gift: no sell/vault/open-another here, the friend claims it in the app
    info.querySelector('#rKeep').onclick=()=>{close('vault');toast(`${win.model} is in your vault`)};
-   info.querySelector('#rSell').onclick=()=>{S.bal+=win.price*.9;close('sold');paintBal();SFX.coin();setTimeout(()=>openSold(win),200)};
+   info.querySelector('#rSell').onclick=e=>{const ob=S.bal,src=e.currentTarget.getBoundingClientRect();S.bal+=win.price*.9;close('sold');paintBal();setTimeout(()=>coinsToWallet(src,ob,S.bal,()=>openSold(win)),260)};
    info.querySelector('#rShip').onclick=()=>{close('vault');openShip(S.col[0])};
    info.querySelector('#rAgain').onclick=()=>{close('vault');setTimeout(()=>openBuy(bi),200)};
 }
@@ -2220,7 +2220,7 @@ function openBoxV1(bi){const b=BOXES[bi];scr.scrollTop=0;S.bal-=b.price;S.pts+=b
    pushTick({who:'You',tier:win.tier,box:b.tier,i:win});
    const close=st=>{done=true;S.col.unshift({id:win.id,st,t:Date.now(),trk:st==='shipped'?'UPS · 1Z'+Math.random().toString(36).slice(2,9).toUpperCase():undefined});save();rv.classList.remove('on');rv.querySelectorAll('canvas:not(.rv3d):not(.glowl)').forEach(c=>{c.width=c.height=0});rv.innerHTML='';scr.classList.remove('rv-on');renderCol();renderLB()};
    info.querySelector('#rKeep').onclick=()=>{close('vault');toast(`${win.model} is in your vault`)};
-   info.querySelector('#rSell').onclick=()=>{S.bal+=win.price*.9;close('sold');paintBal();SFX.coin();setTimeout(()=>openSold(win),200)};
+   info.querySelector('#rSell').onclick=e=>{const ob=S.bal,src=e.currentTarget.getBoundingClientRect();S.bal+=win.price*.9;close('sold');paintBal();setTimeout(()=>coinsToWallet(src,ob,S.bal,()=>openSold(win)),260)};
    info.querySelector('#rShip').onclick=()=>{close('vault');openShip(S.col[0])};
    info.querySelector('#rAgain').onclick=()=>{close('vault');setTimeout(()=>openBuy(bi),200)};
    },1700)}
@@ -2296,15 +2296,15 @@ function renderCol(){autoSell();
 $('#colSort').onclick=()=>{colSort=(colSort+1)%4;renderCol();SFX.tap()};
 $('#sellAll').onclick=()=>{const v=S.col.filter(c=>c.st==='vault');if(!v.length)return;const tot=v.reduce((a,c)=>a+item(c.id).price*.9,0);
  openSheet('Sell all',`<div class="mbx-sell"><div class="mbx-sub" style="margin:0">${v.length} vaulted watch${v.length===1?'':'es'} · market value ${money(v.reduce((a,c)=>a+item(c.id).price,0))}</div><div class="mbx-buy"><span>MistyBox buys them for</span><b>${money(tot)}</b></div><button class="cta sm" id="saGo">SELL ALL NOW</button><p class="note">By selling you confirm you are over 18 and accept the Terms of Service.</p></div>`,
-  el=>el.querySelector('#saGo').onclick=()=>{v.forEach(c=>c.st='sold');S.bal+=tot;save();paintBal();renderCol();closeSheet();SFX.coin();
-   setTimeout(()=>openSheet('',`<div class="mbx-nf sold"><h2>ITEMS SOLD!</h2><p>You made <b>${money(tot)}</b> from ${v.length} watch${v.length===1?'':'es'}. It’s in your wallet now.</p><button class="cta sm" id="soGo">BACK TO BOXES</button></div>`,e2=>e2.querySelector('#soGo').onclick=()=>{closeSheet();show('boxes')}),320)})};
+  el=>el.querySelector('#saGo').onclick=e=>{const ob=S.bal,src=e.currentTarget.getBoundingClientRect();v.forEach(c=>c.st='sold');S.bal+=tot;save();paintBal();renderCol();closeSheet();
+   coinsToWallet(src,ob,S.bal,()=>openSheet('',`<div class="mbx-nf sold"><h2>ITEMS SOLD!</h2><p>You made <b>${money(tot)}</b> from ${v.length} watch${v.length===1?'':'es'}. It’s in your wallet now.</p><button class="cta sm" id="soGo">BACK TO BOXES</button></div>`,e2=>e2.querySelector('#soGo').onclick=()=>{closeSheet();show('boxes')}),18)})};
 setInterval(()=>{if(curView==='collection')renderCol()},60000);addEventListener('resize',()=>{const w=$('#sellAll').parentElement,nv=$('#nav');if(w.parentElement===scr)w.style.top=(nv.offsetTop-66)+'px'});
 $('#colChips').onclick=e=>{const c=e.target.closest('[data-f]');if(c){colF=c.dataset.f;renderCol();SFX.tap()}};
 $('#colGrid').onclick=e=>{const w=e.target.closest('[data-k]');if(!w)return;const c=S.col[+w.dataset.k],i=item(c.id);
  if(c.st!=='vault'){openWatch(c.id);return}
  openSheet('Sell item',`<div class="mbx-sell"><div class="mbx-ph"><img src="${i.img}" alt="${esc(i.brand)} ${esc(i.model)}"></div>${rar(i.tier)}<div class="mbx-brand">${esc(i.brand)}</div><div class="mbx-sub">${esc(i.model)} · market value ${money(i.price)}</div>
  <div class="mbx-buy"><span>MistyBox buys it for</span><b>${money(i.price*.9)}</b></div><button class="cta sm" id="cSell">SELL NOW</button><button class="btn" id="cShip">SHIP TO ME</button><p class="note">Vaulted watches are insured and stored for free. By selling you confirm you are over 18 and accept the Terms of Service.</p></div>`,
- el=>{el.querySelector('#cSell').onclick=()=>{c.st='sold';S.bal+=i.price*.9;save();paintBal();renderCol();closeSheet();SFX.coin();setTimeout(()=>openSold(i),320)};
+ el=>{el.querySelector('#cSell').onclick=e=>{const ob=S.bal,src=e.currentTarget.getBoundingClientRect();c.st='sold';S.bal+=i.price*.9;save();paintBal();renderCol();closeSheet();coinsToWallet(src,ob,S.bal,()=>openSold(i))};
   el.querySelector('#cShip').onclick=()=>{closeSheet();setTimeout(()=>openShip(c),300)}})};
 function openShip(c){const i=item(c.id);
  openSheet('Ship to me',`<form class="form" id="sF" novalidate><p class="note">${esc(i.brand)} ${esc(i.model)} · insured, signature on delivery.</p><label for="sN">FULL NAME</label><input class="inp" id="sN" autocomplete="off"><label for="sA">STREET ADDRESS</label><input class="inp" id="sA" autocomplete="off">
@@ -3093,6 +3093,55 @@ frame();
 #scr:not([data-view=boxes]) .top{pointer-events:none}
 #scr:not([data-view=boxes]) .top button,#scr:not([data-view=boxes]) .top a,#scr:not([data-view=boxes]) .top .mb-drawer{pointer-events:auto}
 </style>
+<style id="coins-css">
+/* sell → coins fly to the wallet (2026-11-22) */
+#coinfx{position:absolute;inset:0;z-index:60;pointer-events:none;overflow:hidden}
+#coinfx .cn{position:absolute;left:0;top:0;width:24px;height:24px;margin:-12px 0 0 -12px;border-radius:50%;will-change:transform,opacity;
+ background:radial-gradient(circle at 34% 30%,#fff6cf 0 12%,#f6cf5c 34%,#c9952a 70%,#8a5f12 100%);box-shadow:inset 0 0 0 2px rgba(255,236,170,.75),inset 0 -2px 3px rgba(90,55,0,.55),0 2px 6px rgba(0,0,0,.6)}
+#coinfx .cn::after{content:"$";position:absolute;inset:0;display:grid;place-items:center;font:900 13px/1 Montserrat,sans-serif;color:#7a4f06;text-shadow:0 1px 0 rgba(255,240,190,.7)}
+#coinfx .plus{position:absolute;font:italic 900 18px/1 Montserrat,sans-serif;color:#f6cf5c;text-shadow:0 2px 10px rgba(0,0,0,.8);white-space:nowrap;transform:translate(-50%,0);animation:cnPlus 1.3s cubic-bezier(.2,.8,.3,1) forwards}
+@keyframes cnPlus{0%{opacity:0;transform:translate(-50%,6px) scale(.8)}18%{opacity:1;transform:translate(-50%,0) scale(1.06)}75%{opacity:1}100%{opacity:0;transform:translate(-50%,14px)}}
+#walletBtn.cn-hit{animation:cnHit .22s ease-out}
+#walletBtn.cn-done{animation:cnDone .6s ease-out}
+@keyframes cnHit{50%{transform:scale(1.07)}}
+@keyframes cnDone{0%{filter:drop-shadow(0 0 0 rgba(246,207,92,0))}35%{transform:scale(1.1);filter:drop-shadow(0 0 14px rgba(246,207,92,.85))}100%{transform:none;filter:none}}
+</style>
+<script>
+/* coinsToWallet(fromRect, oldBal, newBal, then): a burst of coins from the sell button arcs into the wallet (top right);
+   each one bumps the wallet with a tick, the balance counts up as they land, then `then` runs. */
+function coinsToWallet(from,ob,nb,then){
+ const wb=$('#walletBtn'),bal=$('#bal'),RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
+ if(!wb||!from||RM||document.hidden){paintBal();try{SFX.coin()}catch(e){}then&&setTimeout(then,RM?0:250);return}
+ bal.textContent=money(ob);
+ let fx=$('#coinfx');if(!fx){fx=document.createElement('div');fx.id='coinfx';scr.appendChild(fx)}
+ const S0=scr.getBoundingClientRect(),k=S0.width/scr.offsetWidth||1,P=r=>({x:(r.left-S0.left+r.width/2)/k,y:(r.top-S0.top+r.height/2)/k});
+ const a=P(from),wr=wb.getBoundingClientRect(),t={x:(wr.left-S0.left+wr.width*.42)/k,y:(wr.top-S0.top+wr.height/2)/k};
+ const N=Math.max(10,Math.min(22,Math.round(8+Math.log10(Math.max(10,nb-ob))*4))),GAP=42,FLY=720;
+ let landed=0,started=false;
+ const count=()=>{const t0=performance.now(),D=Math.max(600,N*GAP+260);
+  const tick=n=>{const u=Math.min(1,(n-t0)/D),e=1-Math.pow(1-u,3);bal.textContent=money(ob+(nb-ob)*e);if(u<1)requestAnimationFrame(tick)};requestAnimationFrame(tick)};
+ const finish=()=>{paintBal();wb.classList.remove('cn-hit');void wb.offsetWidth;wb.classList.add('cn-done');setTimeout(()=>wb.classList.remove('cn-done'),650);
+  try{SFX.coin()}catch(e){}try{navigator.vibrate&&navigator.vibrate([10,30,16])}catch(e){}
+  const pl=document.createElement('div');pl.className='plus';pl.textContent='+'+money(nb-ob);pl.style.left=t.x+'px';pl.style.top=(t.y+22)+'px';fx.appendChild(pl);setTimeout(()=>pl.remove(),1400);
+  then&&setTimeout(then,420)};
+ for(let i=0;i<N;i++){const c=document.createElement('div');c.className='cn';fx.appendChild(c);
+  const ang=Math.random()*Math.PI*2,rad=34+Math.random()*46,b={x:a.x+Math.cos(ang)*rad,y:a.y+Math.sin(ang)*rad*.7-14},
+   ctrl={x:(b.x+t.x)/2+(Math.random()-.5)*90,y:Math.min(b.y,t.y)-60-Math.random()*90},spin=2+Math.random()*3,delay=i*GAP,t0=performance.now()+delay;
+  c.style.transform=`translate(${a.x}px,${a.y}px) scale(.3)`;c.style.opacity=0;
+  const step=n=>{const el=n-t0;if(el<0){requestAnimationFrame(step);return}
+   let x,y,sc,op=1;
+   if(el<230){const u=el/230,e=1-Math.pow(1-u,3);x=a.x+(b.x-a.x)*e;y=a.y+(b.y-a.y)*e;sc=.3+.75*e}           // burst out of the button
+   else{const u=Math.min(1,(el-230)/FLY),e=u*u*(3-2*u)*.4+u*u*.6,v=1-e;                                        // arc up into the wallet
+    x=v*v*b.x+2*v*e*ctrl.x+e*e*t.x;y=v*v*b.y+2*v*e*ctrl.y+e*e*t.y;sc=1.05-.5*e;op=u>.92?1-(u-.92)/.08:1;
+    if(u>=1){c.remove();landed++;if(!started){started=true;count()}
+     wb.classList.remove('cn-hit');void wb.offsetWidth;wb.classList.add('cn-hit');try{SFX.tick(.9)}catch(e){}
+     if(landed===N)finish();return}}
+   const flip=Math.cos(el/1000*spin*Math.PI*2);
+   c.style.opacity=op;c.style.transform=`translate(${x}px,${y}px) scale(${(sc*Math.max(.18,Math.abs(flip))).toFixed(3)},${sc.toFixed(3)})`;
+   requestAnimationFrame(step)};
+  requestAnimationFrame(step)}
+ try{SFX.coin()}catch(e){}}
+</script>
 <!-- ---------- FTUE (2026-11-22): guided first-run tour before login; first Open goes through sign-up ---------- -->
 <style id="ftue-css">
 #ft{position:absolute;inset:0;z-index:40;display:none;pointer-events:none;font-family:Montserrat,Poppins,sans-serif;color:#fff}
