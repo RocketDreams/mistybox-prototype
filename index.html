@@ -1368,7 +1368,7 @@ const RC={grail:'#ff4d6d',legendary:'#ffb02e',epic:'#b36bff',rare:'#4aa8ff',unco
 const TIERS=['grail','legendary','epic','rare','uncommon','common'];
 const T1={g:'grail',l:'legendary',e:'epic',r:'rare',u:'uncommon',c:'common'};
 const BOXES=[
- {tier:'Heritage',key:'bronze',price:50,min:20,max:1175,skin:'Green Leather',cube:'greenleather',img:'assets/3d/cube_greenleather-box.webp',led:'assets/3d/none.png',w:240,w1:'#2aff8d',w2:'#64ffac',accent:'#43fb99',glow:'rgba(42,199,115,.55)',c1:'#76ffb6',c2:'#52ffa3',c3:'#2ce281',ctat:'#0a2b19',cglow:'rgba(42,199,115,.45)',
+ {tier:'Heritage',key:'bronze',price:50,min:20,max:1175,skin:'Green Carbon',cube:'greencarbon',img:'assets/3d/cube_greencarbon-box.webp',led:'assets/3d/none.png',w:240,w1:'#2aff8d',w2:'#64ffac',accent:'#43fb99',glow:'rgba(42,199,115,.55)',c1:'#76ffb6',c2:'#52ffa3',c3:'#2ce281',ctat:'#0a2b19',cglow:'rgba(42,199,115,.45)',
   odds:{common:[50.56,'$20 – $22'],uncommon:[27.47,'$25 – $60'],rare:[11.45,'$50 – $60'],epic:[6.42,'$62 – $85'],legendary:[3.18,'$89 – $115'],grail:[.92,'$120 – $1,175']},
   items:`g|Tissot|PRX Damascus Steel|1175|tissot-prx-damascus-steel-38mm
 g|Tissot|PRX Carbon (Black/Black)|1150|tissot-prx-carbon-40-5mm-black-black
@@ -2486,7 +2486,7 @@ setTimeout(()=>{const id=new URLSearchParams(location.search).get('gift'),g=id&&
 (()=>{const boot=document.getElementById('boot'),bar=boot.querySelector('.bt-bar i'),pct=document.getElementById('bootPct');
  const T0=performance.now();let shown=0;
  const set=v=>{v=Math.max(shown,Math.min(1,v));shown=v;bar.style.width=(v*100).toFixed(1)+'%';pct.textContent=Math.round(v*100)+'%'};
- const CUBE_GLB={alu:'case.glb',carbon:'case_carbon.glb',zebra:'case_carbon.glb',zebrafur:'case_carbon.glb',pinata:'case_carbon.glb',puzzle:'case_carbon.glb',hearts:'case_hearts.glb',hoops:'case_hoops.glb',leather:'case_leather.glb',greenleather:'case_leather.glb',prism:'case_prism.glb'};
+ const CUBE_GLB={alu:'case.glb',carbon:'case_carbon.glb',zebra:'case_carbon.glb',zebrafur:'case_carbon.glb',pinata:'case_carbon.glb',puzzle:'case_carbon.glb',greencarbon:'case_carbon.glb',hearts:'case_hearts.glb',hoops:'case_hoops.glb',leather:'case_leather.glb',greenleather:'case_leather.glb',prism:'case_prism.glb'};
  const imgs=new Set(['assets/logo-white.png','assets/wallet-plus.png','assets/mk/logo.png','assets/mk/bg.jpg','assets/mk/bg_top.jpg','assets/mk/bg_bot.jpg','assets/mk/i_star.png','assets/mk/i_gift.png',
    'assets/mk/n_boxes.png','assets/mk/n_showroom.png','assets/mk/n_collection.png','assets/mk/n_leaderboard.png','assets/mk/n_account.png']);
  const three=new Set(), opt=new Set();
@@ -2628,7 +2628,7 @@ function glowLayer(baseCanvas){
 const loader = new GLTFLoader(), cache = {}, models = {};
 function keyOf(b){const m=/3d\/(\w+)-box/.exec(b.img);return m?m[1]:'agent'}
 // ---- the new cube boxes: one model family, skinned per box (materials ported from cube.html) ----
-const CUBE_GLB = {alu: 'case.glb', carbon: 'case_carbon.glb', zebra: 'case_carbon.glb', zebrafur: 'case_carbon.glb', pinata: 'case_carbon.glb', puzzle: 'case_carbon.glb', hearts: 'case_hearts.glb', hoops: 'case_hoops.glb', leather: 'case_leather.glb', greenleather: 'case_leather.glb', prism: 'case_prism.glb'};   // v2 case model (Sharon, 2026-11-16)
+const CUBE_GLB = {alu: 'case.glb', carbon: 'case_carbon.glb', zebra: 'case_carbon.glb', zebrafur: 'case_carbon.glb', pinata: 'case_carbon.glb', puzzle: 'case_carbon.glb', greencarbon: 'case_carbon.glb', hearts: 'case_hearts.glb', hoops: 'case_hoops.glb', leather: 'case_leather.glb', greenleather: 'case_leather.glb', prism: 'case_prism.glb'};   // v2 case model (Sharon, 2026-11-16)
 const CUBE_SCALE = 1.15, cubeSrc = {}, TL = new THREE.TextureLoader();
 let ROOM = null;   // bright studio reflections for the cube boxes (chrome would read black in the app's dark scene)
 function studioEnv(){   // equirect canvas (works in every renderer: three PMREMs it per context): softboxes on a grey studio
@@ -2656,7 +2656,12 @@ function cubeTex(){ if(CT) return CT;
       const gr = g.createLinearGradient(x, y, x + w, y + w); gr.addColorStop(0, '#ffffff'); gr.addColorStop(1, '#d9d9d9'); g.fillStyle = gr;
       g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + w, r); g.arcTo(x + w, y + w, x, y + w, r); g.arcTo(x, y + w, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath(); g.fill() }
     const t = new THREE.CanvasTexture(c); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; t.repeat.set(PUZ_REP[0], PUZ_REP[1]); t.offset.set(PUZ_REP[2], PUZ_REP[3]); return t })();
-  return CT = {puzzle, carbon, zebra, noise, lcol: tex('leather_col.jpg', true), lred: tex('leather_green_col.jpg', true), lrough: tex('leather_rough.jpg'), lnrm: tex('leather_nrm.jpg'), pinata: (t => (t.repeat.set(.8, 2), t))(tex('pinata_col.jpg', true)), pinataB: (t => (t.repeat.set(.8, 2), t))(tex('pinata_bump.jpg'))} }
+  const gcarbon = (() => { const n = 8, px = 32, c = document.createElement('canvas'); c.width = c.height = n * px; const g = c.getContext('2d');   // glossy green carbon weave (Heritage, 2026-11-23)
+    for(let i = 0; i < n; i++) for(let j = 0; j < n; j++){ const horiz = ((i + j) % 4) < 2, x = i * px, y = j * px;
+      const gr = horiz ? g.createLinearGradient(0, y, 0, y + px) : g.createLinearGradient(x, 0, x + px, 0); const hi = horiz ? 1 : .62;
+      gr.addColorStop(0, '#011a0c'); gr.addColorStop(.5, `rgb(${Math.round(8*hi)},${Math.round(150*hi)},${Math.round(70*hi)})`); gr.addColorStop(1, '#011a0c'); g.fillStyle = gr; g.fillRect(x, y, px, px) }
+    const t = new THREE.CanvasTexture(c); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(4, 4); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; return t })();
+  return CT = {gcarbon, puzzle, carbon, zebra, noise, lcol: tex('leather_col.jpg', true), lred: tex('leather_green_col.jpg', true), lrough: tex('leather_rough.jpg'), lnrm: tex('leather_nrm.jpg'), pinata: (t => (t.repeat.set(.8, 2), t))(tex('pinata_col.jpg', true)), pinataB: (t => (t.repeat.set(.8, 2), t))(tex('pinata_bump.jpg'))} }
 const M_ = (o) => new THREE.MeshStandardMaterial(o), MP = (o) => new THREE.MeshPhysicalMaterial(o);
 var PUZ_REP = window.PUZ_REP || [1.2, 1.2, .1, .1];
 function puzzleMat(T){   // Puzzle Cube drop (2026-11-23): white stickers tinted per face by the panel's own normal
@@ -2680,6 +2685,7 @@ function cubeMat(skin, name, src){
     InteriorBlack: M_({color: 0x0b0b0d, roughness: .95}), HingeSteel: M_({color: 0xa8abb1, metalness: 1, roughness: .22})};
   let S_ = {};
   if(skin === 'carbon') S_ = {...chrome(), CarbonPanel: MP({map: T.carbon, metalness: .1, roughness: .4, clearcoat: .8, clearcoatRoughness: .12})};   // silver frame so the black box stands out (Sharon, 2026-11-23)
+  if(skin === 'greencarbon') S_ = {...chrome(), CarbonPanel: MP({map: T.gcarbon, metalness: .15, roughness: .3, clearcoat: 1, clearcoatRoughness: .05, envMapIntensity: .9})};
   if(skin === 'puzzle') S_ = {...chrome(), CarbonPanel: puzzleMat(T)};
   if(skin === 'pinata') S_ = {...chrome(), CarbonPanel: M_({map: T.pinata, bumpMap: T.pinataB, bumpScale: 3, roughness: .82, metalness: 0, envMapIntensity: .35})};   // Piñata drop: rainbow paper fringe (2026-11-23)
   if(skin === 'zebra') S_ = {...chrome(), CarbonPanel: M_({map: T.zebra, roughness: .95, envMapIntensity: .55})};
