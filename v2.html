@@ -36,10 +36,10 @@ html,body{height:100%;background:#000;overflow:hidden;font-family:Montserrat,san
 .vals small{display:block;font:600 9.5px/1 Montserrat;letter-spacing:1.4px;color:#9aa1ad;margin-bottom:5px}
 .vals b{font:800 21px/1 Montserrat}
 .bgfx{position:absolute;inset:-14%;background:url(assets/swoosh.svg) center 38%/150% auto no-repeat,#000;opacity:.95;transform-origin:50% 40%;will-change:transform;pointer-events:none}
-.side{position:absolute;top:var(--by,38%);z-index:2;width:46px;height:46px;margin-top:-23px;border:0;color:#fff;cursor:pointer;display:grid;place-items:center;isolation:isolate;
+.side{position:absolute;left:50%;z-index:2;width:46px;height:46px;margin:-23px 0 0 -23px;border:0;color:#fff;cursor:pointer;display:grid;place-items:center;isolation:isolate;
  background:linear-gradient(135deg,#f4f5f7 0%,#9ea3ab 25%,#e9ebee 50%,#7e838b 75%,#d9dce0 100%);clip-path:polygon(30% 0,70% 0,100% 30%,100% 70%,70% 100%,30% 100%,0 70%,0 30%);transition:opacity .25s,transform .2s}
 .side::before{content:"";position:absolute;inset:1.5px;z-index:-1;background:linear-gradient(180deg,#16161b,#060608);clip-path:inherit}
-.side.l{left:14px}.side.r{right:14px}.side:active{transform:scale(.92)}.side:disabled{opacity:0;pointer-events:none}
+.side.r{top:var(--bt,22%)}.side.l{top:var(--bb,52%)}.side:active{transform:scale(.92)}.side{transition:opacity .25s,transform .2s,top .35s}.side:disabled,#app.flying .side{opacity:0;pointer-events:none}
 .cta{width:100%;height:54px;border:0;cursor:pointer;color:#0b0d12;font:italic 900 19px/1 Montserrat;letter-spacing:.3px;background:linear-gradient(180deg,#ffffff 0%,#eef0f4 38%,#c9ced6 62%,#f4f6f9 100%);clip-path:polygon(14px 0,100% 0,100% calc(100% - 14px),calc(100% - 14px) 100%,0 100%,0 14px);filter:drop-shadow(0 0 14px rgba(140,190,255,.6))}
 .hint{margin-top:12px;font:600 10.5px/1 Montserrat;letter-spacing:.6px;color:#6d7480}
 .load{position:absolute;inset:0;display:grid;place-items:center;background:#000;transition:opacity .6s;z-index:5}
@@ -234,7 +234,7 @@ function goTo(j){j=Math.max(0,Math.min(BOXES.length-1,j));if(j===cur&&!fly)retur
  const lift=2.8+.6*(n-1);
  const p1=new THREE.Vector3(0,from.p.y+lift,from.p.z+(to.p.z-from.p.z)*.22),p2=new THREE.Vector3(0,to.p.y+lift*.9,from.p.z+(to.p.z-from.p.z)*.8);
  fly={j,dir,t0:performance.now(),dur:RM?1:(1700+420*(n-1)),from,to,p1,p2};
- cur=j;paint(dir);whoosh(n)}
+ cur=j;paint(dir);whoosh(n);app.classList.add('flying')}
 function frame(now){requestAnimationFrame(frame);
  if(fly){let t=Math.min(1,(now-fly.t0)/fly.dur);if(RM)t=1;const u=ease(t);
   cam.position.copy(bez(fly.from.p,fly.p1,fly.p2,fly.to.p,u));
@@ -247,10 +247,11 @@ function frame(now){requestAnimationFrame(frame);
  cam.lookAt(look);
  { const r0=rest(0),depth=(r0.p.z-cam.position.z)/D,rise=cam.position.y-r0.p.y;
    bgfx.style.transform=`translate3d(0,${(rise*26).toFixed(1)}px,0) scale(${(1+depth*.07+rise*.025).toFixed(4)})`; }
- if(!fly){ const v=new THREE.Vector3(0,.86,zOf(cur)).project(cam); app.style.setProperty('--by',((1-v.y)/2*100).toFixed(2)+'%') }
+ if(!fly){ const top=new THREE.Vector3(0,2.45,zOf(cur)).project(cam),bot=new THREE.Vector3(0,-.6,zOf(cur)).project(cam);
+   app.style.setProperty('--bt',((1-top.y)/2*100).toFixed(2)+'%');app.style.setProperty('--bb',((1-bot.y)/2*100).toFixed(2)+'%') }   // up arrow above the box, down arrow below it
  const tt=now/1000;holders.forEach((h,i)=>{const on=i===cur&&!fly;h.rotation.y+=((on?-.35+Math.sin(tt*.5)*.35:-.5)-h.rotation.y)*.04;h.position.y=.14+(i===cur?.04*Math.sin(tt*1.4):0)});
   R.render(S,cam)}
-function arrive(){try{navigator.vibrate&&navigator.vibrate(8)}catch(e){}thump()}
+function arrive(){app.classList.remove('flying');try{navigator.vibrate&&navigator.vibrate(8)}catch(e){}thump()}
 function size(){const w=cv.clientWidth,h=cv.clientHeight;R.setSize(w,h,false);cam.aspect=w/h;cam.updateProjectionMatrix();
  DIST=Math.max(6.5,1.75/(Math.tan(FOV*Math.PI/360)*Math.min(1,cam.aspect)))}   // keep about 2.3 box-widths across, also in portrait
 addEventListener('resize',size);requestAnimationFrame(frame);
