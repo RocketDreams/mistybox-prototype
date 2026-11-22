@@ -1336,6 +1336,7 @@ html,body{overscroll-behavior:none}
     <button data-m="prefs">Preferences <span id="prefS">Sound on ›</span></button>
     <button data-m="billing">Billing &amp; wallet <span>›</span></button>
     <button data-m="how">How it works <span>›</span></button>
+    <button data-m="tour">Take the app tour <span>Replay ›</span></button>
     <button data-m="help">Help &amp; Support <span>›</span></button>
     <button data-m="reset">Reset demo <span>›</span></button>
    </div>
@@ -3217,7 +3218,7 @@ const STEPS=[
  {sel:'.vals',r:16,pad:6,t:'Know your range',b:'<b>Floor</b> is the lowest-value watch inside, <b>Max</b> the most valuable. <b>Rarity</b> shows the full breakdown.'},
  {sel:'#walletBtn',r:22,pad:6,t:'Your balance',b:'Your wallet lives here. Top it up any time with <b>+</b>.'},
  {sel:'#nav [data-v="collection"]',r:18,pad:2,t:'Your vault',b:'Every watch you unbox lands here. <b>Ship it home</b> or <b>sell it back</b> instantly.'},
- {sel:'#buy',r:14,pad:6,t:'Open your first box',b:'Tap here to pick your box. We’ll set up your account first, it takes 10 seconds.',act:'buy',hint:'Tap Open'}
+ {sel:'#buy',r:14,pad:6,t:'Open your first box',b:()=>S.user?'Tap here to pick your box and open it.':'Tap here to pick your box. We’ll set up your account first, it takes 10 seconds.',act:'buy',hint:'Tap Open'}
 ];
 const N=STEPS.length-1;let i=-1,watch=0,boxAt=0;
 
@@ -3255,7 +3256,7 @@ function render(){const st=STEPS[i];bub.classList.remove('in','ftw');dot.style.d
   <p class="ft-b">Every box hides a <b>real luxury watch</b>. Let us show you around, it takes 30 seconds.</p>
   <div class="ft-ft"><button class="ft-next" type="button">SHOW ME AROUND</button><button class="ft-skip" type="button">Skip the tour</button></div>`}
  else{bub.innerHTML=`<div class="ft-prog">${Array.from({length:N},(_,k)=>`<i class="${k<i?'on':''}"></i>`).join('')}<span>${i}/${N}</span></div>
-  <h2 class="ft-t">${st.t}</h2><p class="ft-b">${st.b}</p>
+  <h2 class="ft-t">${st.t}</h2><p class="ft-b">${typeof st.b==='function'?st.b():st.b}</p>
   <div class="ft-ft"><button class="ft-skip" type="button">Skip tour</button>${st.act?`<span class="ft-do"><i></i>${st.hint}</span>`:`<button class="ft-next" type="button">NEXT <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>`}</div>`}
  const nx=bub.querySelector('.ft-next');if(nx)nx.onclick=e=>{e.stopPropagation();step(1)};
  bub.querySelector('.ft-skip').onclick=e=>{e.stopPropagation();end(true)};
@@ -3264,7 +3265,7 @@ function render(){const st=STEPS[i];bub.classList.remove('in','ftw');dot.style.d
 function step(d){const n=i+d;if(n>N)return;i=n;try{i>1?SFX.swish():SFX.tap()}catch(e){}
  const st=STEPS[i];if(st.act==='box')boxAt=cur;render()}
 function end(skipped){cancelAnimationFrame(watch);ft.classList.remove('on');hand.classList.remove('on');views.style.overflow='';S.ftue=skipped?'skipped':'done';save();
- if(skipped)toast('Tour skipped. Tap Open when you’re ready.')}
+ if(skipped)toast('Tour skipped. Replay it any time from Account.')}
 function start(){if(ft.classList.contains('on'))return;views.scrollTop=0;views.style.overflow='hidden';ft.classList.add('on');i=-1;step(1);loop()}
 function loop(){watch=requestAnimationFrame(loop);const st=STEPS[i];if(!st)return;
  if(st.act==='box'&&boxAt>=0&&cur!==boxAt){boxAt=-1;const at=i;setTimeout(()=>{if(i===at)step(1)},550)}}
@@ -3275,6 +3276,8 @@ document.getElementById('buy').addEventListener('click',()=>{if(!ft.classList.co
 ft.addEventListener('keydown',e=>{if(e.key==='Escape')end(true)});
 addEventListener('resize',()=>{if(ft.classList.contains('on'))place(false)});
 window.MBTour={start,end};
+// Account → "Take the app tour": back to Boxes, then replay from the welcome card
+document.querySelector('.menu').addEventListener('click',e=>{if(!e.target.closest('[data-m="tour"]'))return;if(curView!=='boxes')show('boxes');if(cur!==0)go(0,-1);setTimeout(start,650)});
 
 const go=()=>{if(S.ftue||isGiftLanding())return;setTimeout(start,450)};
 if(document.getElementById('boot'))addEventListener('mb-booted',go,{once:true});else go();
