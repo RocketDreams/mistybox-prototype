@@ -1558,7 +1558,14 @@ function paintBg(){
  SWP={U,FB,W,H};startSwoosh();
  // soft edge: nothing below the fire area (title / BUY stay on plain dark)
  g.globalCompositeOperation='destination-out';const cut=g.createLinearGradient(0,FB-34*U,0,FB+6*U);cut.addColorStop(0,'rgba(0,0,0,0)');cut.addColorStop(1,'rgba(0,0,0,1)');g.fillStyle=cut;g.fillRect(0,FB-34*U,W,H);
- g.filter='none';g.globalCompositeOperation='source-over';g.shadowBlur=0;startEmbers()}
+ g.filter='none';g.globalCompositeOperation='source-over';g.shadowBlur=0;drawFeathers(g,W,H);startEmbers()}
+/* dense feather field (2026-11-22): many fine, low-contrast leaves at a diagonal, with hairline veins (like the packaging) */
+function drawFeathers(g,W,H){let seed=11;const r=()=>(seed=(seed*16807)%2147483647)/2147483647;const N=Math.round(W*H/2600);
+ for(let i=0;i<N;i++){const x=r()*W*1.3-W*.15,y=r()*H*1.15-H*.08,L=55+r()*130,a=-.95+(r()-.5)*.7,wd=L*(.09+r()*.09),al=.028+r()*.048;
+  g.save();g.translate(x,y);g.rotate(a);g.beginPath();g.moveTo(0,0);g.quadraticCurveTo(L*.42,-wd,L,0);g.quadraticCurveTo(L*.58,wd*.45,0,0);
+  const gr=g.createLinearGradient(0,0,L,0);gr.addColorStop(0,'rgba(130,130,140,0)');gr.addColorStop(.55,`rgba(130,130,140,${al})`);gr.addColorStop(1,'rgba(170,170,180,0)');g.fillStyle=gr;g.fill();
+  g.lineWidth=.5;g.strokeStyle=`rgba(175,175,188,${al*.85})`;for(let v=1;v<=4;v++){const o=wd*(v/5-.45);g.beginPath();g.moveTo(L*.06,o*.15);g.quadraticCurveTo(L*.44,o-wd*.28,L*.94,o*.08);g.stroke()}
+  g.restore()}}
 /* packaging-style graphite swooshes on their own canvas, slowly drifting and breathing */
 let SWP=null,SWON=0;
 const SWL=[ // x0,y0,x1,y1,cx,cy (x in u; y as [frac, 'f'=fire area | 'h'=screen]), thickness u, alpha, period s
@@ -1583,7 +1590,7 @@ function startSwoosh(){if(SWON)return;SWON=1;
   SWL.forEach(([X0,Y0,X1,Y1,CX,CY,TH,AL,PER],k)=>{
    const w=6.2832/PER,s1=Math.sin(ts*w+k*1.7),s2=Math.cos(ts*w*.7+k),
     x0=X0*U,y0=Y(Y0),x1=X1*U,y1=Y(Y1),L=Math.hypot(x1-x0,y1-y0),ux=(x1-x0)/L,uy=(y1-y0)/L,
-    sh=42*U*s1,ox=ux*sh,oy=uy*sh,cx=CX*U+ox-uy*20*U*s2,cy=Y(CY)+oy+ux*20*U*s2,al=AL*(.78+.22*Math.sin(ts*w*1.3+k*2.3)),th=TH*U*(.92+.08*s2);
+    sh=42*U*s1,ox=ux*sh,oy=uy*sh,cx=CX*U+ox-uy*20*U*s2,cy=Y(CY)+oy+ux*20*U*s2,al=.6*AL*(.78+.22*Math.sin(ts*w*1.3+k*2.3)),th=TH*U*(.92+.08*s2);
    const N=48,C=[],T=[];
    for(let i=0;i<=N;i++){const q=i/N,u=1-q;C.push([u*u*(x0+ox)+2*u*q*cx+q*q*(x1+ox),u*u*(y0+oy)+2*u*q*cy+q*q*(y1+oy)])}
    for(let i=0;i<=N;i++){const q=i/N,a=C[Math.max(0,i-1)],b=C[Math.min(N,i+1)],dx=b[0]-a[0],dy=b[1]-a[1],l=Math.hypot(dx,dy)||1,hw=th*Math.pow(Math.sin(Math.PI*Math.pow(q,.8)),1.4);T.push([C[i][0]+dy/l*hw,C[i][1]-dx/l*hw])}
@@ -3054,6 +3061,21 @@ frame();
  SFX.reveal=function(tier){window.__CH=MAJ;return baseReveal.call(SFX,tier)};
 })();
 </script>
+<style id="purple-css">
+/* ---- purple accent (2026-11-22): one colour breaks the black: primary CTA, Rarity, active tab ---- */
+:root{--mb-purple:#7b4fd6;--mb-purple-hi:#9168e8;--mb-purple-lo:#6a3fc4;--mb-purple-glow:rgba(140,90,255,.45)}
+#scr #buy.cta,#scr .pick .pk-go.cta,#auth #auGo.cta{color:#fff!important;border-radius:0!important;box-shadow:none!important;
+ background:linear-gradient(180deg,var(--mb-purple-hi) 0%,var(--mb-purple) 46%,var(--mb-purple-lo) 100%)!important;
+ clip-path:polygon(16px 0,100% 0,100% calc(100% - 16px),calc(100% - 16px) 100%,0 100%,0 16px)!important;
+ filter:drop-shadow(0 0 14px var(--mb-purple-glow)) drop-shadow(0 6px 14px rgba(0,0,0,.55))!important;text-shadow:0 1px 0 rgba(40,10,90,.35)}
+#scr #buy.cta::before,#scr #buy.cta::after,#scr .pick .pk-go.cta::before,#auth #auGo.cta::before{display:none!important}
+#scr #buy.cta svg,#auth #auGo.cta svg{stroke:#fff}
+#scr #buy.cta:active,#scr .pick .pk-go.cta:active,#auth #auGo.cta:active{filter:drop-shadow(0 0 8px var(--mb-purple-glow))!important;transform:translateY(2px)}
+#scr .odds{border:1.5px solid var(--mb-purple)!important;background:rgba(18,10,34,.75)!important}
+#scr .odds img{filter:brightness(0) saturate(100%) invert(40%) sepia(62%) saturate(2400%) hue-rotate(244deg) brightness(95%)}
+#scr .nav button.on img{filter:brightness(0) saturate(100%) invert(40%) sepia(62%) saturate(2400%) hue-rotate(244deg) brightness(105%)}
+#scr .nav button.on:after{display:block!important;content:""!important;position:absolute;bottom:calc(-6*var(--U,1px))!important;width:calc(46*var(--U,1px))!important;height:3px!important;border-radius:2px;background:var(--mb-purple)!important;box-shadow:0 0 8px var(--mb-purple-glow)!important}
+</style>
 <!-- ---------- FTUE (2026-11-22): guided first-run tour before login; first Open goes through sign-up ---------- -->
 <style id="ftue-css">
 #ft{position:absolute;inset:0;z-index:40;display:none;pointer-events:none;font-family:Montserrat,Poppins,sans-serif;color:#fff}
