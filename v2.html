@@ -18,7 +18,7 @@ html,body{height:100%;background:#000;overflow:hidden;font-family:Montserrat,san
 .tag{font:800 10px/1 Montserrat;letter-spacing:2px;color:#0b0d12;background:linear-gradient(180deg,#fff,#c9ced6);padding:6px 10px;clip-path:polygon(6px 0,100% 0,100% calc(100% - 6px),calc(100% - 6px) 100%,0 100%,0 6px)}
 .back{pointer-events:auto;font:600 11px/1 Montserrat;color:#9aa1ad;text-decoration:none;letter-spacing:.4px}
 /* depth ladder */
-.ladder{position:absolute;right:14px;top:50%;transform:translateY(-62%);display:flex;flex-direction:column;align-items:flex-end;gap:16px}
+.ladder{position:absolute;right:14px;top:96px;display:flex;flex-direction:column;align-items:flex-end;gap:16px}
 .ladder button{position:relative;background:none;border:0;color:#fff;display:flex;align-items:center;gap:8px;cursor:pointer;padding:2px 0}
 .ladder span{font:700 9px/1 Montserrat;letter-spacing:1.4px;opacity:0;transform:translateX(6px);transition:.3s;color:#c9ced6}
 .ladder i{display:block;width:10px;height:10px;transform:rotate(45deg);border:1.5px solid rgba(255,255,255,.45);transition:.35s}
@@ -35,10 +35,12 @@ html,body{height:100%;background:#000;overflow:hidden;font-family:Montserrat,san
 .vals{display:flex;justify-content:center;gap:26px;margin-bottom:16px}
 .vals small{display:block;font:600 9.5px/1 Montserrat;letter-spacing:1.4px;color:#9aa1ad;margin-bottom:5px}
 .vals b{font:800 21px/1 Montserrat}
-.row{display:flex;gap:10px;align-items:center}
-.nav{flex:none;width:52px;height:52px;border:0;color:#fff;cursor:pointer;display:grid;place-items:center;background:rgba(255,255,255,.08);clip-path:polygon(30% 0,70% 0,100% 30%,100% 70%,70% 100%,30% 100%,0 70%,0 30%);transition:background .2s,opacity .2s}
-.nav:active{background:rgba(255,255,255,.2)}.nav:disabled{opacity:.3}
-.cta{flex:1;height:52px;border:0;cursor:pointer;color:#0b0d12;font:italic 900 19px/1 Montserrat;letter-spacing:.3px;background:linear-gradient(180deg,#ffffff 0%,#eef0f4 38%,#c9ced6 62%,#f4f6f9 100%);clip-path:polygon(14px 0,100% 0,100% calc(100% - 14px),calc(100% - 14px) 100%,0 100%,0 14px);filter:drop-shadow(0 0 14px rgba(140,190,255,.6))}
+.bgfx{position:absolute;inset:-14%;background:url(assets/swoosh.svg) center 38%/150% auto no-repeat,#000;opacity:.95;transform-origin:50% 40%;will-change:transform;pointer-events:none}
+.side{position:absolute;top:var(--by,38%);z-index:2;width:46px;height:46px;margin-top:-23px;border:0;color:#fff;cursor:pointer;display:grid;place-items:center;isolation:isolate;
+ background:linear-gradient(135deg,#f4f5f7 0%,#9ea3ab 25%,#e9ebee 50%,#7e838b 75%,#d9dce0 100%);clip-path:polygon(30% 0,70% 0,100% 30%,100% 70%,70% 100%,30% 100%,0 70%,0 30%);transition:opacity .25s,transform .2s}
+.side::before{content:"";position:absolute;inset:1.5px;z-index:-1;background:linear-gradient(180deg,#16161b,#060608);clip-path:inherit}
+.side.l{left:14px}.side.r{right:14px}.side:active{transform:scale(.92)}.side:disabled{opacity:0;pointer-events:none}
+.cta{width:100%;height:54px;border:0;cursor:pointer;color:#0b0d12;font:italic 900 19px/1 Montserrat;letter-spacing:.3px;background:linear-gradient(180deg,#ffffff 0%,#eef0f4 38%,#c9ced6 62%,#f4f6f9 100%);clip-path:polygon(14px 0,100% 0,100% calc(100% - 14px),calc(100% - 14px) 100%,0 100%,0 14px);filter:drop-shadow(0 0 14px rgba(140,190,255,.6))}
 .hint{margin-top:12px;font:600 10.5px/1 Montserrat;letter-spacing:.6px;color:#6d7480}
 .load{position:absolute;inset:0;display:grid;place-items:center;background:#000;transition:opacity .6s;z-index:5}
 .load.off{opacity:0;pointer-events:none}
@@ -49,19 +51,17 @@ html,body{height:100%;background:#000;overflow:hidden;font-family:Montserrat,san
 @media (prefers-reduced-motion:reduce){.nm.in,.nm.out{animation:none}}
 </style></head><body>
 <div id="app">
- <canvas id="gl"></canvas><div class="vig"></div>
+ <div class="bgfx" id="bgfx"></div><canvas id="gl"></canvas><div class="vig"></div>
+ <button class="side l" id="prev" aria-label="Previous box"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
+ <button class="side r" id="next" aria-label="Next box"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button>
  <div class="top"><img src="assets/logo-white.png" alt="MistyBox"><a class="back" href="./">← V1</a><span class="tag">V2 · DEPTH</span></div>
  <nav class="ladder" id="ladder" aria-label="Boxes"></nav>
  <div class="info">
   <div class="idx" id="idx">BOX 1 / 5</div>
   <h1 class="nm in" id="nm">HERITAGE</h1>
   <div class="vals"><div><small>FLOOR VALUE</small><b id="mn">$20</b></div><div><small>MAX VALUE</small><b id="mx">$1,175</b></div></div>
-  <div class="row">
-   <button class="nav" id="prev" aria-label="Previous box (back)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button>
-   <button class="cta" id="buy">OPEN FOR $50</button>
-   <button class="nav" id="next" aria-label="Next box (forward)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 15l6-6 6 6"/></svg></button>
-  </div>
-  <div class="hint">Swipe up for the next box · down to go back</div>
+  <button class="cta" id="buy">OPEN FOR $50</button>
+  <div class="hint">Swipe or tap the arrows to travel between boxes</div>
  </div>
  <div class="toast" id="toast"></div>
  <div class="load" id="load"><img src="assets/mark.png" alt="Loading"></div>
@@ -82,11 +82,11 @@ const money=v=>'$'+v.toLocaleString('en-US');
 const $=s=>document.querySelector(s);
 const RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-const cv=$('#gl');
-const R=new THREE.WebGLRenderer({canvas:cv,antialias:true});
+const cv=$('#gl'),bgfx=$('#bgfx'),app=$('#app');
+const R=new THREE.WebGLRenderer({canvas:cv,antialias:true,alpha:true});R.setClearColor(0x000000,0);
 R.setPixelRatio(Math.min(devicePixelRatio,(navigator.hardwareConcurrency||8)<=4?1.5:2));
 R.toneMapping=THREE.ACESFilmicToneMapping;R.toneMappingExposure=1.2;R.outputColorSpace=THREE.SRGBColorSpace;
-const S=new THREE.Scene();S.background=new THREE.Color(0x000000);S.fog=new THREE.FogExp2(0x000000,.042);
+const S=new THREE.Scene();S.fog=new THREE.FogExp2(0x000000,.03);
 const pm=new THREE.PMREMGenerator(R);
 {const env=new THREE.Scene();env.background=new THREE.Color(0x050506);
  const card=(w,h,x,y,z,i)=>{const m=new THREE.Mesh(new THREE.PlaneGeometry(w,h),new THREE.MeshBasicMaterial({color:new THREE.Color(i,i,i),side:THREE.DoubleSide}));m.position.set(x,y,z);m.lookAt(0,.5,0);env.add(m)};
@@ -206,24 +206,13 @@ function loadCube(skin){
     const holder = new THREE.Group(); holder.add(root); holder.userData.cube = skin; return holder }) }
 
 
-// ---- the corridor: floor, a pedestal + spotlight per box, portal frames between them, floating dust ----
+// ---- the corridor: floating boxes, a spotlight each, dust for parallax; the swoosh layer sits behind the transparent canvas ----
 const zOf=i=>-i*D;
 const radial=(stops)=>{const c=document.createElement('canvas');c.width=c.height=256;const g=c.getContext('2d'),gr=g.createRadialGradient(128,128,0,128,128,128);stops.forEach(([o,col])=>gr.addColorStop(o,col));g.fillStyle=gr;g.fillRect(0,0,256,256);const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;return t};
-const floor=new THREE.Mesh(new THREE.PlaneGeometry(40,D*BOXES.length+40),new THREE.MeshStandardMaterial({color:0x070709,metalness:.7,roughness:.32}));
-floor.rotation.x=-Math.PI/2;floor.position.z=-D*(BOXES.length-1)/2;S.add(floor);
-const POOLT=radial([[0,'rgba(170,200,255,.55)'],[.35,'rgba(90,130,255,.18)'],[1,'rgba(0,0,0,0)']]);
-const pedMat=new THREE.MeshPhysicalMaterial({color:0x0a0a0d,metalness:.6,roughness:.25,clearcoat:1,clearcoatRoughness:.05});
-const ringMat=new THREE.MeshBasicMaterial({color:0xcfe2ff});
-const portalMat=new THREE.MeshBasicMaterial({color:0x7fa8ff,transparent:true,opacity:.55,fog:true});
-const holders=[],pools=[],rings=[];
+const holders=[];
 BOXES.forEach((b,i)=>{const z=zOf(i);
- const ped=new THREE.Mesh(new THREE.CylinderGeometry(1.2,1.28,.14,64),pedMat);ped.position.set(0,.07,z);S.add(ped);
- const ring=new THREE.Mesh(new THREE.TorusGeometry(1.21,.012,8,96),ringMat.clone());ring.rotation.x=Math.PI/2;ring.position.set(0,.145,z);S.add(ring);rings.push(ring);
- const pool=new THREE.Mesh(new THREE.PlaneGeometry(4.6,4.6),new THREE.MeshBasicMaterial({map:POOLT,transparent:true,depthWrite:false,blending:THREE.AdditiveBlending}));pool.rotation.x=-Math.PI/2;pool.position.set(0,.005,z);S.add(pool);pools.push(pool);
- const sp=new THREE.SpotLight(0xd9d4ff,30,12,.42,.8,1.4);sp.position.set(0,5.2,z+1.6);sp.target.position.set(0,.6,z);S.add(sp,sp.target);
- const h=new THREE.Group();h.position.set(0,.14,z);h.rotation.y=-.5;S.add(h);holders.push(h);
- if(i<BOXES.length-1){const pz=z-D/2,W=3.6,H=3.2,t=.03,g=new THREE.Group();   // portal frame halfway to the next box
-  [[0,H,W+t,t],[-W/2,H/2,t,H],[W/2,H/2,t,H]].forEach(([x,y,w,hh])=>{const m=new THREE.Mesh(new THREE.BoxGeometry(w,hh,t),portalMat);m.position.set(x,y,0);g.add(m)});g.position.z=pz;S.add(g)}});
+ const sp=new THREE.SpotLight(0xd9d4ff,30,14,.42,.8,1.4);sp.position.set(0,5.2,z+1.6);sp.target.position.set(0,.8,z);S.add(sp,sp.target);
+ const h=new THREE.Group();h.position.set(0,.14,z);h.rotation.y=-.5;S.add(h);holders.push(h)});
 // dust motes for parallax
 {const N=700,p=new Float32Array(N*3);for(let k=0;k<N;k++){p[3*k]=(Math.random()-.5)*12;p[3*k+1]=Math.random()*6;p[3*k+2]=6-Math.random()*(D*BOXES.length+10)}
  const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.BufferAttribute(p,3));
@@ -256,9 +245,11 @@ function frame(now){requestAnimationFrame(frame);
  const dt=1/60;bobV+=(-70*bobY-10*bobV)*dt;bobY+=bobV*dt;
  if(!fly){const r=rest(cur);cam.position.set(r.p.x,r.p.y+bobY*.18,r.p.z)}
  cam.lookAt(look);
+ { const r0=rest(0),depth=(r0.p.z-cam.position.z)/D,rise=cam.position.y-r0.p.y;
+   bgfx.style.transform=`translate3d(0,${(rise*26).toFixed(1)}px,0) scale(${(1+depth*.07+rise*.025).toFixed(4)})`; }
+ if(!fly){ const v=new THREE.Vector3(0,.86,zOf(cur)).project(cam); app.style.setProperty('--by',((1-v.y)/2*100).toFixed(2)+'%') }
  const tt=now/1000;holders.forEach((h,i)=>{const on=i===cur&&!fly;h.rotation.y+=((on?-.35+Math.sin(tt*.5)*.35:-.5)-h.rotation.y)*.04;h.position.y=.14+(i===cur?.04*Math.sin(tt*1.4):0)});
- rings.forEach((r,i)=>{r.material.color.setScalar(i===cur?1:.35)});pools.forEach((p,i)=>{p.material.opacity+=((i===cur?1:.35)-p.material.opacity)*.06});
- R.render(S,cam)}
+  R.render(S,cam)}
 function arrive(){try{navigator.vibrate&&navigator.vibrate(8)}catch(e){}thump()}
 function size(){const w=cv.clientWidth,h=cv.clientHeight;R.setSize(w,h,false);cam.aspect=w/h;cam.updateProjectionMatrix();
  DIST=Math.max(6.5,1.75/(Math.tan(FOV*Math.PI/360)*Math.min(1,cam.aspect)))}   // keep about 2.3 box-widths across, also in portrait
@@ -276,7 +267,7 @@ $('#next').onclick=()=>goTo(cur+1);$('#prev').onclick=()=>goTo(cur-1);
 let tt;$('#buy').onclick=()=>{const t=$('#toast');t.textContent='V2 demo: box navigation only';t.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('on'),1800)};
 addEventListener('keydown',e=>{if(['ArrowUp','ArrowRight','PageDown'].includes(e.key)){e.preventDefault();goTo(cur+1)}if(['ArrowDown','ArrowLeft','PageUp'].includes(e.key)){e.preventDefault();goTo(cur-1)}});
 let wheelAt=0;cv.addEventListener('wheel',e=>{e.preventDefault();const n=performance.now();if(n-wheelAt<900||Math.abs(e.deltaY)<8)return;wheelAt=n;goTo(cur+(e.deltaY>0?1:-1))},{passive:false});
-let sx=0,sy=0,st=0;const app=$('#app');
+let sx=0,sy=0,st=0;
 app.addEventListener('pointerdown',e=>{if(e.target.closest('button,a'))return;sx=e.clientX;sy=e.clientY;st=performance.now()});
 app.addEventListener('pointerup',e=>{if(!st)return;const dx=e.clientX-sx,dy=e.clientY-sy;st=0;if(Math.max(Math.abs(dx),Math.abs(dy))<36)return;
  if(Math.abs(dy)>=Math.abs(dx))goTo(cur+(dy<0?1:-1));else goTo(cur+(dx<0?1:-1))});
