@@ -1322,7 +1322,7 @@ html,body{overscroll-behavior:none}
   <section class="view" id="v-account">
    <div class="pad"><div class="ptitle">Account</div><div class="psub">Settings, wallet and help.</div></div>
    <div class="acard"><div class="lab">BALANCE</div><div class="bal" id="aBal">$0</div>
-    <div class="kv">Withdrawable <b id="aWd">$0</b></div><div class="kv">Gift points <b id="aGp">0</b></div>
+    <div class="kv">Withdrawable <b id="aWd">$0</b></div><button type="button" class="kv gp-kv" id="aGpRow">Gift Points <b><span class="gp-i"></span><span id="aGp">0</span> <i>Shop ›</i></b></button>
     <div class="two"><button class="btn w" id="depBtn">DEPOSIT</button><button class="btn" id="wdBtn">WITHDRAW</button></div></div>
    <div class="acard"><div style="font-size:16px;font-weight:600">Refer a Friend</div><div class="psub">Give $5, get $5 after their first purchase.</div>
     <button class="code" id="copyCode" style="width:100%"><span><span class="lab" style="display:block;font-size:9px;letter-spacing:2px;color:var(--dim)">YOUR CODE</span><b>MBX7Q2KD</b></span><span class="pill acc">COPY</span></button>
@@ -2025,6 +2025,7 @@ function OBOX(b){const G=GEO[b.key==='icy'?'crown':'std'],sm=G.seam,pt=p=>`${p[0
 function openBox(bi){const b=BOXES[bi];scr.scrollTop=0;const GIFT=window.__giftFree===bi?window.__gift:null;if(GIFT)window.__giftFree=null;else S.bal-=b.price;   // a gift's first open is already paid for; its result screen sends the friend to the App Store
  S.pts+=b.price*5;save();paintBal();
  const win=draw(b);lastWin={id:win.id,box:bi};
+ const GPE=GIFT?0:Math.max(0,Math.round(b.price-win.price));if(GPE){S.gp=(S.gp||0)+GPE;save()}   // GP (Sharon 2026-11-23): box price above the watch's market value comes back 1:1 as Gift Points
  const rv=$('#reveal'),W=scr.clientWidth,H=scr.clientHeight,cx=W/2,boxY=Math.min(H-140,Math.max(H*.58,512));
  const OB=OBOX(b),RA=(window.MB3D&&window.MB3D.anchor)?window.MB3D.anchor(b):null,BW=Math.min(255,W*.68),BH=BW*(760/900),hX=cx-BW/2+BW*(RA?RA.hx:OB.hx)/100,hY=boxY-BH/2+BH*(RA?RA.hy:OB.hy)/100;
  rv.style.setProperty('--rc',b.accent);rv.style.setProperty('--hc','#7fe9ff');
@@ -2164,7 +2165,7 @@ function openBox(bi){const b=BOXES[bi];scr.scrollTop=0;const GIFT=window.__giftF
    const info=document.createElement('div');info.className='rv-detail';info.style.setProperty('--rc',RC[win.tier]);
    info.classList.add('mbx-rv');info.innerHTML=`<div class="mbx-big"><img class="dimg" id="dImg" src="${win.img}" alt="${esc(win.brand)} ${esc(win.model)}"></div>
     ${rar(win.tier)}<div class="mbx-brand">${esc(win.brand)}</div><div class="mbx-price">${money(win.price)}</div><div class="mbx-model">${esc(win.model)}</div>
-    ${GIFT?giftClaimHTML(GIFT):`<p class="dfrom">Revealed from ${esc(b.skin)} · ${b.tier} box · authenticated &amp; insured</p>
+    ${GIFT?giftClaimHTML(GIFT):`<p class="dfrom">Revealed from ${esc(b.skin)} · ${b.tier} box · authenticated &amp; insured</p>${GPE?`<button type="button" class="gp-earn" id="rGp">${gpIco(18)}<b>+${GPE.toLocaleString()} GP</b><span>added · Gift Shop ›</span></button>`:''}
     <div class="acts"><div class="mbx-acts"><button class="cta sm" id="rSell">SELL ${money(win.price*.9)}</button><button class="btn" id="rKeep">VAULT</button></div><div class="mbx-links"><button type="button" class="lnk" id="rShip">Ship to me</button><button type="button" class="lnk" id="rAgain">Open another · ${money(b.price)}</button></div></div>`}`;
    info.classList.add('pre','on');if(GIFT)info.classList.add('giftrv');rv.appendChild(info);INFO=info;
    const di=info.querySelector('#dImg');di.style.visibility='hidden';const fr=di.getBoundingClientRect();
@@ -2185,6 +2186,7 @@ function openBox(bi){const b=BOXES[bi];scr.scrollTop=0;const GIFT=window.__giftF
    info.querySelector('#rSell').onclick=e=>{const ob=S.bal,src=e.currentTarget.getBoundingClientRect();S.bal+=win.price*.9;close('sold');paintBal();setTimeout(()=>coinsToWallet(src,ob,S.bal,()=>openSold(win)),260)};
    info.querySelector('#rShip').onclick=()=>{close('vault');openShip(S.col[0])};
    info.querySelector('#rAgain').onclick=()=>{close('vault');setTimeout(()=>openBuy(bi),200)};
+   const gb=info.querySelector('#rGp');if(gb)gb.onclick=()=>{close('vault');toast(`${win.model} is in your vault`);setTimeout(()=>window.openGShop&&openGShop(),250)};
 }
 }
 /* gift result: claim in the app (viral loop) */
@@ -2381,12 +2383,12 @@ $('#colGrid').onclick=e=>{const w=e.target.closest('[data-k]');if(!w)return;cons
  el=>{el.querySelector('#cSell').onclick=e=>{const ob=S.bal,src=e.currentTarget.getBoundingClientRect();c.st='sold';S.bal+=i.price*.9;save();paintBal();renderCol();closeSheet();coinsToWallet(src,ob,S.bal,()=>openSold(i))};
   el.querySelector('#cShip').onclick=()=>{closeSheet();setTimeout(()=>openShip(c),300)}})};
 function openShip(c){const i=item(c.id);
- openSheet('Ship to me',`<form class="form" id="sF" novalidate><p class="note">${esc(i.brand)} ${esc(i.model)} · insured, signature on delivery.</p><label for="sN">FULL NAME</label><input class="inp" id="sN" autocomplete="off"><label for="sA">STREET ADDRESS</label><input class="inp" id="sA" autocomplete="off">
- <div class="two" style="margin:0"><div><label for="sC">CITY</label><input class="inp" id="sC" autocomplete="off"></div><div><label for="sZ">ZIP</label><input class="inp" id="sZ" inputmode="numeric" autocomplete="off"></div></div>
+ openSheet('Ship to me',`<form class="form" id="sF" novalidate><p class="note">${esc(i.brand)} ${esc(i.model)} · insured, signature on delivery.</p><label for="sN">FULL NAME</label><input class="inp" id="sN" autocomplete="off" value="${esc(S.addr?.n||'')}"><label for="sA">STREET ADDRESS</label><input class="inp" id="sA" autocomplete="off" value="${esc(S.addr?.a||'')}">
+ <div class="two" style="margin:0"><div><label for="sC">CITY</label><input class="inp" id="sC" autocomplete="off" value="${esc(S.addr?.c||'')}"></div><div><label for="sZ">ZIP</label><input class="inp" id="sZ" inputmode="numeric" autocomplete="off" value="${esc(S.addr?.z||'')}"></div></div>
  <div class="err" id="sErr"></div><button class="cta sm">CONFIRM SHIPPING · FREE</button></form>`,
  el=>el.querySelector('#sF').onsubmit=e=>{e.preventDefault();const v=id=>el.querySelector(id).value.trim();
   if(!v('#sN')||!v('#sA')||!v('#sC')){el.querySelector('#sErr').textContent='Fill in name, street and city.';return}if(!/^\d{5}$/.test(v('#sZ'))){el.querySelector('#sErr').textContent='ZIP should be 5 digits.';return}
-  c.st='shipped';c.trk='UPS · 1Z'+Math.random().toString(36).slice(2,9).toUpperCase();save();renderCol();closeSheet();toast('Shipping confirmed · tracking added')})}
+  S.addr={n:v('#sN'),a:v('#sA'),c:v('#sC'),z:v('#sZ')};c.st='shipped';c.trk='UPS · 1Z'+Math.random().toString(36).slice(2,9).toUpperCase();save();renderCol();closeSheet();toast('Shipping confirmed · tracking added')})}
 
 /* ---------- leaderboard ---------- */
 const PEOPLE={week:[['Noa K.',14000],['Liam R.',7450],['Maya S.',4250],['Dan P.',3500],['Ella G.',1500],['Omer T.',250],['Yael B.',250],['Ron A.',0]],
@@ -3743,6 +3745,163 @@ if(document.getElementById('boot'))addEventListener('mb-booted',go,{once:true});
  document.addEventListener('click',e=>{const el=e.target.closest(SEL);if(!el||el.disabled)return;H(el.matches('.cta,.pk-go,#auGo')?14:8)},true);
  // the slot-style item spin during an opening: a soft tick per item (throttled)
  const _t=SFX.tick;let lt=0;SFX.tick=function(){const r=_t.apply(this,arguments);const n=performance.now();if(document.getElementById('reveal')?.classList.contains('on')&&n-lt>70){lt=n;H(5)}return r};
+})();
+</script>
+<style id="gp-css">
+/* GP (Gift Points) + Gift Shop (Sharon 2026-11-23) */
+.gp-ico{display:inline-block;vertical-align:-3px;flex:none;filter:drop-shadow(0 0 4px rgba(0,154,73,.55))}
+.gp-i{display:inline-block;width:15px;height:15px;vertical-align:-2px;margin-right:5px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%2345e08c'/%3E%3Cstop offset='1' stop-color='%23007a3a'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpolygon points='12,1.5 21.1,6.75 21.1,17.25 12,22.5 2.9,17.25 2.9,6.75' fill='url(%23g)' stroke='%23c9f7dc' stroke-width='1.1'/%3E%3Cpolygon points='12,6.6 16.7,9.3 16.7,14.7 12,17.4 7.3,14.7 7.3,9.3' fill='none' stroke='white' stroke-opacity='.6' stroke-width='1.3'/%3E%3C/svg%3E") center/contain no-repeat}
+#scr .gp-kv{width:100%;background:none;border:0;color:inherit;font:inherit;padding:0;text-align:left;cursor:pointer}
+#scr .gp-kv b{display:inline-flex;align-items:center;gap:0}
+#scr .gp-kv i{font-style:normal;color:var(--mb-purple-hi);font-weight:600;margin-left:8px;font-size:12px}
+/* result screen: +GP chip */
+#scr .gp-earn{display:inline-flex;align-items:center;gap:7px;margin:10px auto 0;padding:7px 14px 7px 10px;background:rgba(0,154,73,.14);border:1px solid rgba(25,184,95,.55);color:#fff;font:500 12.5px Inter,sans-serif;cursor:pointer;
+ clip-path:polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px)}
+#scr .gp-earn b{font-weight:700;color:#3ddc84}
+#scr .gp-earn span{color:#cfd3da}
+/* shop button under the VIP badge */
+#gpShopBtn{position:absolute;width:44px;height:44px;padding:0;border:0;background:none;cursor:pointer;z-index:7;-webkit-tap-highlight-color:transparent}
+#gpShopBtn>svg{width:44px;height:44px;display:block;filter:drop-shadow(0 3px 6px rgba(0,0,0,.6))}
+#gpShopBtn .gp-badge{position:absolute;right:-5px;bottom:-5px;line-height:0}
+#gpShopBtn .gp-badge svg{width:18px;height:18px}
+#gpShopBtn:active{transform:scale(.94)}
+#scr:not([data-view=boxes]) #gpShopBtn{display:none}
+/* shop panel: slides in from the right */
+#gshop{position:absolute;inset:0;z-index:19;background:#050407;transform:translateX(102%);transition:transform .42s cubic-bezier(.22,.8,.2,1);display:flex;flex-direction:column;overflow:hidden;visibility:hidden}
+#gshop.on{transform:none;visibility:visible}
+#gshop.anim{visibility:visible}
+#gshop .gs-bg{position:absolute;inset:0;pointer-events:none;opacity:.55;background:radial-gradient(120% 50% at 50% 0%,rgba(0,154,73,.22),transparent 60%)}
+#gshop .gs-hd{position:relative;display:flex;align-items:center;gap:12px;padding:calc(54px + var(--st,0px)) 18px 10px}
+#gshop .gs-back{width:38px;height:38px;flex:none;display:grid;place-items:center;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.04);color:#fff;cursor:pointer;
+ clip-path:polygon(9px 0,100% 0,100% calc(100% - 9px),calc(100% - 9px) 100%,0 100%,0 9px)}
+#gshop h2{margin:0;flex:1;font-family:var(--mb-font-display,'Archivo'),sans-serif;font-weight:900;font-stretch:125%;font-variation-settings:'wdth' 125;font-size:22px;letter-spacing:1px;text-transform:uppercase;color:#fff}
+#gshop .gs-bal{display:flex;align-items:center;gap:7px;padding:8px 14px 8px 10px;border:1px solid rgba(25,184,95,.6);background:rgba(0,154,73,.12);font:700 16px Inter,sans-serif;color:#fff;font-variant-numeric:tabular-nums;
+ clip-path:polygon(9px 0,100% 0,100% calc(100% - 9px),calc(100% - 9px) 100%,0 100%,0 9px)}
+#gshop .gs-bal small{font:600 11px Inter;color:#3ddc84;letter-spacing:.5px}
+#gshop .gs-note{position:relative;margin:2px 18px 12px;font:500 12.5px/1.45 Inter,sans-serif;color:#aeb3bc}
+#gshop .gs-note b{color:#fff;font-weight:600}
+#gshop .gs-tabs{position:relative;display:flex;gap:8px;padding:0 18px 12px;overflow-x:auto;scrollbar-width:none}
+#gshop .gs-tabs::-webkit-scrollbar{display:none}
+#gshop .gs-tabs button{flex:none;height:32px;padding:0 14px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.04);color:#cfd3da;font:600 12.5px Inter,sans-serif;cursor:pointer;
+ clip-path:polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px)}
+#gshop .gs-tabs button.on{background:var(--mb-purple);border-color:var(--mb-purple);color:#fff}
+#gshop .gs-body{position:relative;flex:1;overflow-y:auto;padding:0 18px 40px;-webkit-overflow-scrolling:touch}
+#gshop .gs-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+#gshop .gs-card{position:relative;isolation:isolate;display:flex;flex-direction:column;text-align:left;padding:1.5px;border:0;cursor:pointer;color:#fff;
+ background:linear-gradient(135deg,#f4f5f7 0%,#9ea3ab 18%,#e9ebee 42%,#7e838b 62%,#d9dce0 82%,#8c9098 100%);clip-path:polygon(14px 0,100% 0,100% calc(100% - 14px),calc(100% - 14px) 100%,0 100%,0 14px)}
+#gshop .gs-card .in{display:flex;flex-direction:column;height:100%;background:linear-gradient(180deg,#141417,#070708);clip-path:polygon(13.4px 0,100% 0,100% calc(100% - 13.4px),calc(100% - 13.4px) 100%,0 100%,0 13.4px);padding:10px 12px 12px}
+#gshop .gs-art{height:118px;display:grid;place-items:center;margin:0 -4px 8px;background:radial-gradient(closest-side,rgba(255,255,255,.08),transparent)}
+#gshop .gs-art svg{width:112px;height:112px}
+#gshop .gs-tag{align-self:flex-start;font:700 9.5px Inter;letter-spacing:1px;text-transform:uppercase;padding:3px 7px;margin-bottom:6px;color:#0b0d12;background:#e9ebee;clip-path:polygon(5px 0,100% 0,100% calc(100% - 5px),calc(100% - 5px) 100%,0 100%,0 5px)}
+#gshop .gs-tag.mb{background:var(--mb-purple);color:#fff}
+#gshop .gs-name{font:600 13.5px/1.25 Inter,sans-serif;min-height:34px}
+#gshop .gs-price{display:flex;align-items:center;gap:6px;margin-top:8px;font:700 16px Inter,sans-serif;font-variant-numeric:tabular-nums}
+#gshop .gs-price.short{color:#9aa0a9}
+#gshop .gs-ord{display:flex;align-items:center;gap:12px;padding:10px 12px;margin-bottom:10px;border:1px solid rgba(255,255,255,.14);background:#0d0d10;clip-path:polygon(12px 0,100% 0,100% calc(100% - 12px),calc(100% - 12px) 100%,0 100%,0 12px)}
+#gshop .gs-ord svg{width:56px;height:56px;flex:none}
+#gshop .gs-ord div{flex:1;min-width:0;font:600 13.5px Inter}
+#gshop .gs-ord small{display:block;font:500 12px/1.4 Inter;color:#aeb3bc;margin-top:3px}
+#gshop .gs-empty{padding:40px 10px;text-align:center;font:500 13.5px/1.5 Inter;color:#aeb3bc}
+/* product sheet */
+div.gs-sheet{padding:0 20px 22px}
+.gs-sheet .gs-big{display:grid;place-items:center;height:200px;margin:-4px 0 8px;background:radial-gradient(closest-side,rgba(255,255,255,.09),transparent)}
+.gs-sheet .gs-big svg{width:190px;height:190px}
+.gs-sheet .gs-p{display:flex;align-items:center;gap:8px;font:700 22px Inter,sans-serif;margin:6px 0 4px}
+.gs-sheet .gs-d{font:500 13.5px/1.5 Inter;color:#c3c7cf;margin:0 0 14px}
+.gs-sheet .gs-addr{display:flex;align-items:flex-start;gap:10px;padding:12px 14px;margin:0 0 12px;border:1px solid rgba(255,255,255,.16);background:#0d0d10;font:500 13.5px/1.45 Inter;color:#e4e6ea;clip-path:polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px)}
+.gs-sheet .gs-addr div{flex:1}
+.gs-sheet .gs-addr small{display:block;font:700 10px Inter;letter-spacing:1px;color:#9aa0a9;margin-bottom:3px}
+.gs-sheet .gs-addr button{background:none;border:0;color:var(--mb-purple-hi);font:600 13px Inter;cursor:pointer;padding:0}
+.gs-sheet .cta[disabled]{opacity:.45;pointer-events:none}
+</style>
+<script>
+/* ---------- GP · Gift Points + Gift Shop (Sharon 2026-11-23, demo products) ----------
+   Earn: whenever a box reveals a watch worth less than the box price, the difference comes back 1:1 as GP.
+   Spend: GP only, in the in-app Gift Shop (MistyBox-branded merch + generic essentials). Shipping is free, to the saved address. */
+function gpIco(sz=16){return `<svg class="gp-ico" width="${sz}" height="${sz}" viewBox="0 0 24 24" aria-hidden="true"><defs><linearGradient id="gpg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#45e08c"/><stop offset="1" stop-color="#007a3a"/></linearGradient></defs><polygon points="12,1.5 21.1,6.75 21.1,17.25 12,22.5 2.9,17.25 2.9,6.75" fill="url(#gpg)" stroke="#c9f7dc" stroke-width="1.1"/><polygon points="12,6.6 16.7,9.3 16.7,14.7 12,17.4 7.3,14.7 7.3,9.3" fill="none" stroke="#fff" stroke-opacity=".6" stroke-width="1.3"/></svg>`}
+(()=>{if(typeof S==='undefined')return;if(S.gp==null)S.gp=1870;S.gpOrders=S.gpOrders||[];
+ const L='assets/logo-white.png',LOGO=(x,y,w)=>`<image href="${L}" x="${x}" y="${y}" width="${w}" height="${(w*274/1956).toFixed(2)}"/>`;   // official logo, unaltered
+ const CH='<defs><linearGradient id="sv" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f4f6f8"/><stop offset=".35" stop-color="#9ea3ab"/><stop offset=".6" stop-color="#e9ebee"/><stop offset="1" stop-color="#6d737b"/></linearGradient><linearGradient id="lt" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7a4a2a"/><stop offset="1" stop-color="#4a2a16"/></linearGradient></defs>';
+ const ART={
+  tee:`<path d="M38 22 L50 16 Q60 24 70 16 L82 22 L100 38 L90 50 L82 44 L82 104 L38 104 L38 44 L30 50 L20 38 Z" fill="#141519" stroke="#30323a" stroke-width="1.5"/><path d="M50 16 Q60 26 70 16" fill="none" stroke="#3a3d46" stroke-width="2"/>${LOGO(42,48,36)}`,
+  hoodie:`<path d="M36 30 Q60 6 84 30 L102 48 L94 102 L84 100 L84 108 L36 108 L36 100 L26 102 L18 48 Z" fill="#0b2a19" stroke="#1d4a31" stroke-width="1.5"/><path d="M46 30 Q60 44 74 30" fill="none" stroke="#1d4a31" stroke-width="2"/><path d="M44 82 L76 82 L80 100 L40 100 Z" fill="none" stroke="#1d4a31" stroke-width="1.5"/><line x1="56" y1="38" x2="55" y2="54" stroke="#cfd3da" stroke-width="1.2"/><line x1="64" y1="38" x2="65" y2="54" stroke="#cfd3da" stroke-width="1.2"/>${LOGO(43,62,34)}`,
+  mug:`<path d="M84 46 Q102 46 102 62 Q102 78 84 78" fill="none" stroke="#1a1b20" stroke-width="7"/><rect x="28" y="34" width="58" height="66" rx="6" fill="#141519" stroke="#30323a" stroke-width="1.5"/><ellipse cx="57" cy="34" rx="29" ry="5" fill="#0a0a0c" stroke="#30323a" stroke-width="1.5"/>${LOGO(35,62,44)}`,
+  cap:`<path d="M24 74 Q24 36 60 34 Q96 36 96 74 Z" fill="#141519" stroke="#30323a" stroke-width="1.5"/><path d="M20 74 Q60 66 104 74 Q108 86 92 86 Q60 80 26 86 Q14 84 20 74 Z" fill="#0d0e11" stroke="#30323a" stroke-width="1.5"/><circle cx="60" cy="36" r="3" fill="#30323a"/>${LOGO(38,54,44)}`,
+  print:`<rect x="22" y="14" width="76" height="94" fill="url(#sv)"/><rect x="27" y="19" width="66" height="84" fill="#060608"/><image href="assets/3d/cube_greencarbon-box.webp" x="34" y="30" width="52" height="52"/>${LOGO(38,88,44)}`,
+  roll:`<rect x="16" y="44" width="88" height="40" rx="20" fill="url(#lt)" stroke="#2c180b" stroke-width="1.5"/><rect x="22" y="50" width="76" height="28" rx="14" fill="none" stroke="#c9a27a" stroke-width="1" stroke-dasharray="3 3"/><rect x="92" y="54" width="14" height="20" rx="4" fill="#3a2111"/>${LOGO(36,60,44)}`,
+  watch:`<rect x="46" y="8" width="28" height="30" rx="4" fill="#1a1b20"/><rect x="46" y="82" width="28" height="30" rx="4" fill="#1a1b20"/><circle cx="60" cy="60" r="30" fill="url(#sv)"/><circle cx="60" cy="60" r="25" fill="#062a17"/><circle cx="60" cy="60" r="25" fill="none" stroke="#19b85f" stroke-opacity=".5"/><rect x="91" y="56" width="5" height="8" rx="1" fill="url(#sv)"/><line x1="60" y1="60" x2="60" y2="42" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/><line x1="60" y1="60" x2="73" y2="66" stroke="#fff" stroke-width="2" stroke-linecap="round"/><circle cx="60" cy="60" r="2.2" fill="#3ddc84"/>${LOGO(46,70,28)}`,
+  kit:`<rect x="26" y="30" width="22" height="64" rx="5" fill="#dfe8f0" stroke="#8a95a3"/><rect x="31" y="20" width="12" height="12" rx="2" fill="#2a6fd6"/><rect x="28" y="52" width="18" height="22" fill="#2a6fd6" opacity=".85"/><rect x="58" y="28" width="8" height="58" rx="3" fill="#6b4a2f"/><rect x="56" y="84" width="12" height="16" rx="2" fill="#cfd3da"/><path d="M76 50 h30 v46 h-30 z" fill="#3c4250"/><path d="M76 50 l30 46" stroke="#4d5566" stroke-width="2"/>`,
+  winder:`<rect x="18" y="26" width="84" height="74" rx="6" fill="#18191d" stroke="#3a3d46" stroke-width="1.5"/><rect x="26" y="34" width="68" height="58" rx="4" fill="#0a0a0c" stroke="#9ea3ab" stroke-opacity=".4"/><circle cx="60" cy="63" r="20" fill="#2a2c33"/><circle cx="60" cy="63" r="12" fill="url(#sv)"/><circle cx="60" cy="63" r="9" fill="#1d2a3a"/><circle cx="98" cy="96" r="2" fill="#3ddc84"/>`,
+  charger:`<path d="M40 100 L80 100 L74 92 L46 92 Z" fill="#2a2c33"/><path d="M52 92 L46 30 Q46 22 54 22 L74 22 Q82 22 80 30 L70 92 Z" fill="#18191d" stroke="#3a3d46" stroke-width="1.5"/><rect x="53" y="28" width="22" height="44" rx="4" fill="#0c0c0e" stroke="#9ea3ab" stroke-opacity=".5"/><circle cx="64" cy="82" r="3" fill="#19b85f"/>`,
+  cloth:`<rect x="30" y="58" width="60" height="38" fill="#2a6fd6" transform="rotate(-6 60 77)"/><rect x="28" y="46" width="60" height="38" fill="#e9c15a" transform="rotate(4 58 65)"/><rect x="32" y="34" width="60" height="38" fill="#6d737b"/><path d="M32 34 h60 v38" fill="none" stroke="#9aa0a9" stroke-dasharray="2 3"/>`,
+  tools:`<rect x="22" y="22" width="76" height="76" rx="6" fill="#15161a" stroke="#3a3d46"/><path d="M38 34 L46 86 L50 86 L42 34 Z" fill="url(#sv)"/><rect x="58" y="32" width="6" height="34" rx="2" fill="#c0392b"/><rect x="59.5" y="66" width="3" height="22" fill="url(#sv)"/><rect x="74" y="32" width="6" height="34" rx="2" fill="#2a6fd6"/><rect x="75.5" y="66" width="3" height="22" fill="url(#sv)"/><rect x="88" y="34" width="4" height="52" rx="2" fill="url(#sv)"/>`};
+ const art=k=>`<svg viewBox="0 0 120 120" aria-hidden="true">${CH}${ART[k]}</svg>`;
+ const P=[
+  {id:'tee',a:'tee',n:'MistyBox Black Tee',gp:450,mb:1,d:'Heavyweight organic cotton tee, relaxed fit, white MistyBox wordmark on the chest.'},
+  {id:'mug',a:'mug',n:'Matte Black Mug',gp:250,mb:1,d:'Ceramic, 12 oz, matte black finish with the MistyBox wordmark.'},
+  {id:'cap',a:'cap',n:'MistyBox Cap',gp:350,mb:1,d:'Six-panel cap, adjustable strap, embroidered wordmark.'},
+  {id:'hoodie',a:'hoodie',n:'Irish Green Hoodie',gp:900,mb:1,d:'Brushed fleece hoodie in deep Irish green, wordmark on the chest.'},
+  {id:'print',a:'print',n:'Heritage Box Art Print',gp:600,mb:1,d:'Framed 12×16 in print of the Heritage box in green carbon, silver frame.'},
+  {id:'roll',a:'roll',n:'Leather Watch Roll',gp:1200,mb:1,d:'Full-grain leather travel roll for three watches, embossed wordmark.'},
+  {id:'mbwatch',a:'watch',n:'MistyBox Field Watch',gp:2500,mb:1,d:'38 mm steel case, Irish green dial, sapphire crystal. Limited to members.'},
+  {id:'kit',a:'kit',n:'Watch Care Kit',gp:300,mb:0,d:'Cleaning spray, soft brush and microfiber cloth for cases and bracelets.'},
+  {id:'cloth',a:'cloth',n:'Microfiber Cloth 3-Pack',gp:120,mb:0,d:'Lint-free cloths for crystals, cases and screens.'},
+  {id:'tools',a:'tools',n:'Strap Change Tool Set',gp:400,mb:0,d:'Spring-bar tool, two precision drivers and a pin pusher in a slim case.'},
+  {id:'charger',a:'charger',n:'Wireless Charging Stand',gp:700,mb:0,d:'15 W stand for phones, with a soft night light.'},
+  {id:'winder',a:'winder',n:'Automatic Watch Winder',gp:1800,mb:0,d:'Quiet single-watch winder with a glass lid and adjustable turns per day.'}];
+ const fmt=v=>Math.round(v).toLocaleString('en-US');
+ // ---- shop button under the VIP badge
+ const mdw=document.querySelector('.mdw'),vip=document.querySelector('#dwLoyal .mb-drawer-tab');
+ const btn=document.createElement('button');btn.id='gpShopBtn';btn.type='button';btn.setAttribute('aria-label','Gift Shop, spend your GP');
+ btn.innerHTML=`<svg viewBox="0 0 44 44" aria-hidden="true"><defs><linearGradient id="gsS" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset=".3" stop-color="#c9ced5"/><stop offset=".55" stop-color="#f4f6f8"/><stop offset=".8" stop-color="#8d939b"/><stop offset="1" stop-color="#5d636b"/></linearGradient></defs>
+  <path d="M8 4 H36 L40 8 V36 L36 40 H8 L4 36 V8 Z" fill="url(#gsS)"/><path d="M9.5 6 H34.5 L38 9.5 V34.5 L34.5 38 H9.5 L6 34.5 V9.5 Z" fill="#0c0d10"/>
+  <path d="M12 15 L14 10 H30 L32 15 Z" fill="none" stroke="url(#gsS)" stroke-width="1.8" stroke-linejoin="round"/><path d="M12 15 q2.7 3 5.3 0 q2.7 3 5.3 0 q2.7 3 5.3 0 q2.1 3 4.1 0" fill="none" stroke="url(#gsS)" stroke-width="1.8" stroke-linejoin="round"/>
+  <path d="M13.5 18.5 V32 H30.5 V18.5" fill="none" stroke="url(#gsS)" stroke-width="1.8"/><rect x="17" y="23" width="10" height="9" fill="none" stroke="#19b85f" stroke-width="1.8"/><path d="M22 23 v9 M17 26.5 h10" stroke="#19b85f" stroke-width="1.4"/></svg><span class="gp-badge">${gpIco(16)}</span>`;
+ if(mdw&&vip){mdw.appendChild(btn);
+  const place=()=>{const m=mdw.getBoundingClientRect(),r=vip.querySelector('.mb-lvl')?.getBoundingClientRect()||vip.getBoundingClientRect(),k=m.width/mdw.offsetWidth||1;if(!r.width)return;
+   btn.style.left=((r.left-m.left+r.width/2)/k-22)+'px';btn.style.top=((r.bottom-m.top)/k+8)+'px'};
+  place();setTimeout(place,600);setTimeout(place,2500);addEventListener('resize',place);addEventListener('mb-booted',()=>setTimeout(place,100))}
+ btn.onclick=()=>openGShop();
+ // ---- panel
+ const sh=document.createElement('section');sh.id='gshop';sh.setAttribute('aria-label','Gift Shop');sh.setAttribute('aria-hidden','true');
+ sh.innerHTML=`<div class="gs-bg"></div><div class="gs-hd"><button type="button" class="gs-back" aria-label="Close Gift Shop"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></button><h2>Gift Shop</h2><div class="gs-bal" aria-label="Your GP balance">${gpIco(20)}<span id="gsBal">0</span><small>GP</small></div></div>
+  <p class="gs-note">When a box reveals a watch worth less than its price, the difference comes back as <b>GP, 1 GP for every $1</b>. Spend GP on gifts here. <b>Shipping is free.</b></p>
+  <div class="gs-tabs" role="tablist"><button type="button" class="on" data-f="all">All</button><button type="button" data-f="mb">MistyBox</button><button type="button" data-f="ess">Essentials</button><button type="button" data-f="ord">My orders</button></div>
+  <div class="gs-body" id="gsBody"></div>`;
+ scr.appendChild(sh);let F='all';
+ const bal=$=>{document.getElementById('gsBal').textContent=fmt(S.gp)};
+ function render(){const b=document.getElementById('gsBody');bal();
+  if(F==='ord'){b.innerHTML=S.gpOrders.length?S.gpOrders.map(o=>{const p=P.find(x=>x.id===o.id)||P[0];return `<div class="gs-ord">${art(p.a)}<div>${esc(p.n)}<small>${new Date(o.t).toLocaleDateString('en-US',{month:'short',day:'numeric'})} · ${fmt(p.gp)} GP · Free shipping<br>Shipping to ${esc(o.city||'you')} · ${esc(o.trk)}</small></div></div>`}).join(''):`<div class="gs-empty">No gifts ordered yet.<br>Pick something from the shop and it ships to you for free.</div>`;return}
+  const list=P.filter(p=>F==='all'||(F==='mb'?p.mb:!p.mb));
+  b.innerHTML=`<div class="gs-grid">${list.map(p=>`<button type="button" class="gs-card" data-id="${p.id}"><div class="in"><div class="gs-art">${art(p.a)}</div><span class="gs-tag${p.mb?' mb':''}">${p.mb?'MistyBox':'Essentials'}</span><div class="gs-name">${esc(p.n)}</div><div class="gs-price${S.gp<p.gp?' short':''}">${gpIco(16)}${fmt(p.gp)}</div></div></button>`).join('')}</div>`}
+ sh.querySelector('.gs-tabs').onclick=e=>{const t=e.target.closest('button');if(!t)return;F=t.dataset.f;sh.querySelectorAll('.gs-tabs button').forEach(x=>x.classList.toggle('on',x===t));render();try{SFX.tap()}catch(_){}};
+ sh.querySelector('.gs-back').onclick=()=>closeGShop();
+ sh.querySelector('#gsBody').onclick=e=>{const c=e.target.closest('.gs-card');if(c)openItem(P.find(p=>p.id===c.dataset.id))};
+ window.openGShop=function(tab){F=tab||'all';sh.querySelectorAll('.gs-tabs button').forEach(x=>x.classList.toggle('on',x.dataset.f===F));render();sh.classList.add('anim');requestAnimationFrame(()=>sh.classList.add('on'));sh.setAttribute('aria-hidden','false');try{SFX.whoosh(.5)}catch(_){}
+  setTimeout(()=>sh.querySelector('.gs-back').focus({preventScroll:true}),450)};
+ window.closeGShop=function(){sh.classList.remove('on');sh.setAttribute('aria-hidden','true');setTimeout(()=>sh.classList.remove('anim'),450)};
+ // ---- product sheet → address → order
+ const addrHTML=()=>S.addr?`<div class="gs-addr"><div><small>SHIP TO</small>${esc(S.addr.n)}<br>${esc(S.addr.a)}, ${esc(S.addr.c)} ${esc(S.addr.z)}</div><button type="button" id="gsChg">Change</button></div>`:'';
+ function openItem(p){const need=p.gp-S.gp;
+  openSheet(p.n,`<div class="gs-sheet"><div class="gs-big">${art(p.a)}</div><div class="gs-p">${gpIco(22)}${fmt(p.gp)} GP</div><p class="gs-d">${esc(p.d)}<br>Free shipping. Paid with GP only.</p>
+   ${need>0?`<button class="cta sm" disabled>YOU NEED ${fmt(need)} MORE GP</button><p class="note">You have ${fmt(S.gp)} GP. Open boxes to collect more.</p>`:`${addrHTML()}<button class="cta sm" id="gsGet">${S.addr?'GET IT · FREE SHIPPING':'GET IT · ADD ADDRESS'}</button><p class="note">${fmt(p.gp)} GP will be taken from your balance.</p>`}</div>`,
+   el=>{el.parentElement&&el.parentElement.classList.add('gs-wrap');const g=el.querySelector('#gsGet'),c=el.querySelector('#gsChg');
+    if(c)c.onclick=()=>addrForm(p);if(g)g.onclick=()=>S.addr?order(p):addrForm(p)})}
+ function addrForm(p){const A=S.addr||{};
+  openSheet('Shipping address',`<form class="form gs-sheet" id="gsF" novalidate><p class="note">${esc(p.n)} · ${fmt(p.gp)} GP · free shipping. We save this address for your next order.</p><label for="gN">FULL NAME</label><input class="inp" id="gN" autocomplete="off" value="${esc(A.n||'')}"><label for="gA">STREET ADDRESS</label><input class="inp" id="gA" autocomplete="off" value="${esc(A.a||'')}">
+   <div class="two" style="margin:0"><div><label for="gC">CITY</label><input class="inp" id="gC" autocomplete="off" value="${esc(A.c||'')}"></div><div><label for="gZ">ZIP</label><input class="inp" id="gZ" inputmode="numeric" autocomplete="off" value="${esc(A.z||'')}"></div></div>
+   <div class="err" id="gErr"></div><button class="cta sm">CONFIRM · ${fmt(p.gp)} GP</button></form>`,
+   el=>el.querySelector('#gsF').onsubmit=e=>{e.preventDefault();const v=i=>el.querySelector(i).value.trim(),er=el.querySelector('#gErr');
+    if(!v('#gN')||!v('#gA')||!v('#gC')){er.textContent='Fill in name, street and city.';return}if(!/^\d{5}$/.test(v('#gZ'))){er.textContent='ZIP should be 5 digits.';return}
+    S.addr={n:v('#gN'),a:v('#gA'),c:v('#gC'),z:v('#gZ')};save();order(p)})}
+ function order(p){if(S.gp<p.gp){toast('Not enough GP');return}const from=S.gp;S.gp-=p.gp;
+  S.gpOrders.unshift({id:p.id,t:Date.now(),city:S.addr&&S.addr.c,trk:'UPS · 1Z'+Math.random().toString(36).slice(2,9).toUpperCase()});save();try{paintBal()}catch(_){}closeSheet();
+  const el=document.getElementById('gsBal'),t0=performance.now();const tk=n=>{const u=Math.min(1,(n-t0)/700);el.textContent=fmt(from+(S.gp-from)*(1-Math.pow(1-u,3)));if(u<1)requestAnimationFrame(tk)};requestAnimationFrame(tk);
+  try{SFX.coin()}catch(_){}try{navigator.vibrate&&navigator.vibrate([10,30,16])}catch(_){}
+  toast(`Ordered · ${p.n} ships free to ${S.addr.c}`);setTimeout(()=>{if(F!=='ord')render()},50)}
+ // account row opens the shop
+ const ar=document.getElementById('aGpRow');if(ar)ar.onclick=()=>openGShop();
+ try{paintBal()}catch(_){}
 })();
 </script>
 </body></html>
