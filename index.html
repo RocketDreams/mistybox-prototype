@@ -2186,7 +2186,7 @@ function openBox(bi){const b=BOXES[bi];scr.scrollTop=0;const GIFT=window.__giftF
    info.querySelector('#rSell').onclick=e=>{const ob=S.bal,src=e.currentTarget.getBoundingClientRect();S.bal+=win.price*.9;close('sold');paintBal();setTimeout(()=>coinsToWallet(src,ob,S.bal,()=>openSold(win)),260)};
    info.querySelector('#rShip').onclick=()=>{close('vault');openShip(S.col[0])};
    info.querySelector('#rAgain').onclick=()=>{close('vault');setTimeout(()=>openBuy(bi),200)};
-   const gb=info.querySelector('#rGp');if(gb)gb.onclick=()=>{close('vault');toast(`${win.model} is in your vault`);setTimeout(()=>window.openGShop&&openGShop(),250)};
+   const gb=info.querySelector('#rGp');if(gb)gb.onclick=()=>{const rc=gb.getBoundingClientRect();close('vault');setTimeout(()=>window.openGShop&&openGShop('all',{rect:rc,amt:GPE}),250)};   // GP flies into the shop's GP wallet
 }
 }
 /* gift result: claim in the app (viral loop) */
@@ -3777,6 +3777,15 @@ if(document.getElementById('boot'))addEventListener('mb-booted',go,{once:true});
 #gshop h2{margin:0;flex:1;font-family:var(--mb-font-display,'Archivo'),sans-serif;font-weight:900;font-stretch:125%;font-variation-settings:'wdth' 125;font-size:22px;letter-spacing:1px;text-transform:uppercase;color:#fff}
 #gshop .gs-bal{display:flex;align-items:center;gap:7px;padding:8px 14px 8px 10px;border:1px solid rgba(25,184,95,.6);background:rgba(0,154,73,.12);font:700 16px Inter,sans-serif;color:#fff;font-variant-numeric:tabular-nums;
  clip-path:polygon(9px 0,100% 0,100% calc(100% - 9px),calc(100% - 9px) 100%,0 100%,0 9px)}
+#gshop .gpfly-fx{position:absolute;inset:0;pointer-events:none;z-index:30}
+#gshop .gpfly{position:absolute;left:0;top:0;width:26px;height:26px;will-change:transform}
+#gshop .gpfly svg{width:26px;height:26px;display:block}
+#gshop .gs-bal.hit{animation:gpHit .22s ease-out}
+#gshop .gs-bal.done{animation:gpDone .65s ease-out}
+@keyframes gpHit{50%{transform:scale(1.07)}}
+@keyframes gpDone{35%{transform:scale(1.12);box-shadow:0 0 18px rgba(25,184,95,.8)}100%{transform:none}}
+#gshop .gpfly-plus{position:absolute;z-index:31;transform:translateX(-50%);font:800 15px Inter,sans-serif;color:#3ddc84;text-shadow:0 2px 8px rgba(0,0,0,.8);animation:gpPlus 1.4s ease-out forwards;pointer-events:none;white-space:nowrap}
+@keyframes gpPlus{0%{opacity:0;transform:translate(-50%,6px)}20%{opacity:1;transform:translate(-50%,0)}75%{opacity:1}100%{opacity:0;transform:translate(-50%,-14px)}}
 #gshop .gs-bal small{font:600 11px Inter;color:#3ddc84;letter-spacing:.5px}
 #gshop h2{display:flex;align-items:center;gap:8px}
 #gshop .gs-info{width:22px;height:22px;flex:none;border-radius:50%;border:1.5px solid rgba(255,255,255,.45);background:none;color:#cfd3da;font:700 12px/1 Georgia,serif;font-style:italic;cursor:pointer;padding:0;display:grid;place-items:center}
@@ -3970,8 +3979,28 @@ window.MB_PH=['backpack','beanie','bottleblack','bottlegreen','candle','cap','ca
  const ib=sh.querySelector('.gs-info'),tip=sh.querySelector('#gsTip'),setTip=v=>{tip.classList.toggle('on',v);ib.setAttribute('aria-expanded',v)};
  ib.onclick=e=>{e.stopPropagation();setTip(!tip.classList.contains('on'))};sh.addEventListener('click',e=>{if(!e.target.closest('.gs-info,#gsTip'))setTip(false)});
  sh.querySelector('#gsBody').onclick=e=>{const c=e.target.closest('.gs-card');if(c)openItem(P.find(p=>p.id===c.dataset.id))};
- window.openGShop=function(tab){F=tab||'all';sh.querySelectorAll('.gs-tabs button').forEach(x=>x.classList.toggle('on',x.dataset.f===F));render();sh.classList.add('anim');requestAnimationFrame(()=>sh.classList.add('on'));sh.setAttribute('aria-hidden','false');try{SFX.whoosh(.5)}catch(_){}
+ window.openGShop=function(tab,fly){F=tab||'all';sh.querySelectorAll('.gs-tabs button').forEach(x=>x.classList.toggle('on',x.dataset.f===F));render();if(fly&&fly.amt>0){document.getElementById('gsBal').textContent=fmt(S.gp-fly.amt);setTimeout(()=>flyGP(fly.rect,fly.amt),480)}sh.classList.add('anim');requestAnimationFrame(()=>sh.classList.add('on'));sh.setAttribute('aria-hidden','false');try{SFX.whoosh(.5)}catch(_){}
   setTimeout(()=>sh.querySelector('.gs-back').focus({preventScroll:true}),450)};
+ // GP hexes burst from where the user tapped and arc into the GP wallet at the top of the shop; the balance counts up as they land
+ function flyGP(rect,amt){const bal=sh.querySelector('.gs-bal'),num=document.getElementById('gsBal'),RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const S0=sh.getBoundingClientRect(),k=S0.width/sh.offsetWidth||1,P=r=>({x:(r.left-S0.left+r.width/2)/k,y:(r.top-S0.top+r.height/2)/k});
+  const a=rect&&rect.width?P(rect):{x:sh.offsetWidth/2,y:sh.offsetHeight*.72},ic=bal.querySelector('.gp-ico')||bal,t=P(ic.getBoundingClientRect()),to=S.gp,from=S.gp-amt;
+  if(RM){num.textContent=fmt(to);return}
+  const N=Math.max(7,Math.min(16,Math.round(6+Math.log10(Math.max(10,amt))*3))),GAP=55,FLY=760;let landed=0,started=false;
+  const fx=document.createElement('div');fx.className='gpfly-fx';sh.appendChild(fx);
+  const count=()=>{const t0=performance.now(),D=Math.max(650,N*GAP+300);const tk=n=>{const u=Math.min(1,(n-t0)/D);num.textContent=fmt(from+(to-from)*(1-Math.pow(1-u,3)));if(u<1)requestAnimationFrame(tk)};requestAnimationFrame(tk)};
+  try{SFX.coinStart&&SFX.coinStart()}catch(e){}
+  for(let i=0;i<N;i++){const c=document.createElement('div');c.className='gpfly';c.innerHTML=gpIco(26);fx.appendChild(c);
+   const ang=Math.random()*Math.PI*2,rad=30+Math.random()*50,b={x:a.x+Math.cos(ang)*rad,y:a.y+Math.sin(ang)*rad*.7-16},ctrl={x:(b.x+t.x)/2+(Math.random()-.5)*110,y:Math.min(b.y,t.y)-40-Math.random()*80},spin=(Math.random()-.5)*540,t0=performance.now()+i*GAP;
+   c.style.opacity=0;
+   const step=n=>{const el=n-t0;if(el<0){requestAnimationFrame(step);return}let x,y,sc,op=1;
+    if(el<240){const u=el/240,e=1-Math.pow(1-u,3);x=a.x+(b.x-a.x)*e;y=a.y+(b.y-a.y)*e;sc=.3+.8*e}
+    else{const u=Math.min(1,(el-240)/FLY),e=u*u*(3-2*u)*.4+u*u*.6,v=1-e;x=v*v*b.x+2*v*e*ctrl.x+e*e*t.x;y=v*v*b.y+2*v*e*ctrl.y+e*e*t.y;sc=1.1-.55*e;op=u>.9?1-(u-.9)/.1:1;
+     if(u>=1){c.remove();landed++;if(!started){started=true;count()}bal.classList.remove('hit');void bal.offsetWidth;bal.classList.add('hit');try{SFX.coinLand&&SFX.coinLand(landed,N)}catch(e){}
+      if(landed===N){fx.remove();num.textContent=fmt(to);bal.classList.add('done');setTimeout(()=>bal.classList.remove('done'),700);try{SFX.coin()}catch(e){}try{navigator.vibrate&&navigator.vibrate([10,30,16])}catch(e){}
+       const pl=document.createElement('div');pl.className='gpfly-plus';pl.textContent='+'+fmt(amt)+' GP';pl.style.left=t.x+'px';pl.style.top=(t.y+26)+'px';sh.appendChild(pl);setTimeout(()=>pl.remove(),1400)}return}}
+    c.style.opacity=op;c.style.transform=`translate(${x-13}px,${y-13}px) scale(${sc.toFixed(3)}) rotate(${(spin*Math.min(1,el/1000)).toFixed(1)}deg)`;requestAnimationFrame(step)};
+   requestAnimationFrame(step)}}
  window.closeGShop=function(){setTip(false);sh.classList.remove('on');sh.setAttribute('aria-hidden','true');setTimeout(()=>sh.classList.remove('anim'),450)};
  // ---- product sheet → address → order
  const addrHTML=()=>S.addr?`<div class="gs-addr"><div><small>SHIP TO</small>${esc(S.addr.n)}<br>${esc(S.addr.a)}, ${esc(S.addr.c)} ${esc(S.addr.z)}</div><button type="button" id="gsChg">Change</button></div>`:'';
