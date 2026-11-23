@@ -2416,7 +2416,7 @@ const HOW=`<div class="steps"><div><b>1. Choose a box</b>Every box shows its pri
 $('.menu').onclick=e=>{const b=e.target.closest('[data-m]');if(!b)return;const m=b.dataset.m;
  if(m==='how')openSheet('How it works',HOW);
  if(m==='prefs')openSheet('Preferences',`<div class="form"><label>BACKGROUND COLOUR</label><div class="mbx-bgs">${Object.entries(BGC).map(([k,v])=>`<button type="button" data-bg="${k}" class="${(S.bgc||'black')===k?'on':''}" aria-label="${v.n}"><i style="background:${v.c}"></i><span>${v.n}</span></button>`).join('')}</div>
- <button class="btn" id="pSnd">${S.sound?'Turn sound off':'Turn sound on'}</button><p class="note">Sound plays when you switch boxes, open a box and reveal a watch.</p></div>`,el=>{el.querySelector('#pSnd').onclick=()=>{S.sound=!S.sound;save();paintSnd();closeSheet();toast(S.sound?'Sound on':'Sound off')};
+ <button class="btn" id="pSnd">${S.sound?'Turn sound off':'Turn sound on'}</button><p class="note">Sound plays when you switch boxes, open a box and reveal a watch.</p><button class="btn" id="pHap" style="margin-top:10px">${S.haptics===false?'Turn haptics on':'Turn haptics off'}</button></div>`,el=>{el.querySelector('#pHap').onclick=()=>{S.haptics=S.haptics===false;save();closeSheet();toast(S.haptics?'Haptics on':'Haptics off');S.haptics&&navigator.vibrate&&navigator.vibrate(14)};el.querySelector('#pSnd').onclick=()=>{S.sound=!S.sound;save();paintSnd();closeSheet();toast(S.sound?'Sound on':'Sound off')};
  el.querySelector('.mbx-bgs').onclick=e=>{const b=e.target.closest('[data-bg]');if(!b)return;S.bgc=b.dataset.bg;save();applyBg();el.querySelectorAll('[data-bg]').forEach(x=>x.classList.toggle('on',x===b));SFX.tap()}});
  if(m==='country')openSheet('Shipping country',`<div class="form"><button class="btn w">🇺🇸 United States</button><p class="note">MistyBox ships to the United States only right now.</p></div>`);
  if(m==='gifts')openSheet('Gifts',`<div class="form"><p class="note">You’ve sent ${S.gifts} gift${S.gifts===1?'':'s'}.</p><button class="cta sm" id="gNew">SEND A GIFT</button></div>`,el=>el.querySelector('#gNew').onclick=()=>{closeSheet();show('boxes');setTimeout(()=>$('#giftBtn').click(),350)});
@@ -3725,5 +3725,24 @@ if(document.getElementById('boot'))addEventListener('mb-booted',go,{once:true});
   noise(out,L,t+.5,3.4,'highpass',8000,8000,.6,.07,.4)};     // ride shimmer swelling after the hit
  const baseReveal=SFX.reveal;SFX.reveal=function(tier){TK.on=false;clearTimeout(TK.to);const r=baseReveal.apply(SFX,arguments);const k=Math.max(0,TIERS.length-1-TIERS.indexOf(tier));crash(.62+.05*k);return r};
  window.MBTechno={crash}})();
+</script>
+<script>
+/* haptics (Sharon 2026-11-23). iPhone Safari has no navigator.vibrate, so on iOS 18+ a hidden native <input switch> is toggled: that plays the system haptic tick.
+   Android keeps real vibration. Every existing navigator.vibrate(...) call in the app now works on iPhone too. Follows the sound/haptics setting (S.haptics !== false). */
+(()=>{const nat=navigator.vibrate&&navigator.vibrate.bind(navigator),IOS=/iP(hone|ad|od)/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+ let lab=null,lastTap=0;
+ const tap=()=>{const now=performance.now();if(now-lastTap<45)return;lastTap=now;try{if(!lab){lab=document.createElement('label');lab.setAttribute('aria-hidden','true');lab.style.cssText='position:fixed;left:-9999px;top:0;width:1px;height:1px;opacity:0;pointer-events:none';
+   const i=document.createElement('input');i.type='checkbox';i.setAttribute('switch','');i.tabIndex=-1;lab.appendChild(i);document.body.appendChild(lab)}lab.click()}catch(e){}};
+ const ok=()=>typeof S==='undefined'||S.haptics!==false;
+ const ios=p=>{const a=Array.isArray(p)?p:[p];let t=0;a.forEach((d,k)=>{if(k%2===0&&d>0){const at=t;setTimeout(tap,at);if(d>=45)setTimeout(tap,at+55)}t+=d});return true};
+ const H=window.MBHaptic=p=>{if(!ok())return false;return IOS?ios(p):nat?nat(p):false};
+ if(IOS||!nat)try{Object.defineProperty(navigator,'vibrate',{value:H,configurable:true,writable:true})}catch(e){navigator.vibrate=H}
+ else{const n=nat;navigator.vibrate=p=>ok()&&n(p)}
+ // light taps on the main controls that had none: bottom nav, primary buttons, sell/vault, segmented tabs, category drawer
+ const SEL='#nav button,.cta,#rKeep,.btn,.seg button,.mb-seg a,.mb-drawer-tab,.mb-cat,.pk-go,#auGo,.ft-next,.sheet button';
+ document.addEventListener('click',e=>{const el=e.target.closest(SEL);if(!el||el.disabled)return;H(el.matches('.cta,.pk-go,#auGo')?14:8)},true);
+ // the slot-style item spin during an opening: a soft tick per item (throttled)
+ const _t=SFX.tick;let lt=0;SFX.tick=function(){const r=_t.apply(this,arguments);const n=performance.now();if(document.getElementById('reveal')?.classList.contains('on')&&n-lt>70){lt=n;H(5)}return r};
+})();
 </script>
 </body></html>
