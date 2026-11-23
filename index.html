@@ -3798,6 +3798,8 @@ if(document.getElementById('boot'))addEventListener('mb-booted',go,{once:true});
 #gshop .gs-card .in{display:flex;flex-direction:column;height:100%;background:linear-gradient(180deg,#141417,#070708);clip-path:polygon(13.4px 0,100% 0,100% calc(100% - 13.4px),calc(100% - 13.4px) 100%,0 100%,0 13.4px);padding:10px 12px 12px}
 #gshop .gs-art{height:118px;display:grid;place-items:center;margin:0 -4px 8px;background:radial-gradient(closest-side,rgba(255,255,255,.08),transparent)}
 #gshop .gs-art svg{width:112px;height:112px}
+#gshop .gs-art img.ph,.gs-sheet .gs-big img.ph,#gshop .gs-ord img.ph{filter:none;-webkit-mask-image:radial-gradient(closest-side,#000 72%,transparent 100%);mask-image:radial-gradient(closest-side,#000 72%,transparent 100%)}
+#gshop .gs-art img.ph{width:138px;height:138px}
 #gshop .gs-art img{width:124px;height:124px;object-fit:contain;filter:drop-shadow(0 8px 14px rgba(0,0,0,.5))}
 #gshop .gs-ord img{width:56px;height:56px;object-fit:contain;flex:none}
 .gs-sheet .gs-big img{width:210px;height:210px;object-fit:contain;filter:drop-shadow(0 12px 20px rgba(0,0,0,.55))}
@@ -3832,6 +3834,7 @@ div.gs-sheet{padding:0 20px 22px}
    Earn: whenever a box reveals a watch worth less than the box price, the difference comes back 1:1 as GP.
    Spend: GP only, in the in-app Gift Shop (MistyBox-branded merch + generic essentials). Shipping is free, to the saved address. */
 function gpIco(sz=16){return `<svg class="gp-ico" width="${sz}" height="${sz}" viewBox="0 0 24 24" aria-hidden="true"><defs><linearGradient id="gpg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#45e08c"/><stop offset="1" stop-color="#007a3a"/></linearGradient></defs><polygon points="12,1.5 21.1,6.75 21.1,17.25 12,22.5 2.9,17.25 2.9,6.75" fill="url(#gpg)" stroke="#c9f7dc" stroke-width="1.1"/><text x="12" y="15.3" text-anchor="middle" font-family="Inter,Arial,Helvetica,sans-serif" font-weight="900" font-size="8.6" letter-spacing="-.3" fill="#fff">GP</text></svg>`}
+window.MB_PH=['backpack','beanie','bottleblack','bottlegreen','candle','cap','capgreen','charger','chargerpad','clock','cloth','coasters','deskmat','dome','earbuds','espresso','gc1','gc2','gc3','gc4','gc5','gc6','hoodie','hoodieblack','hoodiegrey','keychain','kit','leatherbox','mbwatch','mbwatchsteel','mesh','mug','mugwhite','notebook','pen','phonecase','phonecasegreen','pillow','pouch','powerbank','presbox','print','print_alu','print_bluecarbon','print_carbon','print_hearts','print_hoops','print_pinata','print_prism','print_puzzle','print_redleather','print_zebra','roll','rollblack','spray','stand','stickers','strapblack','strapbrown','strapnato','straprubber','tee','teegreen','teegrey','tools','totebag','travelcase','tray','watchbox','winder','winder2','winderdouble'];
 (()=>{if(typeof S==='undefined')return;if(S.gp==null)S.gp=1870;S.gpOrders=S.gpOrders||[];
  const L='assets/logo-white.png',LOGO=(x,y,w)=>`<image href="${L}" x="${x}" y="${y}" width="${w}" height="${(w*274/1956).toFixed(2)}"/>`;   // official logo, unaltered
  const CH='<defs><linearGradient id="sv" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f4f6f8"/><stop offset=".35" stop-color="#9ea3ab"/><stop offset=".6" stop-color="#e9ebee"/><stop offset="1" stop-color="#6d737b"/></linearGradient><linearGradient id="lt" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7a4a2a"/><stop offset="1" stop-color="#4a2a16"/></linearGradient></defs>';
@@ -3848,7 +3851,8 @@ function gpIco(sz=16){return `<svg class="gp-ico" width="${sz}" height="${sz}" v
   charger:`<path d="M40 100 L80 100 L74 92 L46 92 Z" fill="#2a2c33"/><path d="M52 92 L46 30 Q46 22 54 22 L74 22 Q82 22 80 30 L70 92 Z" fill="#18191d" stroke="#3a3d46" stroke-width="1.5"/><rect x="53" y="28" width="22" height="44" rx="4" fill="#0c0c0e" stroke="#9ea3ab" stroke-opacity=".5"/><circle cx="64" cy="82" r="3" fill="#19b85f"/>`,
   cloth:`<rect x="30" y="58" width="60" height="38" fill="#2a6fd6" transform="rotate(-6 60 77)"/><rect x="28" y="46" width="60" height="38" fill="#e9c15a" transform="rotate(4 58 65)"/><rect x="32" y="34" width="60" height="38" fill="#6d737b"/><path d="M32 34 h60 v38" fill="none" stroke="#9aa0a9" stroke-dasharray="2 3"/>`,
   tools:`<rect x="22" y="22" width="76" height="76" rx="6" fill="#15161a" stroke="#3a3d46"/><path d="M38 34 L46 86 L50 86 L42 34 Z" fill="url(#sv)"/><rect x="58" y="32" width="6" height="34" rx="2" fill="#c0392b"/><rect x="59.5" y="66" width="3" height="22" fill="url(#sv)"/><rect x="74" y="32" width="6" height="34" rx="2" fill="#2a6fd6"/><rect x="75.5" y="66" width="3" height="22" fill="url(#sv)"/><rect x="88" y="34" width="4" height="52" rx="2" fill="url(#sv)"/>`};
- const art=k=>`<img src="assets/gifts/${k}.webp" alt="" decoding="async">`;   // realistic 3D product renders (2026-11-23), replace with real photos when merch exists
+ const PH=new Set(window.MB_PH||[]);   // product photos generated with ChatGPT (2026-11-23); others fall back to the 3D render
+ const art=k=>PH.has(k)?`<img class="ph" src="assets/gifts/ph/${k}.jpg" alt="" decoding="async">`:`<img src="assets/gifts/${k}.webp" alt="" decoding="async">`;   // realistic 3D product renders (2026-11-23), replace with real photos when merch exists
  const P=[
   {id:'tee',a:'tee',n:'MistyBox Black Tee',gp:450,mb:1,d:'Heavyweight organic cotton tee, relaxed fit, white MistyBox wordmark on the chest.'},
   {id:'mug',a:'mug',n:'Matte Black Mug',gp:250,mb:1,d:'Ceramic, 12 oz, matte black finish with the MistyBox wordmark.'},
@@ -3856,7 +3860,7 @@ function gpIco(sz=16){return `<svg class="gp-ico" width="${sz}" height="${sz}" v
   {id:'hoodie',a:'hoodie',n:'Irish Green Hoodie',gp:900,mb:1,d:'Brushed fleece hoodie in deep Irish green, wordmark on the chest.'},
   {id:'print',a:'print',n:'Heritage Box Art Print',gp:600,mb:1,d:'Framed 12×16 in print of the Heritage box in green carbon, silver frame.'},
   {id:'roll',a:'roll',n:'Leather Watch Roll',gp:1200,mb:1,d:'Full-grain leather travel roll for three watches, embossed wordmark.'},
-  {id:'mbwatch',a:'watch',n:'MistyBox Field Watch',gp:2500,mb:1,d:'38 mm steel case, Irish green dial, sapphire crystal. Limited to members.'},
+  {id:'mbwatch',a:'mbwatch',n:'MistyBox Field Watch',gp:2500,mb:1,d:'38 mm steel case, Irish green dial, sapphire crystal. Limited to members.'},
   {id:'kit',a:'kit',n:'Watch Care Kit',gp:300,mb:0,d:'Cleaning spray, soft brush and microfiber cloth for cases and bracelets.'},
   {id:'cloth',a:'cloth',n:'Microfiber Cloth 3-Pack',gp:120,mb:0,d:'Lint-free cloths for crystals, cases and screens.'},
   {id:'tools',a:'tools',n:'Strap Change Tool Set',gp:400,mb:0,d:'Spring-bar tool, two precision drivers and a pin pusher in a slim case.'},
@@ -3886,6 +3890,7 @@ function gpIco(sz=16){return `<svg class="gp-ico" width="${sz}" height="${sz}" v
   {id:'stand',n:'Watch Display Stand',gp:700,mb:1,d:'Brushed aluminium stand with a soft cushion for one watch.'},
   {id:'rollblack',n:'Black Leather Watch Roll',gp:1200,mb:1,d:'Full-grain black leather travel roll for three watches, embossed wordmark.'},
   {id:'phonecasegreen',n:'Irish Green Phone Case',gp:450,mb:1,d:'Slim matte phone case in Irish green with the MistyBox wordmark.'},
+  {id:'mbwatchsteel',n:'MistyBox Field Watch, Steel',gp:2900,mb:1,d:'38 mm steel case and bracelet, Irish green sunburst dial. Limited to members.'},
   {id:'pouch',n:'Leather Zip Pouch',gp:650,mb:1,d:'Dark brown leather pouch for straps, cables and small things.'},
   {id:'print_zebra',n:'Zebra Box Art Print',gp:600,mb:1,d:'Framed 12×16 in print of the Icon box in Zebra, silver frame.'},
   {id:'print_carbon',n:'Carbon Box Art Print',gp:600,mb:1,d:'Framed 12×16 in print of the Masterpiece box in carbon, silver frame.'},
@@ -3910,6 +3915,10 @@ function gpIco(sz=16){return `<svg class="gp-ico" width="${sz}" height="${sz}" v
   {id:'powerbank',n:'Power Bank 10,000 mAh',gp:600,mb:0,d:'Slim aluminium power bank with USB-C fast charge.'},
   {id:'travelcase',n:'Single Watch Travel Case',gp:450,mb:0,d:'Round zip case in green leather that protects one watch on the go.'},
   {id:'spray',n:'Crystal Cleaning Spray',gp:120,mb:0,d:'100 ml spray for crystals, cases and bracelets.'},
+  {id:'presbox',n:'Lacquer Presentation Box',gp:500,mb:0,d:'Black piano-lacquer box with a cushion for gifting or storing one watch.'},
+  {id:'winderdouble',n:'Double Watch Winder',gp:3200,mb:0,d:'Walnut winder for two automatic watches, glass front, silent motors.'},
+  {id:'leatherbox',n:'Leather Single Watch Box',gp:600,mb:0,d:'Brown leather travel box with a suede cushion for one watch.'},
+  {id:'chargerpad',n:'Dual Wireless Charger',gp:900,mb:0,d:'Black aluminium pad that charges a phone and a smartwatch together.'},
   {id:'tray',n:'Walnut Valet Tray',gp:550,mb:0,d:'Walnut tray with a felt base for a watch, keys and rings.'},
   // CrashMania Gold Coins: social-play coins with no cash value, delivered to the player's CrashMania account (no shipping)
   {id:'gc1',n:'10,000 Gold Coins',gp:100,gc:10000,d:'A pack of 10,000 Gold Coins for CrashMania.'},
