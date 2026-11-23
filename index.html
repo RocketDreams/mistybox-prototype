@@ -3835,7 +3835,7 @@ div.gs-sheet{padding:0 20px 22px}
    Earn: whenever a box reveals a watch worth less than the box price, the difference comes back 1:1 as GP.
    Spend: GP only, in the in-app Gift Shop (MistyBox-branded merch + generic essentials). Shipping is free, to the saved address. */
 /* Crash Coin (CrashMania): cartoon gold coin, red-orange centre, gold "CC", thick dark outline, as in the CrashMania store */
-function ccIco(sz=16){return `<svg class="cc-ico" width="${sz}" height="${sz}" viewBox="0 0 100 100" aria-hidden="true">${ccFace(50,50,46)}</svg>`}
+function ccIco(sz=16){return `<img class="cc-ico" src="assets/cc-coin.png" width="${sz}" height="${sz}" alt="">`}   // CC coin icon generated in ChatGPT from CrashMania references (2026-11-24)
 function ccFace(cx,cy,r,sy=1){const k=r/46;return `<g transform="translate(${cx} ${cy}) scale(${k} ${k*sy})"><circle r="44" fill="#ffd23f" stroke="#1d1206" stroke-width="6"/><circle r="36" fill="#f3a613"/><circle r="31" fill="#d9481c" stroke="#8a2a0c" stroke-width="2.5"/><path d="M-24 -12 A30 30 0 0 1 12 -28" fill="none" stroke="#ff8a4a" stroke-width="4" stroke-linecap="round" opacity=".7"/>
  <text x="0" y="11" text-anchor="middle" font-family="Arial Black,Arial,sans-serif" font-weight="900" font-size="30" fill="#ffd23f" stroke="#5a1a06" stroke-width="5" paint-order="stroke" letter-spacing="-1">CC</text><path d="M-30 -26 A40 40 0 0 1 4 -40" fill="none" stroke="#fff6c8" stroke-width="5" stroke-linecap="round" opacity=".9"/></g>`}
 function ccStack(x,y,n,rx=26){const ry=rx*.38,h=rx*.32;let o='';for(let i=0;i<n;i++){const yy=y-i*h;
@@ -3866,7 +3866,7 @@ window.MB_PH=['backpack','beanie','bottleblack','bottlegreen','candle','cap','ca
   cloth:`<rect x="30" y="58" width="60" height="38" fill="#2a6fd6" transform="rotate(-6 60 77)"/><rect x="28" y="46" width="60" height="38" fill="#e9c15a" transform="rotate(4 58 65)"/><rect x="32" y="34" width="60" height="38" fill="#6d737b"/><path d="M32 34 h60 v38" fill="none" stroke="#9aa0a9" stroke-dasharray="2 3"/>`,
   tools:`<rect x="22" y="22" width="76" height="76" rx="6" fill="#15161a" stroke="#3a3d46"/><path d="M38 34 L46 86 L50 86 L42 34 Z" fill="url(#sv)"/><rect x="58" y="32" width="6" height="34" rx="2" fill="#c0392b"/><rect x="59.5" y="66" width="3" height="22" fill="url(#sv)"/><rect x="74" y="32" width="6" height="34" rx="2" fill="#2a6fd6"/><rect x="75.5" y="66" width="3" height="22" fill="url(#sv)"/><rect x="88" y="34" width="4" height="52" rx="2" fill="url(#sv)"/>`};
  const PH=new Set(window.MB_PH||[]);   // product photos generated with ChatGPT (2026-11-23); others fall back to the 3D render
- const art=k=>/^gc\d$/.test(k)?ccPack(+k.slice(2)):PH.has(k)?`<img class="ph" src="assets/gifts/ph/${k}.jpg" alt="" decoding="async">`:`<img src="assets/gifts/${k}.webp" alt="" decoding="async">`;   // realistic 3D product renders (2026-11-23), replace with real photos when merch exists
+ const art=k=>PH.has(k)?`<img class="ph" src="assets/gifts/ph/${k}.jpg" alt="" decoding="async">`:`<img src="assets/gifts/${k}.webp" alt="" decoding="async">`;   // realistic 3D product renders (2026-11-23), replace with real photos when merch exists
  const P=[
   {id:'tee',a:'tee',n:'MistyBox Black Tee',gp:450,mb:1,d:'Heavyweight organic cotton tee, relaxed fit, white MistyBox wordmark on the chest.'},
   {id:'mug',a:'mug',n:'Matte Black Mug',gp:250,mb:1,d:'Ceramic, 12 oz, matte black finish with the MistyBox wordmark.'},
