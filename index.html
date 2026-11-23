@@ -3244,13 +3244,13 @@ function coinsToWallet(from,ob,nb,then){
    else{const u=Math.min(1,(el-230)/FLY),e=u*u*(3-2*u)*.4+u*u*.6,v=1-e;                                        // arc up into the wallet
     x=v*v*b.x+2*v*e*ctrl.x+e*e*t.x;y=v*v*b.y+2*v*e*ctrl.y+e*e*t.y;sc=1.05-.5*e;op=u>.92?1-(u-.92)/.08:1;
     if(u>=1){c.remove();landed++;if(!started){started=true;count()}
-     wb.classList.remove('cn-hit');void wb.offsetWidth;wb.classList.add('cn-hit');try{SFX.tick(.9)}catch(e){}
+     wb.classList.remove('cn-hit');void wb.offsetWidth;wb.classList.add('cn-hit');try{SFX.coinLand?SFX.coinLand(landed,N):SFX.tick(.9)}catch(e){}
      if(landed===N)finish();return}}
    const flip=Math.cos(el/1000*spin*Math.PI*2);
    c.style.opacity=op;c.style.transform=`translate(${x}px,${y}px) scale(${(sc*Math.max(.18,Math.abs(flip))).toFixed(3)},${sc.toFixed(3)})`;
    requestAnimationFrame(step)};
   requestAnimationFrame(step)}
- try{SFX.coin()}catch(e){}}
+ try{SFX.coinStart?SFX.coinStart():SFX.coin()}catch(e){}}
 </script>
 <style id="hex-css">
 #scr .mklogo,#scr .top .hd img.mklogo{mix-blend-mode:normal!important;object-fit:contain;object-position:left center;filter:none}
@@ -3976,6 +3976,36 @@ function gpIco(sz=16){return `<svg class="gp-ico" width="${sz}" height="${sz}" v
  // account row opens the shop
  const ar=document.getElementById('aGpRow');if(ar)ar.onclick=()=>openGShop();
  try{paintBal()}catch(_){}
+})();
+</script>
+<script>
+/* orchestral coins (Sharon 2026-11-23): "a philharmonic told to imitate coins gathering".
+   coinStart = harp glissando as the coins lift off; coinLand = one pizzicato/celesta note per coin, climbing the D-major chord;
+   coin (finale, also used for deposits/promo) = strings + horns swell on D major with a soft timpani and a celesta sparkle.
+   window.MB_COINS = 'A' (pizzicato + celesta, default) or 'B' (harp + glockenspiel, brass fanfare). */
+(()=>{const on=()=>S.sound&&ac(),mtof=m=>440*Math.pow(2,(m-69)/12);
+ const env=(g,t,a,v,d)=>{g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(v,t+a);g.gain.setTargetAtTime(0,t+a,d)};
+ function pizz(m,t,v=.12,dec=.09){const f=mtof(m),o=AC.createOscillator(),o2=AC.createOscillator(),lp=AC.createBiquadFilter(),g=AC.createGain();o.type='triangle';o.frequency.value=f;o2.type='sine';o2.frequency.value=f*2;
+  const g2=AC.createGain();g2.gain.value=.25;lp.type='lowpass';lp.frequency.setValueAtTime(f*6,t);lp.frequency.exponentialRampToValueAtTime(f*1.5,t+.15);o.connect(lp);o2.connect(g2).connect(lp);lp.connect(g);env(g,t,.003,v,dec);out(g,true);o.start(t);o2.start(t);o.stop(t+dec*8);o2.stop(t+dec*8)}
+ function bell(m,t,v=.05,dec=.35){const f=mtof(m);[[1,1,dec],[2.01,.35,dec*.5],[3.0,.18,dec*.3],[4.2,.08,dec*.2]].forEach(([k,a,d])=>{const o=AC.createOscillator(),g=AC.createGain();o.type='sine';o.frequency.value=f*k;env(g,t,.002,v*a,d);out(g,true);o.start(t);o.stop(t+d*8)})}
+ function harp(m,t,v=.09){pizz(m,t,v,.22)}
+ function strings(ms,t,dur,v=.05){ms.forEach(m=>{const f=mtof(m),lp=AC.createBiquadFilter(),g=AC.createGain();lp.type='lowpass';lp.frequency.value=Math.min(4000,f*5);lp.Q.value=.5;
+   g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(v,t+.28);g.gain.setValueAtTime(v,t+dur*.45);g.gain.exponentialRampToValueAtTime(.0005,t+dur);lp.connect(g);out(g,true);
+   const lfo=AC.createOscillator(),lg=AC.createGain();lfo.frequency.value=5.2;lg.gain.value=f*.004;lfo.connect(lg);
+   [-7,0,6].forEach(dt=>{const o=AC.createOscillator();o.type='sawtooth';o.frequency.value=f;o.detune.value=dt;lg.connect(o.frequency);o.connect(lp);o.start(t);o.stop(t+dur+.1)});lfo.start(t);lfo.stop(t+dur+.1)})}
+ function horns(ms,t,dur,v=.05){ms.forEach(m=>{const f=mtof(m),o=AC.createOscillator(),lp=AC.createBiquadFilter(),g=AC.createGain();o.type='sawtooth';o.frequency.value=f;lp.type='lowpass';lp.Q.value=1;
+   lp.frequency.setValueAtTime(f*1.2,t);lp.frequency.linearRampToValueAtTime(f*3.5,t+.18);lp.frequency.exponentialRampToValueAtTime(f*1.6,t+dur);
+   g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(v,t+.09);g.gain.exponentialRampToValueAtTime(.0005,t+dur);o.connect(lp).connect(g);out(g,true);o.start(t);o.stop(t+dur+.05)})}
+ function timp(t,v=.22,m=38){const o=AC.createOscillator(),g=AC.createGain();o.type='sine';o.frequency.setValueAtTime(mtof(m)*1.04,t);o.frequency.exponentialRampToValueAtTime(mtof(m),t+.25);env(g,t,.004,v,.35);out(g,true);o.start(t);o.stop(t+2.5);
+  try{nz(t,.25,'lowpass',500,200,.7,v*.25,.003,true)}catch(e){}}
+ const ARP=[62,66,69,74,78,81,86,90,93,98];   // D major climbing
+ const V=()=>window.MB_COINS||'A';
+ SFX.coinStart=function(){if(!on())return;const t=AC.currentTime+.01;[50,54,57,62,66,69,74].forEach((m,i)=>harp(m,t+i*.035,.06));if(V()==='B')bell(86,t+.26,.035)};
+ SFX.coinLand=function(i,N){if(!on())return;const t=AC.currentTime,k=Math.min(ARP.length-1,Math.floor(i*ARP.length/Math.max(N,1))),m=ARP[k];
+  if(V()==='A'){pizz(m,t,.1);if(i%3===2)bell(m+12,t,.03,.25)}else{harp(m,t,.08);if(i%2)bell(m+12,t,.035,.3)}};
+ SFX.coin=function(){if(!on())return;const t=AC.currentTime+.02;
+  if(V()==='A'){strings([50,57,62,66,69],t,1.6,.035);horns([57,62,66],t+.05,1.2,.03);timp(t,.18);bell(86,t+.05,.05,.5);bell(93,t+.12,.035,.45)}
+  else{horns([62,66,69],t,.16,.05);horns([62,66,69,74],t+.17,1.3,.05);strings([50,57,62],t+.15,1.4,.03);timp(t+.17,.2);bell(90,t+.19,.05,.5)}};
 })();
 </script>
 </body></html>
