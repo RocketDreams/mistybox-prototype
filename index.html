@@ -2025,7 +2025,7 @@ function OBOX(b){const G=GEO[b.key==='icy'?'crown':'std'],sm=G.seam,pt=p=>`${p[0
 function openBox(bi){const b=BOXES[bi];scr.scrollTop=0;const GIFT=window.__giftFree===bi?window.__gift:null;if(GIFT)window.__giftFree=null;else S.bal-=b.price;   // a gift's first open is already paid for; its result screen sends the friend to the App Store
  S.pts+=b.price*5;save();paintBal();
  const win=draw(b);lastWin={id:win.id,box:bi};
- const GPE=GIFT?0:Math.max(0,Math.round(b.price-win.price));if(GPE){S.gp=(S.gp||0)+GPE;save()}   // GP (Sharon 2026-11-23): box price above the watch's market value comes back 1:1 as Gift Points
+ const GPE=GIFT?0:Math.max(0,Math.round(b.price-win.price));if(GPE){S.gp=(S.gp||0)+GPE;S.gpPending=(S.gpPending||0)+GPE;save()}   // pending until collected (chip or the shop's Collect pop-up)   // GP (Sharon 2026-11-23): box price above the watch's market value comes back 1:1 as Gift Points
  const rv=$('#reveal'),W=scr.clientWidth,H=scr.clientHeight,cx=W/2,boxY=Math.min(H-140,Math.max(H*.58,512));
  const OB=OBOX(b),RA=(window.MB3D&&window.MB3D.anchor)?window.MB3D.anchor(b):null,BW=Math.min(255,W*.68),BH=BW*(760/900),hX=cx-BW/2+BW*(RA?RA.hx:OB.hx)/100,hY=boxY-BH/2+BH*(RA?RA.hy:OB.hy)/100;
  rv.style.setProperty('--rc',b.accent);rv.style.setProperty('--hc','#7fe9ff');
@@ -2186,7 +2186,7 @@ function openBox(bi){const b=BOXES[bi];scr.scrollTop=0;const GIFT=window.__giftF
    info.querySelector('#rSell').onclick=e=>{const ob=S.bal,src=e.currentTarget.getBoundingClientRect();S.bal+=win.price*.9;close('sold');paintBal();setTimeout(()=>coinsToWallet(src,ob,S.bal,()=>openSold(win)),260)};
    info.querySelector('#rShip').onclick=()=>{close('vault');openShip(S.col[0])};
    info.querySelector('#rAgain').onclick=()=>{close('vault');setTimeout(()=>openBuy(bi),200)};
-   const gb=info.querySelector('#rGp');if(gb)gb.onclick=()=>{const rc=gb.getBoundingClientRect();close('vault');setTimeout(()=>window.openGShop&&openGShop('all',{rect:rc,amt:GPE}),250)};   // GP flies into the shop's GP wallet
+   const gb=info.querySelector('#rGp');if(gb)gb.onclick=()=>{const rc=gb.getBoundingClientRect(),amt=S.gpPending||GPE;S.gpPending=0;save();close('vault');setTimeout(()=>window.openGShop&&openGShop('all',{rect:rc,amt}),250)};   // GP flies into the shop's GP wallet
 }
 }
 /* gift result: claim in the app (viral loop) */
@@ -3777,6 +3777,19 @@ if(document.getElementById('boot'))addEventListener('mb-booted',go,{once:true});
 #gshop h2{margin:0;flex:1;font-family:var(--mb-font-display,'Archivo'),sans-serif;font-weight:900;font-stretch:125%;font-variation-settings:'wdth' 125;font-size:22px;letter-spacing:1px;text-transform:uppercase;color:#fff}
 #gshop .gs-bal{display:flex;align-items:center;gap:7px;padding:8px 14px 8px 10px;border:1px solid rgba(25,184,95,.6);background:rgba(0,154,73,.12);font:700 16px Inter,sans-serif;color:#fff;font-variant-numeric:tabular-nums;
  clip-path:polygon(9px 0,100% 0,100% calc(100% - 9px),calc(100% - 9px) 100%,0 100%,0 9px)}
+.gs-pop{position:absolute;inset:0;z-index:25;display:grid;place-items:center;padding:24px;background:rgba(0,0,0,.62);opacity:0;transition:opacity .25s}
+.gs-pop.on{opacity:1}
+.gs-pop-card{position:relative;width:100%;max-width:320px;padding:30px 24px 24px;text-align:center;background:radial-gradient(120% 70% at 50% 0%,rgba(0,154,73,.28),transparent 60%),#0d0e11;
+ border:1.5px solid rgba(25,184,95,.7);box-shadow:0 0 40px rgba(0,154,73,.35);clip-path:polygon(18px 0,100% 0,100% calc(100% - 18px),calc(100% - 18px) 100%,0 100%,0 18px);transform:scale(.86);transition:transform .35s cubic-bezier(.2,1.4,.4,1)}
+.gs-pop.on .gs-pop-card{transform:none}
+.gs-pop-ico{display:grid;place-items:center;margin-bottom:6px;animation:gpFloat 2.4s ease-in-out infinite}
+.gs-pop-ico svg{filter:drop-shadow(0 0 18px rgba(25,184,95,.7))}
+@keyframes gpFloat{50%{transform:translateY(-6px) rotate(-4deg)}}
+.gs-pop-card h3{margin:0 0 4px;font-family:var(--mb-font-display,'Archivo'),sans-serif;font-weight:900;font-stretch:125%;font-variation-settings:'wdth' 125;font-size:22px;letter-spacing:1px;text-transform:uppercase;color:#fff}
+.gs-pop-amt{font:800 40px Inter,sans-serif;color:#3ddc84;font-variant-numeric:tabular-nums;margin:2px 0 8px}
+.gs-pop-amt small{font-size:16px;font-weight:700}
+.gs-pop-card p{margin:0 0 18px;font:500 13.5px/1.45 Inter,sans-serif;color:#c3c7cf}
+.gs-pop-card .cta{width:100%}
 #gshop .gpfly-fx{position:absolute;inset:0;pointer-events:none;z-index:30}
 #gshop .gpfly{position:absolute;left:0;top:0;width:26px;height:26px;will-change:transform}
 #gshop .gpfly svg{width:26px;height:26px;display:block}
@@ -3980,7 +3993,8 @@ window.MB_PH=['backpack','beanie','bottleblack','bottlegreen','candle','cap','ca
  const ib=sh.querySelector('.gs-info'),tip=sh.querySelector('#gsTip'),setTip=v=>{tip.classList.toggle('on',v);ib.setAttribute('aria-expanded',v)};
  ib.onclick=e=>{e.stopPropagation();setTip(!tip.classList.contains('on'))};sh.addEventListener('click',e=>{if(!e.target.closest('.gs-info,#gsTip'))setTip(false)});
  sh.querySelector('#gsBody').onclick=e=>{const c=e.target.closest('.gs-card');if(c)openItem(P.find(p=>p.id===c.dataset.id))};
- window.openGShop=function(tab,fly){F=tab||'all';sh.querySelectorAll('.gs-tabs button').forEach(x=>x.classList.toggle('on',x.dataset.f===F));render();if(fly&&fly.amt>0){document.getElementById('gsBal').textContent=fmt(S.gp-fly.amt);setTimeout(()=>flyGP(fly.rect,fly.amt),480)}sh.classList.add('anim');requestAnimationFrame(()=>sh.classList.add('on'));sh.setAttribute('aria-hidden','false');try{SFX.whoosh(.5)}catch(_){}
+ window.openGShop=function(tab,fly){F=tab||'all';sh.querySelectorAll('.gs-tabs button').forEach(x=>x.classList.toggle('on',x.dataset.f===F));render();if(fly&&fly.amt>0){document.getElementById('gsBal').textContent=fmt(S.gp-fly.amt);setTimeout(()=>flyGP(fly.rect,fly.amt),480)}
+  else if(S.gpPending>0){document.getElementById('gsBal').textContent=fmt(S.gp-S.gpPending);setTimeout(collectPop,520)}sh.classList.add('anim');requestAnimationFrame(()=>sh.classList.add('on'));sh.setAttribute('aria-hidden','false');try{SFX.whoosh(.5)}catch(_){}
   setTimeout(()=>sh.querySelector('.gs-back').focus({preventScroll:true}),450)};
  // GP hexes burst from where the user tapped and arc into the GP wallet at the top of the shop; the balance counts up as they land
  function flyGP(rect,amt){const bal=sh.querySelector('.gs-bal'),num=document.getElementById('gsBal'),RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -4002,6 +4016,14 @@ window.MB_PH=['backpack','beanie','bottleblack','bottlegreen','candle','cap','ca
        const pl=document.createElement('div');pl.className='gpfly-plus';pl.textContent='+'+fmt(amt)+' GP';pl.style.left=t.x+'px';pl.style.top=(t.y+26)+'px';sh.appendChild(pl);setTimeout(()=>pl.remove(),1400)}return}}
     c.style.opacity=op;c.style.transform=`translate(${x-13}px,${y-13}px) scale(${sc.toFixed(3)}) rotate(${(spin*Math.min(1,el/1000)).toFixed(1)}deg)`;requestAnimationFrame(step)};
    requestAnimationFrame(step)}}
+ // GP earned but never collected from the result screen: the next shop visit opens with a Collect pop-up
+ function collectPop(){const amt=S.gpPending||0;if(!amt||sh.querySelector('.gs-pop'))return;const n=S.gpPendingN;
+  const w=document.createElement('div');w.className='gs-pop';w.innerHTML=`<div class="gs-pop-card" role="dialog" aria-modal="true" aria-labelledby="gsPopT"><div class="gs-pop-ico">${gpIco(92)}</div>
+   <h3 id="gsPopT">GP credited</h3><div class="gs-pop-amt">+${fmt(amt)} <small>GP</small></div><p>From boxes that revealed a watch worth less than the box price. Spend it on gifts here.</p>
+   <button type="button" class="cta sm" id="gsCollect">COLLECT</button></div>`;
+  sh.appendChild(w);requestAnimationFrame(()=>w.classList.add('on'));try{SFX.tap()}catch(e){}try{navigator.vibrate&&navigator.vibrate(14)}catch(e){}
+  const b=w.querySelector('#gsCollect');setTimeout(()=>b.focus({preventScroll:true}),300);
+  b.onclick=()=>{const rc=b.getBoundingClientRect();S.gpPending=0;save();w.classList.remove('on');setTimeout(()=>w.remove(),260);flyGP(rc,amt)}}
  window.closeGShop=function(){setTip(false);sh.classList.remove('on');sh.setAttribute('aria-hidden','true');setTimeout(()=>sh.classList.remove('anim'),450)};
  // ---- product sheet → address → order
  const addrHTML=()=>S.addr?`<div class="gs-addr"><div><small>SHIP TO</small>${esc(S.addr.n)}<br>${esc(S.addr.a)}, ${esc(S.addr.c)} ${esc(S.addr.z)}</div><button type="button" id="gsChg">Change</button></div>`:'';
