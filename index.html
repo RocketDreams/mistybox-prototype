@@ -3265,13 +3265,13 @@ function coinsToWallet(from,ob,nb,then){
  function light(now){const n=Math.max(1,Math.round(cells.length*.02));for(let i=0;i<n;i++){const k=cells[Math.random()*cells.length|0];
    if(k.y>cutY()||(k.dur&&now-k.t0<k.dur))continue;k.t0=now;k.dur=1400+Math.random()*2200;k.peak=.16+Math.random()*.2}}
  // the comb only covers the top of the screen: it ends just above the WHAT'S INSIDE strip (home), ~45% down elsewhere, with a soft fade
- function cutY(){const el=document.getElementById('inside4');if(el&&el.offsetParent&&typeof curView!=='undefined'&&curView==='boxes'){const sr=scr.getBoundingClientRect(),k=sr.width/scr.offsetWidth||1,r=el.getBoundingClientRect();if(r.height)return (r.top-sr.top)/k-6}return H*.45}
+ function cutY(){const el=document.getElementById('inside4');if(scr.classList.contains('rv-on'))return H+R*3;if(el&&el.offsetParent&&typeof curView!=='undefined'&&curView==='boxes'){const sr=scr.getBoundingClientRect(),k=sr.width/scr.offsetWidth||1,r=el.getBoundingClientRect();if(r.height)return (r.top-sr.top)/k-6}return H+R*3}   // secondary screens + reveal: comb covers the whole screen (Sharon 2026-11-23)
  function draw(now){g.setTransform(dpr,0,0,dpr,0,0);g.clearRect(0,0,W,H);const CUT=cutY(),FADE=70;
   for(const k of cells){if(k.y-R>CUT)continue;const f=Math.max(0,Math.min(1,(CUT-k.y)/FADE));if(!f)continue;let gl=0;if(k.dur){const u=(now-k.t0)/k.dur;if(u>=1)k.dur=0;else gl=k.peak*Math.sin(Math.PI*u)**2}   // soft rise and fall
    const a=(k.base+gl)*f;hexPath(k.x,k.y,R-GAP);g.fillStyle=`hsla(${k.h},${k.s}%,${k.l+gl*60}%,${a})`;g.fill();
    g.lineWidth=.6;g.strokeStyle=`hsla(${k.h},70%,70%,${(.045+gl*.5)*f})`;g.stroke()}}
  let nextLight=0;
- const step=now=>{requestAnimationFrame(step);if(now-last<42||document.hidden||!c.offsetWidth||document.querySelector('.pk-on,.rv-on'))return;last=now;
+ const step=now=>{requestAnimationFrame(step);if(now-last<42||document.hidden||!c.offsetWidth||document.querySelector('.pk-on')||(scr.classList.contains('rv-on')&&!document.querySelector('#reveal .rv-detail.on:not(.pre)')))return;last=now;
   if(!RM&&now>nextLight){light(now);nextLight=now+110+Math.random()*160}draw(now)};
  build();draw(0);requestAnimationFrame(step);addEventListener('resize',()=>{build();draw(performance.now())})})();
 </script>
