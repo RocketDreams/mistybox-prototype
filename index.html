@@ -3842,7 +3842,7 @@ div.gs-sheet{padding:0 20px 22px}
 <script>
 /* ---------- GP · Gift Points + Gift Shop (Sharon 2026-11-23, demo products) ----------
    Earn: whenever a box reveals a watch worth less than the box price, the difference comes back 1:1 as GP.
-   Spend: GP only, in the in-app Gift Shop (MistyBox-branded merch + generic essentials). Shipping is free, to the saved address. */
+   Spend: GP only, in the in-app Gift Shop (MistyBox-branded merch + generic essentials). Shipping is NOT free: a flat shipping fee is paid in $ from the wallet balance, to the saved address. */
 /* Crash Coin (CrashMania): cartoon gold coin, red-orange centre, gold "CC", thick dark outline, as in the CrashMania store */
 function ccIco(sz=16){return `<img class="cc-ico" src="assets/cc-coin.png" width="${sz}" height="${sz}" alt="">`}   // CC coin icon generated in ChatGPT from CrashMania references (2026-11-24)
 function ccFace(cx,cy,r,sy=1){const k=r/46;return `<g transform="translate(${cx} ${cy}) scale(${k} ${k*sy})"><circle r="44" fill="#ffd23f" stroke="#1d1206" stroke-width="6"/><circle r="36" fill="#f3a613"/><circle r="31" fill="#d9481c" stroke="#8a2a0c" stroke-width="2.5"/><path d="M-24 -12 A30 30 0 0 1 12 -28" fill="none" stroke="#ff8a4a" stroke-width="4" stroke-linecap="round" opacity=".7"/>
@@ -3953,6 +3953,7 @@ window.MB_PH=['backpack','beanie','bottleblack','bottlegreen','candle','cap','ca
   {id:'gc6',n:'25M Crash Coins',gp:1000,gc:25000000,d:'25,000,000 Crash Coins for CrashMania.'}];
  P.forEach(p=>{p.a=p.a||p.id;p.cat=p.gc?'gc':p.mb?'mb':'ess'});
  const fmt=v=>Math.round(v).toLocaleString('en-US');
+ const SHIP=7.99;   // gifts are paid in GP, shipping is NOT free: flat fee in $ from the wallet balance (Sharon 2026-11-24; amount is a placeholder)
  // ---- shop button under the VIP badge
  const mdw=document.querySelector('.mdw'),vip=document.querySelector('#dwLoyal .mb-drawer-tab');
  const btn=document.createElement('button');btn.id='gpShopBtn';btn.type='button';btn.setAttribute('aria-label','Gift Shop, spend your GP');
@@ -3965,13 +3966,13 @@ window.MB_PH=['backpack','beanie','bottleblack','bottlegreen','candle','cap','ca
  // ---- panel
  const sh=document.createElement('section');sh.id='gshop';sh.setAttribute('aria-label','Gift Shop');sh.setAttribute('aria-hidden','true');
  sh.innerHTML=`<div class="gs-bg"></div><div class="gs-hd"><button type="button" class="gs-back" aria-label="Close Gift Shop"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></button><h2>Gift Shop<button type="button" class="gs-info" aria-label="How GP works" aria-expanded="false" aria-controls="gsTip">i</button></h2><div class="gs-bal" aria-label="Your GP balance">${gpIco(20)}<span id="gsBal">0</span><small>GP</small></div></div>
-  <div class="gs-tip" id="gsTip" role="tooltip">When a box reveals a watch worth less than its price, the difference comes back as <b>GP, 1 GP for every $1</b>. Spend GP on gifts here. <b>Shipping is free.</b></div>
+  <div class="gs-tip" id="gsTip" role="tooltip">When a box reveals a watch worth less than its price, the difference comes back as <b>GP, 1 GP for every $1</b>. Spend GP on gifts here. <b>Shipping is extra</b>, paid in $ from your balance.</div>
   <div class="gs-tabs" role="tablist"><button type="button" class="on" data-f="all">All</button><button type="button" data-f="mb">MistyBox</button><button type="button" data-f="ess">Essentials</button><button type="button" data-f="gc" class="gs-gctab">${ccIco(16)}Crash Coins</button><button type="button" data-f="ord">My orders</button></div>
   <div class="gs-body" id="gsBody"></div>`;
  scr.appendChild(sh);let F='all';
  const bal=$=>{document.getElementById('gsBal').textContent=fmt(S.gp)};
  function render(){const b=document.getElementById('gsBody');bal();
-  if(F==='ord'){b.innerHTML=S.gpOrders.length?S.gpOrders.map(o=>{const p=P.find(x=>x.id===o.id)||P[0];return `<div class="gs-ord">${art(p.a)}<div>${esc(p.n)}<small>${new Date(o.t).toLocaleDateString('en-US',{month:'short',day:'numeric'})} · ${fmt(p.gp)} GP${o.cm?`<br>Delivered to CrashMania · ${esc(o.cm)}`:` · Free shipping<br>Shipping to ${esc(o.city||'you')} · ${esc(o.trk)}`}</small></div></div>`}).join(''):`<div class="gs-empty">No gifts ordered yet.<br>Pick something from the shop and it ships to you for free.</div>`;return}
+  if(F==='ord'){b.innerHTML=S.gpOrders.length?S.gpOrders.map(o=>{const p=P.find(x=>x.id===o.id)||P[0];return `<div class="gs-ord">${art(p.a)}<div>${esc(p.n)}<small>${new Date(o.t).toLocaleDateString('en-US',{month:'short',day:'numeric'})} · ${fmt(p.gp)} GP${o.cm?`<br>Delivered to CrashMania · ${esc(o.cm)}`:` · ${money(o.ship||SHIP)} shipping<br>Shipping to ${esc(o.city||'you')} · ${esc(o.trk)}`}</small></div></div>`}).join(''):`<div class="gs-empty">No gifts ordered yet.<br>Pick something from the shop and it ships to you for free.</div>`;return}
   const list=P.filter(p=>F==='all'||p.cat===F);
   b.innerHTML=`<div class="gs-grid">${list.map(p=>`<button type="button" class="gs-card" data-id="${p.id}"><div class="in"><div class="gs-art">${art(p.a)}</div>${p.gc?'<span class="gs-tag cm"><img src="assets/crashmania-logo.png" alt="CrashMania"></span>':`<span class="gs-tag${p.mb?' mb':''}">${p.mb?'MistyBox':'Essentials'}</span>`}<div class="gs-name">${esc(p.n)}</div><div class="gs-price${S.gp<p.gp?' short':''}">${gpIco(16)}${fmt(p.gp)}</div></div></button>`).join('')}</div>`}
  sh.querySelector('.gs-tabs').onclick=e=>{const t=e.target.closest('button');if(!t)return;F=t.dataset.f;sh.querySelectorAll('.gs-tabs button').forEach(x=>x.classList.toggle('on',x===t));render();try{SFX.tap()}catch(_){}};
@@ -4005,24 +4006,24 @@ window.MB_PH=['backpack','beanie','bottleblack','bottlegreen','candle','cap','ca
  // ---- product sheet → address → order
  const addrHTML=()=>S.addr?`<div class="gs-addr"><div><small>SHIP TO</small>${esc(S.addr.n)}<br>${esc(S.addr.a)}, ${esc(S.addr.c)} ${esc(S.addr.z)}</div><button type="button" id="gsChg">Change</button></div>`:'';
  function openItem(p){const need=p.gp-S.gp;
-  openSheet(p.n,`<div class="gs-sheet"><div class="gs-big">${art(p.a)}</div><div class="gs-p">${gpIco(22)}${fmt(p.gp)} GP</div><p class="gs-d">${esc(p.d)}<br>${p.gc?'Delivered instantly to your CrashMania account. Crash Coins are for social play and have no cash value.':'Free shipping. Paid with GP only.'}</p>
-   ${need>0?`<button class="cta sm" disabled>YOU NEED ${fmt(need)} MORE GP</button><p class="note">You have ${fmt(S.gp)} GP. Open boxes to collect more.</p>`:`${p.gc?(S.cmUser?`<div class="gs-addr"><div><small>CRASHMANIA ACCOUNT</small>${esc(S.cmUser)}</div><button type="button" id="gsChg">Change</button></div>`:''):addrHTML()}<button class="cta sm" id="gsGet">${p.gc?(S.cmUser?'GET CRASH COINS':'GET IT · LINK CRASHMANIA'):S.addr?'GET IT · FREE SHIPPING':'GET IT · ADD ADDRESS'}</button><p class="note">${fmt(p.gp)} GP will be taken from your balance.</p>`}</div>`,
+  openSheet(p.n,`<div class="gs-sheet"><div class="gs-big">${art(p.a)}</div><div class="gs-p">${gpIco(22)}${fmt(p.gp)} GP</div><p class="gs-d">${esc(p.d)}<br>${p.gc?'Delivered instantly to your CrashMania account. Crash Coins are for social play and have no cash value.':`Paid with GP. Shipping ${money(SHIP)}, paid from your $ balance.`}</p>
+   ${need>0?`<button class="cta sm" disabled>YOU NEED ${fmt(need)} MORE GP</button><p class="note">You have ${fmt(S.gp)} GP. Open boxes to collect more.</p>`:`${p.gc?(S.cmUser?`<div class="gs-addr"><div><small>CRASHMANIA ACCOUNT</small>${esc(S.cmUser)}</div><button type="button" id="gsChg">Change</button></div>`:''):addrHTML()}<button class="cta sm" id="gsGet">${p.gc?(S.cmUser?'GET CRASH COINS':'GET IT · LINK CRASHMANIA'):S.addr?`GET IT · ${fmt(p.gp)} GP + ${money(SHIP)}`:'GET IT · ADD ADDRESS'}</button><p class="note">${p.gc?`${fmt(p.gp)} GP will be taken from your balance.`:`${fmt(p.gp)} GP + ${money(SHIP)} shipping from your $ balance.`}</p>`}</div>`,
    el=>{el.parentElement&&el.parentElement.classList.add('gs-wrap');const g=el.querySelector('#gsGet'),c=el.querySelector('#gsChg');
     if(c)c.onclick=()=>p.gc?cmForm(p):addrForm(p);if(g)g.onclick=()=>p.gc?(S.cmUser?order(p):cmForm(p)):(S.addr?order(p):addrForm(p))})}
  function cmForm(p){openSheet('Link CrashMania',`<form class="form gs-sheet" id="gsCm" novalidate><p class="note">${esc(p.n)} · ${fmt(p.gp)} GP. Crash Coins go to this CrashMania account.</p><label for="gU">CRASHMANIA USERNAME OR EMAIL</label><input class="inp" id="gU" autocomplete="off" value="${esc(S.cmUser||'')}"><div class="err" id="gUe"></div><button class="cta sm">CONFIRM · ${fmt(p.gp)} GP</button></form>`,
   el=>el.querySelector('#gsCm').onsubmit=e=>{e.preventDefault();const v=el.querySelector('#gU').value.trim();if(v.length<3){el.querySelector('#gUe').textContent='Enter your CrashMania username or email.';return}S.cmUser=v;save();order(p)})}
  function addrForm(p){const A=S.addr||{};
-  openSheet('Shipping address',`<form class="form gs-sheet" id="gsF" novalidate><p class="note">${esc(p.n)} · ${fmt(p.gp)} GP · free shipping. We save this address for your next order.</p><label for="gN">FULL NAME</label><input class="inp" id="gN" autocomplete="off" value="${esc(A.n||'')}"><label for="gA">STREET ADDRESS</label><input class="inp" id="gA" autocomplete="off" value="${esc(A.a||'')}">
+  openSheet('Shipping address',`<form class="form gs-sheet" id="gsF" novalidate><p class="note">${esc(p.n)} · ${fmt(p.gp)} GP + ${money(SHIP)} shipping. We save this address for your next order.</p><label for="gN">FULL NAME</label><input class="inp" id="gN" autocomplete="off" value="${esc(A.n||'')}"><label for="gA">STREET ADDRESS</label><input class="inp" id="gA" autocomplete="off" value="${esc(A.a||'')}">
    <div class="two" style="margin:0"><div><label for="gC">CITY</label><input class="inp" id="gC" autocomplete="off" value="${esc(A.c||'')}"></div><div><label for="gZ">ZIP</label><input class="inp" id="gZ" inputmode="numeric" autocomplete="off" value="${esc(A.z||'')}"></div></div>
-   <div class="err" id="gErr"></div><button class="cta sm">CONFIRM · ${fmt(p.gp)} GP</button></form>`,
+   <div class="err" id="gErr"></div><button class="cta sm">CONFIRM · ${fmt(p.gp)} GP + ${money(SHIP)}</button></form>`,
    el=>el.querySelector('#gsF').onsubmit=e=>{e.preventDefault();const v=i=>el.querySelector(i).value.trim(),er=el.querySelector('#gErr');
     if(!v('#gN')||!v('#gA')||!v('#gC')){er.textContent='Fill in name, street and city.';return}if(!/^\d{5}$/.test(v('#gZ'))){er.textContent='ZIP should be 5 digits.';return}
     S.addr={n:v('#gN'),a:v('#gA'),c:v('#gC'),z:v('#gZ')};save();order(p)})}
- function order(p){if(S.gp<p.gp){toast('Not enough GP');return}const from=S.gp;S.gp-=p.gp;
-  S.gpOrders.unshift(p.gc?{id:p.id,t:Date.now(),cm:S.cmUser}:{id:p.id,t:Date.now(),city:S.addr&&S.addr.c,trk:'UPS · 1Z'+Math.random().toString(36).slice(2,9).toUpperCase()});save();try{paintBal()}catch(_){}closeSheet();
+ function order(p){if(S.gp<p.gp){toast('Not enough GP');return}if(!p.gc&&S.bal<SHIP){closeSheet();toast(`Shipping costs ${money(SHIP)}. Add funds to your balance first.`);return}if(!p.gc){S.bal=+(S.bal-SHIP).toFixed(2)}const from=S.gp;S.gp-=p.gp;
+  S.gpOrders.unshift(p.gc?{id:p.id,t:Date.now(),cm:S.cmUser}:{id:p.id,t:Date.now(),ship:SHIP,city:S.addr&&S.addr.c,trk:'UPS · 1Z'+Math.random().toString(36).slice(2,9).toUpperCase()});save();try{paintBal()}catch(_){}closeSheet();
   const el=document.getElementById('gsBal'),t0=performance.now();const tk=n=>{const u=Math.min(1,(n-t0)/700);el.textContent=fmt(from+(S.gp-from)*(1-Math.pow(1-u,3)));if(u<1)requestAnimationFrame(tk)};requestAnimationFrame(tk);
   try{SFX.coin()}catch(_){}try{navigator.vibrate&&navigator.vibrate([10,30,16])}catch(_){}
-  toast(p.gc?`${p.n} added to CrashMania · ${S.cmUser}`:`Ordered · ${p.n} ships free to ${S.addr.c}`);setTimeout(()=>{if(F!=='ord')render()},50)}
+  toast(p.gc?`${p.n} added to CrashMania · ${S.cmUser}`:`Ordered · ${p.n} ships to ${S.addr.c} · ${money(SHIP)} shipping`);setTimeout(()=>{if(F!=='ord')render()},50)}
  // account row opens the shop
  const ar=document.getElementById('aGpRow');if(ar)ar.onclick=()=>openGShop();
  try{paintBal()}catch(_){}
