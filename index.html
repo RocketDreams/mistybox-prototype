@@ -3761,7 +3761,7 @@ if(document.getElementById('boot'))addEventListener('mb-booted',go,{once:true});
 #scr .gp-earn span{color:#cfd3da}
 /* shop button under the VIP badge */
 #gpShopBtn{position:absolute;width:44px;height:44px;padding:0;border:0;background:none;cursor:pointer;z-index:7;-webkit-tap-highlight-color:transparent}
-#gpShopBtn>svg{width:44px;height:44px;display:block;filter:drop-shadow(0 3px 6px rgba(0,0,0,.6))}
+#gpShopBtn>svg{width:44px;height:44px;display:block;filter:drop-shadow(0 0 8px rgba(0,154,73,.55)) drop-shadow(0 3px 6px rgba(0,0,0,.6))}
 #gpShopBtn .gp-badge{position:absolute;right:-5px;bottom:-5px;line-height:0}
 #gpShopBtn .gp-badge svg{width:18px;height:18px}
 #gpShopBtn:active{transform:scale(.94)}
@@ -3947,10 +3947,7 @@ window.MB_PH=['backpack','beanie','bottleblack','bottlegreen','candle','cap','ca
  // ---- shop button under the VIP badge
  const mdw=document.querySelector('.mdw'),vip=document.querySelector('#dwLoyal .mb-drawer-tab');
  const btn=document.createElement('button');btn.id='gpShopBtn';btn.type='button';btn.setAttribute('aria-label','Gift Shop, spend your GP');
- btn.innerHTML=`<svg viewBox="0 0 44 44" aria-hidden="true"><defs><linearGradient id="gsS" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset=".3" stop-color="#c9ced5"/><stop offset=".55" stop-color="#f4f6f8"/><stop offset=".8" stop-color="#8d939b"/><stop offset="1" stop-color="#5d636b"/></linearGradient></defs>
-  <path d="M8 4 H36 L40 8 V36 L36 40 H8 L4 36 V8 Z" fill="url(#gsS)"/><path d="M9.5 6 H34.5 L38 9.5 V34.5 L34.5 38 H9.5 L6 34.5 V9.5 Z" fill="#0c0d10"/>
-  <path d="M12 15 L14 10 H30 L32 15 Z" fill="none" stroke="url(#gsS)" stroke-width="1.8" stroke-linejoin="round"/><path d="M12 15 q2.7 3 5.3 0 q2.7 3 5.3 0 q2.7 3 5.3 0 q2.1 3 4.1 0" fill="none" stroke="url(#gsS)" stroke-width="1.8" stroke-linejoin="round"/>
-  <path d="M13.5 18.5 V32 H30.5 V18.5" fill="none" stroke="url(#gsS)" stroke-width="1.8"/><rect x="17" y="23" width="10" height="9" fill="none" stroke="#19b85f" stroke-width="1.8"/><path d="M22 23 v9 M17 26.5 h10" stroke="#19b85f" stroke-width="1.4"/></svg><span class="gp-badge">${gpIco(16)}</span>`;
+ btn.innerHTML=gpIco(44);   // the GP hex opens the Gift Shop (Sharon 2026-11-24)
  if(mdw&&vip){mdw.appendChild(btn);
   const place=()=>{const m=mdw.getBoundingClientRect(),r=vip.querySelector('.mb-lvl')?.getBoundingClientRect()||vip.getBoundingClientRect(),k=m.width/mdw.offsetWidth||1;if(!r.width)return;
    btn.style.left=((r.left-m.left+r.width/2)/k-22)+'px';btn.style.top=((r.bottom-m.top)/k+8)+'px'};
@@ -4030,6 +4027,15 @@ window.MB_PH=['backpack','beanie','bottleblack','bottlegreen','candle','cap','ca
  SFX.coin=function(){if(!on())return;const t=AC.currentTime+.02;
   if(V()==='A'){strings([50,57,62,66,69],t,1.6,.035);horns([57,62,66],t+.05,1.2,.03);timp(t,.18);bell(86,t+.05,.05,.5);bell(93,t+.12,.035,.45)}
   else{horns([62,66,69],t,.16,.05);horns([62,66,69,74],t+.17,1.3,.05);strings([50,57,62],t+.15,1.4,.03);timp(t+.17,.2);bell(90,t+.19,.05,.5)}};
+})();
+</script>
+<script>
+/* coin-sale sound = option 1 "soft ledger" (Sharon picked it 2026-11-24): soft low puff on lift-off, a muted low click per coin, a warm low D chord on arrival */
+(()=>{const on=()=>S.sound&&ac();
+ const tone=(parts,t,a=.003)=>parts.forEach(([f,v,d])=>{const o=AC.createOscillator(),g=AC.createGain();o.type='sine';o.frequency.value=f;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(v,t+a);g.gain.setTargetAtTime(0,t+a,d);o.connect(g);out(g,true);o.start(t);o.stop(t+d*8+.05)});
+ SFX.coinStart=function(){if(!on())return;try{nz(AC.currentTime,.35,'lowpass',600,500,.7,.05,.12,true)}catch(e){}};
+ SFX.coinLand=function(i){if(!on())return;tone([[330+i*4,.06,.012],[660+i*8,.012,.006]],AC.currentTime,.001)};
+ SFX.coin=function(){if(!on())return;tone([[146.8,.11,.5],[220,.07,.45],[293.7,.05,.4],[440,.012,.2]],AC.currentTime+.02,.02)};
 })();
 </script>
 </body></html>
