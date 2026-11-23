@@ -3650,7 +3650,7 @@ if(document.getElementById('boot'))addEventListener('mb-booted',go,{once:true});
  const fmt=ms=>{const s=Math.max(0,ms/1000|0),d=s/86400|0,h=(s%86400)/3600|0,m=(s%3600)/60|0,x=s%60,p=n=>String(n).padStart(2,'0');return 'Ends in '+(d?d+'d ':'')+p(h)+':'+p(m)+':'+p(x)};
  const place=()=>{const m=document.querySelector('.mdw'),hr=hero.getBoundingClientRect();if(!m)return;const mb=m.getBoundingClientRect().bottom;t.style.top=Math.max(6,mb-hr.top+4)+'px'};
  // female announcer "New box drop!" for drops (2026-11-23): plays when a drop box comes on screen; once per arrival, 25 s cooldown per box, respects the sound setting
- const VO={pinata:'assets/vo-drop.m4a',puzzle:'assets/vo-drop.m4a'},VB={},lastAt={};let shown=null;
+ const VO={},VB={}   /* narration removed (Sharon 2026-11-23) */,lastAt={};let shown=null;
  const buf=k=>VB[k]||(VB[k]=fetch(VO[k]).then(r=>r.arrayBuffer()).then(a=>new Promise((ok,no)=>ac().decodeAudioData(a,ok,no))).catch(e=>{delete VB[k];throw e}));
  const announce=b=>{if(!VO[b.key]||!S.sound)return;const c=ac();if(!c)return;const now=Date.now();if(now-(lastAt[b.key]||0)<25000)return;lastAt[b.key]=now;
   try{SFX.thunder&&SFX.thunder(.45)}catch(e){}
