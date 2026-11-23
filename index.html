@@ -3820,8 +3820,12 @@ if(document.getElementById('boot'))addEventListener('mb-booted',go,{once:true});
 #gshop .gs-card .in{display:flex;flex-direction:column;height:100%;background:linear-gradient(180deg,#141417,#070708);clip-path:polygon(13.4px 0,100% 0,100% calc(100% - 13.4px),calc(100% - 13.4px) 100%,0 100%,0 13.4px);padding:10px 12px 12px}
 #gshop .gs-art{height:118px;display:grid;place-items:center;margin:0 -4px 8px;background:radial-gradient(closest-side,rgba(255,255,255,.08),transparent)}
 #gshop .gs-art svg{width:150px;height:118px}
-#gshop .gs-art img.ph,.gs-sheet .gs-big img.ph,#gshop .gs-ord img.ph{filter:none;-webkit-mask-image:radial-gradient(closest-side,#000 72%,transparent 100%);mask-image:radial-gradient(closest-side,#000 72%,transparent 100%)}
-#gshop .gs-art img.ph{width:138px;height:138px}
+/* product photos sit on a grey studio backdrop (so black products read on the black UI): shown as a full-width cut-corner tile */
+#gshop .gs-art:has(img.ph){height:auto;margin:-4px -6px 10px;background:none}
+#gshop .gs-art img.ph{width:100%;height:auto;aspect-ratio:1;object-fit:cover;filter:none;clip-path:polygon(12px 0,100% 0,100% calc(100% - 12px),calc(100% - 12px) 100%,0 100%,0 12px)}
+.gs-sheet .gs-big:has(img.ph){height:auto;background:none;margin:0 0 10px}
+.gs-sheet .gs-big img.ph{width:230px;height:230px;filter:none;clip-path:polygon(16px 0,100% 0,100% calc(100% - 16px),calc(100% - 16px) 100%,0 100%,0 16px)}
+#gshop .gs-ord img.ph{filter:none;clip-path:polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px)}
 #gshop .gs-art img{width:124px;height:124px;object-fit:contain;filter:drop-shadow(0 8px 14px rgba(0,0,0,.5))}
 #gshop .gs-ord img{width:56px;height:56px;object-fit:contain;flex:none}
 .gs-sheet .gs-big img{width:210px;height:210px;object-fit:contain;filter:drop-shadow(0 12px 20px rgba(0,0,0,.55))}
