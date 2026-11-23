@@ -3750,7 +3750,7 @@ if(document.getElementById('boot'))addEventListener('mb-booted',go,{once:true});
 <style id="gp-css">
 /* GP (Gift Points) + Gift Shop (Sharon 2026-11-23) */
 .gp-ico{display:inline-block;vertical-align:-3px;flex:none;filter:drop-shadow(0 0 4px rgba(0,154,73,.55))}
-.gp-i{display:inline-block;width:15px;height:15px;vertical-align:-2px;margin-right:5px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%2345e08c'/%3E%3Cstop offset='1' stop-color='%23007a3a'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpolygon points='12,1.5 21.1,6.75 21.1,17.25 12,22.5 2.9,17.25 2.9,6.75' fill='url(%23g)' stroke='%23c9f7dc' stroke-width='1.1'/%3E%3Cpolygon points='12,6.6 16.7,9.3 16.7,14.7 12,17.4 7.3,14.7 7.3,9.3' fill='none' stroke='white' stroke-opacity='.6' stroke-width='1.3'/%3E%3C/svg%3E") center/contain no-repeat}
+.gp-i{display:inline-block;width:15px;height:15px;vertical-align:-2px;margin-right:5px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%2345e08c'/%3E%3Cstop offset='1' stop-color='%23007a3a'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpolygon points='12,1.5 21.1,6.75 21.1,17.25 12,22.5 2.9,17.25 2.9,6.75' fill='url(%23g)' stroke='%23c9f7dc' stroke-width='1.1'/%3E%3Ctext x='12' y='15.3' text-anchor='middle' font-family='Arial,Helvetica,sans-serif' font-weight='900' font-size='8.6' letter-spacing='-.3' fill='white'%3EGP%3C/text%3E%3C/svg%3E") center/contain no-repeat}
 #scr .gp-kv{width:100%;background:none;border:0;color:inherit;font:inherit;padding:0;text-align:left;cursor:pointer}
 #scr .gp-kv b{display:inline-flex;align-items:center;gap:0}
 #scr .gp-kv i{font-style:normal;color:var(--mb-purple-hi);font-weight:600;margin-left:8px;font-size:12px}
@@ -3792,6 +3792,9 @@ if(document.getElementById('boot'))addEventListener('mb-booted',go,{once:true});
 #gshop .gs-card .in{display:flex;flex-direction:column;height:100%;background:linear-gradient(180deg,#141417,#070708);clip-path:polygon(13.4px 0,100% 0,100% calc(100% - 13.4px),calc(100% - 13.4px) 100%,0 100%,0 13.4px);padding:10px 12px 12px}
 #gshop .gs-art{height:118px;display:grid;place-items:center;margin:0 -4px 8px;background:radial-gradient(closest-side,rgba(255,255,255,.08),transparent)}
 #gshop .gs-art svg{width:112px;height:112px}
+#gshop .gs-art img{width:124px;height:124px;object-fit:contain;filter:drop-shadow(0 8px 14px rgba(0,0,0,.5))}
+#gshop .gs-ord img{width:56px;height:56px;object-fit:contain;flex:none}
+.gs-sheet .gs-big img{width:210px;height:210px;object-fit:contain;filter:drop-shadow(0 12px 20px rgba(0,0,0,.55))}
 #gshop .gs-tag{align-self:flex-start;font:700 9.5px Inter;letter-spacing:1px;text-transform:uppercase;padding:3px 7px;margin-bottom:6px;color:#0b0d12;background:#e9ebee;clip-path:polygon(5px 0,100% 0,100% calc(100% - 5px),calc(100% - 5px) 100%,0 100%,0 5px)}
 #gshop .gs-tag.mb{background:var(--mb-purple);color:#fff}
 #gshop .gs-name{font:600 13.5px/1.25 Inter,sans-serif;min-height:34px}
@@ -3818,7 +3821,7 @@ div.gs-sheet{padding:0 20px 22px}
 /* ---------- GP · Gift Points + Gift Shop (Sharon 2026-11-23, demo products) ----------
    Earn: whenever a box reveals a watch worth less than the box price, the difference comes back 1:1 as GP.
    Spend: GP only, in the in-app Gift Shop (MistyBox-branded merch + generic essentials). Shipping is free, to the saved address. */
-function gpIco(sz=16){return `<svg class="gp-ico" width="${sz}" height="${sz}" viewBox="0 0 24 24" aria-hidden="true"><defs><linearGradient id="gpg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#45e08c"/><stop offset="1" stop-color="#007a3a"/></linearGradient></defs><polygon points="12,1.5 21.1,6.75 21.1,17.25 12,22.5 2.9,17.25 2.9,6.75" fill="url(#gpg)" stroke="#c9f7dc" stroke-width="1.1"/><polygon points="12,6.6 16.7,9.3 16.7,14.7 12,17.4 7.3,14.7 7.3,9.3" fill="none" stroke="#fff" stroke-opacity=".6" stroke-width="1.3"/></svg>`}
+function gpIco(sz=16){return `<svg class="gp-ico" width="${sz}" height="${sz}" viewBox="0 0 24 24" aria-hidden="true"><defs><linearGradient id="gpg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#45e08c"/><stop offset="1" stop-color="#007a3a"/></linearGradient></defs><polygon points="12,1.5 21.1,6.75 21.1,17.25 12,22.5 2.9,17.25 2.9,6.75" fill="url(#gpg)" stroke="#c9f7dc" stroke-width="1.1"/><text x="12" y="15.3" text-anchor="middle" font-family="Inter,Arial,Helvetica,sans-serif" font-weight="900" font-size="8.6" letter-spacing="-.3" fill="#fff">GP</text></svg>`}
 (()=>{if(typeof S==='undefined')return;if(S.gp==null)S.gp=1870;S.gpOrders=S.gpOrders||[];
  const L='assets/logo-white.png',LOGO=(x,y,w)=>`<image href="${L}" x="${x}" y="${y}" width="${w}" height="${(w*274/1956).toFixed(2)}"/>`;   // official logo, unaltered
  const CH='<defs><linearGradient id="sv" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f4f6f8"/><stop offset=".35" stop-color="#9ea3ab"/><stop offset=".6" stop-color="#e9ebee"/><stop offset="1" stop-color="#6d737b"/></linearGradient><linearGradient id="lt" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7a4a2a"/><stop offset="1" stop-color="#4a2a16"/></linearGradient></defs>';
@@ -3835,7 +3838,7 @@ function gpIco(sz=16){return `<svg class="gp-ico" width="${sz}" height="${sz}" v
   charger:`<path d="M40 100 L80 100 L74 92 L46 92 Z" fill="#2a2c33"/><path d="M52 92 L46 30 Q46 22 54 22 L74 22 Q82 22 80 30 L70 92 Z" fill="#18191d" stroke="#3a3d46" stroke-width="1.5"/><rect x="53" y="28" width="22" height="44" rx="4" fill="#0c0c0e" stroke="#9ea3ab" stroke-opacity=".5"/><circle cx="64" cy="82" r="3" fill="#19b85f"/>`,
   cloth:`<rect x="30" y="58" width="60" height="38" fill="#2a6fd6" transform="rotate(-6 60 77)"/><rect x="28" y="46" width="60" height="38" fill="#e9c15a" transform="rotate(4 58 65)"/><rect x="32" y="34" width="60" height="38" fill="#6d737b"/><path d="M32 34 h60 v38" fill="none" stroke="#9aa0a9" stroke-dasharray="2 3"/>`,
   tools:`<rect x="22" y="22" width="76" height="76" rx="6" fill="#15161a" stroke="#3a3d46"/><path d="M38 34 L46 86 L50 86 L42 34 Z" fill="url(#sv)"/><rect x="58" y="32" width="6" height="34" rx="2" fill="#c0392b"/><rect x="59.5" y="66" width="3" height="22" fill="url(#sv)"/><rect x="74" y="32" width="6" height="34" rx="2" fill="#2a6fd6"/><rect x="75.5" y="66" width="3" height="22" fill="url(#sv)"/><rect x="88" y="34" width="4" height="52" rx="2" fill="url(#sv)"/>`};
- const art=k=>`<svg viewBox="0 0 120 120" aria-hidden="true">${CH}${ART[k]}</svg>`;
+ const art=k=>`<img src="assets/gifts/${k}.webp" alt="" decoding="async">`;   // realistic 3D product renders (2026-11-23), replace with real photos when merch exists
  const P=[
   {id:'tee',a:'tee',n:'MistyBox Black Tee',gp:450,mb:1,d:'Heavyweight organic cotton tee, relaxed fit, white MistyBox wordmark on the chest.'},
   {id:'mug',a:'mug',n:'Matte Black Mug',gp:250,mb:1,d:'Ceramic, 12 oz, matte black finish with the MistyBox wordmark.'},
