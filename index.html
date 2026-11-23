@@ -3802,6 +3802,10 @@ if(document.getElementById('boot'))addEventListener('mb-booted',go,{once:true});
 #gshop .gs-ord img{width:56px;height:56px;object-fit:contain;flex:none}
 .gs-sheet .gs-big img{width:210px;height:210px;object-fit:contain;filter:drop-shadow(0 12px 20px rgba(0,0,0,.55))}
 #gshop .gs-tag{align-self:flex-start;font:700 9.5px Inter;letter-spacing:1px;text-transform:uppercase;padding:3px 7px;margin-bottom:6px;color:#0b0d12;background:#e9ebee;clip-path:polygon(5px 0,100% 0,100% calc(100% - 5px),calc(100% - 5px) 100%,0 100%,0 5px)}
+#gshop .gs-tag.cm{background:none;padding:0;clip-path:none}
+#gshop .gs-tag.cm img{height:17px;display:block}
+#gshop .gs-gctab{display:inline-flex;align-items:center;gap:6px}
+#gshop .gs-gctab img{height:13px}
 #gshop .gs-tag.mb{background:var(--mb-purple);color:#fff}
 #gshop .gs-name{font:600 13.5px/1.25 Inter,sans-serif;min-height:34px}
 #gshop .gs-price{display:flex;align-items:center;gap:6px;margin-top:8px;font:700 16px Inter,sans-serif;font-variant-numeric:tabular-nums}
@@ -3857,7 +3861,64 @@ function gpIco(sz=16){return `<svg class="gp-ico" width="${sz}" height="${sz}" v
   {id:'cloth',a:'cloth',n:'Microfiber Cloth 3-Pack',gp:120,mb:0,d:'Lint-free cloths for crystals, cases and screens.'},
   {id:'tools',a:'tools',n:'Strap Change Tool Set',gp:400,mb:0,d:'Spring-bar tool, two precision drivers and a pin pusher in a slim case.'},
   {id:'charger',a:'charger',n:'Wireless Charging Stand',gp:700,mb:0,d:'15 W stand for phones, with a soft night light.'},
-  {id:'winder',a:'winder',n:'Automatic Watch Winder',gp:1800,mb:0,d:'Quiet single-watch winder with a glass lid and adjustable turns per day.'}];
+  {id:'winder',a:'winder',n:'Automatic Watch Winder',gp:1800,mb:0,d:'Quiet single-watch winder with a glass lid and adjustable turns per day.'},
+  {id:'teegreen',n:'Irish Green Tee',gp:450,mb:1,d:'Heavyweight organic cotton tee in Irish green, white wordmark on the chest.'},
+  {id:'teegrey',n:'Charcoal Tee',gp:450,mb:1,d:'Heavyweight organic cotton tee in charcoal, white wordmark on the chest.'},
+  {id:'hoodieblack',n:'Black Hoodie',gp:900,mb:1,d:'Brushed fleece hoodie in black, wordmark on the chest.'},
+  {id:'hoodiegrey',n:'Charcoal Hoodie',gp:900,mb:1,d:'Brushed fleece hoodie in charcoal, wordmark on the chest.'},
+  {id:'capgreen',n:'Irish Green Cap',gp:350,mb:1,d:'Six-panel cap in Irish green, embroidered wordmark.'},
+  {id:'beanie',n:'Ribbed Beanie',gp:300,mb:1,d:'Soft ribbed knit beanie with a woven wordmark label on the cuff.'},
+  {id:'mugwhite',n:'Irish Green Mug',gp:250,mb:1,d:'Ceramic, 12 oz, glossy Irish green with the MistyBox wordmark.'},
+  {id:'espresso',n:'Espresso Cup Set',gp:400,mb:1,d:'Two ceramic espresso cups with saucers, black and Irish green.'},
+  {id:'totebag',n:'Canvas Tote',gp:300,mb:1,d:'Heavy black canvas tote with long handles and a printed wordmark.'},
+  {id:'bottleblack',n:'Steel Bottle, Black',gp:400,mb:1,d:'Insulated steel bottle, 20 oz, keeps drinks cold for 24 hours.'},
+  {id:'bottlegreen',n:'Steel Bottle, Green',gp:400,mb:1,d:'Insulated steel bottle, 20 oz, in Irish green.'},
+  {id:'notebook',n:'Hardcover Notebook + Pen',gp:350,mb:1,d:'A5 dotted notebook with an elastic band and a metal pen.'},
+  {id:'pen',n:'Metal Pen in Case',gp:500,mb:1,d:'Weighted metal rollerball pen in a lacquered gift case.'},
+  {id:'keychain',n:'Steel Hex Keychain',gp:200,mb:1,d:'Brushed steel honeycomb tag with an engraved wordmark.'},
+  {id:'phonecase',n:'Phone Case',gp:450,mb:1,d:'Slim matte phone case with the MistyBox wordmark.'},
+  {id:'deskmat',n:'Felt Desk Mat',gp:500,mb:1,d:'Large wool-felt desk mat, 36 × 18 in, with a printed wordmark.'},
+  {id:'coasters',n:'Hex Leather Coasters',gp:300,mb:1,d:'Set of four honeycomb coasters in black and Irish green leather.'},
+  {id:'candle',n:'Scented Candle',gp:450,mb:1,d:'Black glass candle with a steel lid, notes of cedar and leather.'},
+  {id:'backpack',n:'Everyday Backpack',gp:1400,mb:1,d:'Water-resistant backpack with a padded laptop sleeve.'},
+  {id:'stickers',n:'Hex Sticker Pack',gp:80,mb:1,d:'Seven honeycomb vinyl stickers.'},
+  {id:'watchbox',n:'6-Slot Watch Box',gp:1600,mb:1,d:'Walnut watch box with a glass lid and six cushions, wordmark on the front.'},
+  {id:'stand',n:'Watch Display Stand',gp:700,mb:1,d:'Brushed aluminium stand with a soft cushion for one watch.'},
+  {id:'rollblack',n:'Black Leather Watch Roll',gp:1200,mb:1,d:'Full-grain black leather travel roll for three watches, embossed wordmark.'},
+  {id:'phonecasegreen',n:'Irish Green Phone Case',gp:450,mb:1,d:'Slim matte phone case in Irish green with the MistyBox wordmark.'},
+  {id:'pouch',n:'Leather Zip Pouch',gp:650,mb:1,d:'Dark brown leather pouch for straps, cables and small things.'},
+  {id:'print_zebra',n:'Zebra Box Art Print',gp:600,mb:1,d:'Framed 12×16 in print of the Icon box in Zebra, silver frame.'},
+  {id:'print_carbon',n:'Carbon Box Art Print',gp:600,mb:1,d:'Framed 12×16 in print of the Masterpiece box in carbon, silver frame.'},
+  {id:'print_bluecarbon',n:'Sky Carbon Art Print',gp:600,mb:1,d:'Framed 12×16 in print of the Sky Carbon box, silver frame.'},
+  {id:'print_pinata',n:'Piñata Drop Art Print',gp:600,mb:1,d:'Framed print of the limited Piñata drop box.'},
+  {id:'print_puzzle',n:'Puzzle Cube Art Print',gp:600,mb:1,d:'Framed print of the limited Puzzle Cube drop box.'},
+  {id:'print_hearts',n:'Hearts Box Art Print',gp:600,mb:1,d:'Framed print of the Hearts special box.'},
+  {id:'print_hoops',n:'Hoops Box Art Print',gp:600,mb:1,d:'Framed print of the Game Day Hoops box.'},
+  {id:'print_alu',n:'Aluminium Box Art Print',gp:600,mb:1,d:'Framed print of the Aluminium special box.'},
+  {id:'print_prism',n:'Prism Box Art Print',gp:600,mb:1,d:'Framed print of the Prismatic Enamel box.'},
+  {id:'print_redleather',n:'Leather Box Art Print',gp:600,mb:1,d:'Framed print of the leather box.'},
+  {id:'strapbrown',n:'Brown Leather Strap',gp:350,mb:0,d:'20 mm full-grain leather strap with quick-release spring bars.'},
+  {id:'strapblack',n:'Black Leather Strap',gp:350,mb:0,d:'20 mm full-grain leather strap with quick-release spring bars.'},
+  {id:'strapnato',n:'Green NATO Strap',gp:150,mb:0,d:'20 mm woven nylon strap with steel hardware.'},
+  {id:'straprubber',n:'Black Rubber Strap',gp:300,mb:0,d:'20 mm FKM rubber strap, soft and waterproof.'},
+  {id:'mesh',n:'Steel Mesh Bracelet',gp:500,mb:0,d:'20 mm Milanese mesh bracelet with a sliding clasp.'},
+  {id:'pillow',n:'Watch Pillow',gp:150,mb:0,d:'Suede-feel pillow to rest a watch on in a drawer or box.'},
+  {id:'winder2',n:'Walnut Watch Winder',gp:2100,mb:0,d:'Single-watch winder in walnut with a glass front.'},
+  {id:'dome',n:'Glass Display Dome',gp:800,mb:0,d:'Glass cloche on a walnut base with a cushion for one watch.'},
+  {id:'clock',n:'Desk Clock',gp:700,mb:0,d:'Brushed steel desk clock with a green sunburst dial.'},
+  {id:'earbuds',n:'Wireless Earbuds',gp:1500,mb:0,d:'True wireless earbuds with a pocket charging case.'},
+  {id:'powerbank',n:'Power Bank 10,000 mAh',gp:600,mb:0,d:'Slim aluminium power bank with USB-C fast charge.'},
+  {id:'travelcase',n:'Single Watch Travel Case',gp:450,mb:0,d:'Round zip case in green leather that protects one watch on the go.'},
+  {id:'spray',n:'Crystal Cleaning Spray',gp:120,mb:0,d:'100 ml spray for crystals, cases and bracelets.'},
+  {id:'tray',n:'Walnut Valet Tray',gp:550,mb:0,d:'Walnut tray with a felt base for a watch, keys and rings.'},
+  // CrashMania Gold Coins: social-play coins with no cash value, delivered to the player's CrashMania account (no shipping)
+  {id:'gc1',n:'10,000 Gold Coins',gp:100,gc:10000,d:'A pack of 10,000 Gold Coins for CrashMania.'},
+  {id:'gc2',n:'25,000 Gold Coins',gp:240,gc:25000,d:'A pack of 25,000 Gold Coins for CrashMania.'},
+  {id:'gc3',n:'60,000 Gold Coins',gp:550,gc:60000,d:'A pack of 60,000 Gold Coins for CrashMania.'},
+  {id:'gc4',n:'150,000 Gold Coins',gp:1300,gc:150000,d:'A pack of 150,000 Gold Coins for CrashMania.'},
+  {id:'gc5',n:'400,000 Gold Coins',gp:3300,gc:400000,d:'A pack of 400,000 Gold Coins for CrashMania.'},
+  {id:'gc6',n:'1,000,000 Gold Coins',gp:7900,gc:1000000,d:'A pack of 1,000,000 Gold Coins for CrashMania.'}];
+ P.forEach(p=>{p.a=p.a||p.id;p.cat=p.gc?'gc':p.mb?'mb':'ess'});
  const fmt=v=>Math.round(v).toLocaleString('en-US');
  // ---- shop button under the VIP badge
  const mdw=document.querySelector('.mdw'),vip=document.querySelector('#dwLoyal .mb-drawer-tab');
@@ -3875,14 +3936,14 @@ function gpIco(sz=16){return `<svg class="gp-ico" width="${sz}" height="${sz}" v
  const sh=document.createElement('section');sh.id='gshop';sh.setAttribute('aria-label','Gift Shop');sh.setAttribute('aria-hidden','true');
  sh.innerHTML=`<div class="gs-bg"></div><div class="gs-hd"><button type="button" class="gs-back" aria-label="Close Gift Shop"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></button><h2>Gift Shop<button type="button" class="gs-info" aria-label="How GP works" aria-expanded="false" aria-controls="gsTip">i</button></h2><div class="gs-bal" aria-label="Your GP balance">${gpIco(20)}<span id="gsBal">0</span><small>GP</small></div></div>
   <div class="gs-tip" id="gsTip" role="tooltip">When a box reveals a watch worth less than its price, the difference comes back as <b>GP, 1 GP for every $1</b>. Spend GP on gifts here. <b>Shipping is free.</b></div>
-  <div class="gs-tabs" role="tablist"><button type="button" class="on" data-f="all">All</button><button type="button" data-f="mb">MistyBox</button><button type="button" data-f="ess">Essentials</button><button type="button" data-f="ord">My orders</button></div>
+  <div class="gs-tabs" role="tablist"><button type="button" class="on" data-f="all">All</button><button type="button" data-f="mb">MistyBox</button><button type="button" data-f="ess">Essentials</button><button type="button" data-f="gc" class="gs-gctab"><img src="assets/crashmania-logo.png" alt="">Gold Coins</button><button type="button" data-f="ord">My orders</button></div>
   <div class="gs-body" id="gsBody"></div>`;
  scr.appendChild(sh);let F='all';
  const bal=$=>{document.getElementById('gsBal').textContent=fmt(S.gp)};
  function render(){const b=document.getElementById('gsBody');bal();
-  if(F==='ord'){b.innerHTML=S.gpOrders.length?S.gpOrders.map(o=>{const p=P.find(x=>x.id===o.id)||P[0];return `<div class="gs-ord">${art(p.a)}<div>${esc(p.n)}<small>${new Date(o.t).toLocaleDateString('en-US',{month:'short',day:'numeric'})} · ${fmt(p.gp)} GP · Free shipping<br>Shipping to ${esc(o.city||'you')} · ${esc(o.trk)}</small></div></div>`}).join(''):`<div class="gs-empty">No gifts ordered yet.<br>Pick something from the shop and it ships to you for free.</div>`;return}
-  const list=P.filter(p=>F==='all'||(F==='mb'?p.mb:!p.mb));
-  b.innerHTML=`<div class="gs-grid">${list.map(p=>`<button type="button" class="gs-card" data-id="${p.id}"><div class="in"><div class="gs-art">${art(p.a)}</div><span class="gs-tag${p.mb?' mb':''}">${p.mb?'MistyBox':'Essentials'}</span><div class="gs-name">${esc(p.n)}</div><div class="gs-price${S.gp<p.gp?' short':''}">${gpIco(16)}${fmt(p.gp)}</div></div></button>`).join('')}</div>`}
+  if(F==='ord'){b.innerHTML=S.gpOrders.length?S.gpOrders.map(o=>{const p=P.find(x=>x.id===o.id)||P[0];return `<div class="gs-ord">${art(p.a)}<div>${esc(p.n)}<small>${new Date(o.t).toLocaleDateString('en-US',{month:'short',day:'numeric'})} · ${fmt(p.gp)} GP${o.cm?`<br>Delivered to CrashMania · ${esc(o.cm)}`:` · Free shipping<br>Shipping to ${esc(o.city||'you')} · ${esc(o.trk)}`}</small></div></div>`}).join(''):`<div class="gs-empty">No gifts ordered yet.<br>Pick something from the shop and it ships to you for free.</div>`;return}
+  const list=P.filter(p=>F==='all'||p.cat===F);
+  b.innerHTML=`<div class="gs-grid">${list.map(p=>`<button type="button" class="gs-card" data-id="${p.id}"><div class="in"><div class="gs-art">${art(p.a)}</div>${p.gc?'<span class="gs-tag cm"><img src="assets/crashmania-logo.png" alt="CrashMania"></span>':`<span class="gs-tag${p.mb?' mb':''}">${p.mb?'MistyBox':'Essentials'}</span>`}<div class="gs-name">${esc(p.n)}</div><div class="gs-price${S.gp<p.gp?' short':''}">${gpIco(16)}${fmt(p.gp)}</div></div></button>`).join('')}</div>`}
  sh.querySelector('.gs-tabs').onclick=e=>{const t=e.target.closest('button');if(!t)return;F=t.dataset.f;sh.querySelectorAll('.gs-tabs button').forEach(x=>x.classList.toggle('on',x===t));render();try{SFX.tap()}catch(_){}};
  sh.querySelector('.gs-back').onclick=()=>closeGShop();
  const ib=sh.querySelector('.gs-info'),tip=sh.querySelector('#gsTip'),setTip=v=>{tip.classList.toggle('on',v);ib.setAttribute('aria-expanded',v)};
@@ -3894,10 +3955,12 @@ function gpIco(sz=16){return `<svg class="gp-ico" width="${sz}" height="${sz}" v
  // ---- product sheet → address → order
  const addrHTML=()=>S.addr?`<div class="gs-addr"><div><small>SHIP TO</small>${esc(S.addr.n)}<br>${esc(S.addr.a)}, ${esc(S.addr.c)} ${esc(S.addr.z)}</div><button type="button" id="gsChg">Change</button></div>`:'';
  function openItem(p){const need=p.gp-S.gp;
-  openSheet(p.n,`<div class="gs-sheet"><div class="gs-big">${art(p.a)}</div><div class="gs-p">${gpIco(22)}${fmt(p.gp)} GP</div><p class="gs-d">${esc(p.d)}<br>Free shipping. Paid with GP only.</p>
-   ${need>0?`<button class="cta sm" disabled>YOU NEED ${fmt(need)} MORE GP</button><p class="note">You have ${fmt(S.gp)} GP. Open boxes to collect more.</p>`:`${addrHTML()}<button class="cta sm" id="gsGet">${S.addr?'GET IT · FREE SHIPPING':'GET IT · ADD ADDRESS'}</button><p class="note">${fmt(p.gp)} GP will be taken from your balance.</p>`}</div>`,
+  openSheet(p.n,`<div class="gs-sheet"><div class="gs-big">${art(p.a)}</div><div class="gs-p">${gpIco(22)}${fmt(p.gp)} GP</div><p class="gs-d">${esc(p.d)}<br>${p.gc?'Delivered instantly to your CrashMania account. Gold Coins are for social play and have no cash value.':'Free shipping. Paid with GP only.'}</p>
+   ${need>0?`<button class="cta sm" disabled>YOU NEED ${fmt(need)} MORE GP</button><p class="note">You have ${fmt(S.gp)} GP. Open boxes to collect more.</p>`:`${p.gc?(S.cmUser?`<div class="gs-addr"><div><small>CRASHMANIA ACCOUNT</small>${esc(S.cmUser)}</div><button type="button" id="gsChg">Change</button></div>`:''):addrHTML()}<button class="cta sm" id="gsGet">${p.gc?(S.cmUser?'GET GOLD COINS':'GET IT · LINK CRASHMANIA'):S.addr?'GET IT · FREE SHIPPING':'GET IT · ADD ADDRESS'}</button><p class="note">${fmt(p.gp)} GP will be taken from your balance.</p>`}</div>`,
    el=>{el.parentElement&&el.parentElement.classList.add('gs-wrap');const g=el.querySelector('#gsGet'),c=el.querySelector('#gsChg');
-    if(c)c.onclick=()=>addrForm(p);if(g)g.onclick=()=>S.addr?order(p):addrForm(p)})}
+    if(c)c.onclick=()=>p.gc?cmForm(p):addrForm(p);if(g)g.onclick=()=>p.gc?(S.cmUser?order(p):cmForm(p)):(S.addr?order(p):addrForm(p))})}
+ function cmForm(p){openSheet('Link CrashMania',`<form class="form gs-sheet" id="gsCm" novalidate><p class="note">${esc(p.n)} · ${fmt(p.gp)} GP. Gold Coins go to this CrashMania account.</p><label for="gU">CRASHMANIA USERNAME OR EMAIL</label><input class="inp" id="gU" autocomplete="off" value="${esc(S.cmUser||'')}"><div class="err" id="gUe"></div><button class="cta sm">CONFIRM · ${fmt(p.gp)} GP</button></form>`,
+  el=>el.querySelector('#gsCm').onsubmit=e=>{e.preventDefault();const v=el.querySelector('#gU').value.trim();if(v.length<3){el.querySelector('#gUe').textContent='Enter your CrashMania username or email.';return}S.cmUser=v;save();order(p)})}
  function addrForm(p){const A=S.addr||{};
   openSheet('Shipping address',`<form class="form gs-sheet" id="gsF" novalidate><p class="note">${esc(p.n)} · ${fmt(p.gp)} GP · free shipping. We save this address for your next order.</p><label for="gN">FULL NAME</label><input class="inp" id="gN" autocomplete="off" value="${esc(A.n||'')}"><label for="gA">STREET ADDRESS</label><input class="inp" id="gA" autocomplete="off" value="${esc(A.a||'')}">
    <div class="two" style="margin:0"><div><label for="gC">CITY</label><input class="inp" id="gC" autocomplete="off" value="${esc(A.c||'')}"></div><div><label for="gZ">ZIP</label><input class="inp" id="gZ" inputmode="numeric" autocomplete="off" value="${esc(A.z||'')}"></div></div>
@@ -3906,10 +3969,10 @@ function gpIco(sz=16){return `<svg class="gp-ico" width="${sz}" height="${sz}" v
     if(!v('#gN')||!v('#gA')||!v('#gC')){er.textContent='Fill in name, street and city.';return}if(!/^\d{5}$/.test(v('#gZ'))){er.textContent='ZIP should be 5 digits.';return}
     S.addr={n:v('#gN'),a:v('#gA'),c:v('#gC'),z:v('#gZ')};save();order(p)})}
  function order(p){if(S.gp<p.gp){toast('Not enough GP');return}const from=S.gp;S.gp-=p.gp;
-  S.gpOrders.unshift({id:p.id,t:Date.now(),city:S.addr&&S.addr.c,trk:'UPS · 1Z'+Math.random().toString(36).slice(2,9).toUpperCase()});save();try{paintBal()}catch(_){}closeSheet();
+  S.gpOrders.unshift(p.gc?{id:p.id,t:Date.now(),cm:S.cmUser}:{id:p.id,t:Date.now(),city:S.addr&&S.addr.c,trk:'UPS · 1Z'+Math.random().toString(36).slice(2,9).toUpperCase()});save();try{paintBal()}catch(_){}closeSheet();
   const el=document.getElementById('gsBal'),t0=performance.now();const tk=n=>{const u=Math.min(1,(n-t0)/700);el.textContent=fmt(from+(S.gp-from)*(1-Math.pow(1-u,3)));if(u<1)requestAnimationFrame(tk)};requestAnimationFrame(tk);
   try{SFX.coin()}catch(_){}try{navigator.vibrate&&navigator.vibrate([10,30,16])}catch(_){}
-  toast(`Ordered · ${p.n} ships free to ${S.addr.c}`);setTimeout(()=>{if(F!=='ord')render()},50)}
+  toast(p.gc?`${p.n} added to CrashMania · ${S.cmUser}`:`Ordered · ${p.n} ships free to ${S.addr.c}`);setTimeout(()=>{if(F!=='ord')render()},50)}
  // account row opens the shop
  const ar=document.getElementById('aGpRow');if(ar)ar.onclick=()=>openGShop();
  try{paintBal()}catch(_){}
