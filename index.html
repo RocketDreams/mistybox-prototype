@@ -71,6 +71,14 @@ button{background:none;border:0;cursor:pointer}
 .hero.has3d #hero3dg{opacity:1}
 #hero3d{position:absolute;left:50%;top:-14px;width:min(100%,430px);height:calc(var(--hh,262px) + 38px);transform:translateX(-50%);pointer-events:none;opacity:0;transition:opacity .6s}
 .hero.has3d #hero3d{opacity:1}
+/* stage beams behind the hero box (2026-11-24): green light shafts from above + a lit floor, like a product on a stage */
+#hero .stagefx{position:absolute;left:50%;top:-60px;width:min(100%,430px);height:calc(var(--hh,262px) + 90px);transform:translateX(-50%);pointer-events:none;opacity:0;transition:opacity .8s;
+ background:radial-gradient(38% 30% at 50% 8%,rgba(60,230,140,.30),rgba(0,0,0,0) 70%),radial-gradient(46% 12% at 50% 86%,rgba(25,184,95,.30),rgba(0,0,0,0) 72%),
+  conic-gradient(from 180deg at 50% -6%,rgba(0,0,0,0) 0 151deg,rgba(25,184,95,.34) 156deg 162deg,rgba(0,0,0,0) 168deg 172deg,rgba(120,255,180,.26) 176deg 184deg,rgba(0,0,0,0) 188deg 192deg,rgba(25,184,95,.34) 198deg 204deg,rgba(0,0,0,0) 209deg 360deg);
+ filter:blur(7px);-webkit-mask:linear-gradient(180deg,#000 0,#000 72%,rgba(0,0,0,0) 100%);mask:linear-gradient(180deg,#000 0,#000 72%,rgba(0,0,0,0) 100%);animation:stageBreath 6s ease-in-out infinite}
+#hero.has3d .stagefx{opacity:1}
+@keyframes stageBreath{50%{filter:blur(9px) brightness(1.2)}}
+@media (prefers-reduced-motion:reduce){#hero .stagefx{animation:none}}
 .hero.has3d .track{opacity:0;transition:opacity .4s}
 /* hero (unchanged design) */
 .hero{position:relative;height:var(--hh,262px);margin-top:6px;touch-action:pan-y;cursor:grab}
@@ -2563,12 +2571,19 @@ const pm = new THREE.PMREMGenerator(R);
   const card = (w, h, x, y, z, i) => { const m = new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial({color: new THREE.Color(i, i, i), side: THREE.DoubleSide})); m.position.set(x, y, z); m.lookAt(0, .5, 0); env.add(m) };
   card(6, 3, -5, 6, 4, 3.2); card(1.2, 7, 6, 2.5, -3, 2.4); card(1.2, 7, -6.5, 2, -1, 1.6); card(5, 1, 0, 1.2, 7, 1.0); card(8, 8, 0, 9, 0, .35);
   S.environment = pm.fromScene(env, 0).texture; }
-const key = new THREE.DirectionalLight(0xffffff, .95); key.position.set(-3, 5, 3); S.add(key);
+const key = new THREE.DirectionalLight(0xf2fff7, .7); key.position.set(-3, 5, 3); S.add(key);
 // stage spotlight from above: a soft violet-white hotspot on the lid and the front face
-const mkSpot = (y, z, i) => { const sp = new THREE.SpotLight(0xcfcaff, i, 14, .5, .85, 1.4); sp.position.set(0, y, z); sp.target.position.set(0, .5, 0); return sp };
+const mkSpot = (y, z, i) => { const sp = new THREE.SpotLight(0xe6fff0, i, 14, .5, .85, 1.4); sp.position.set(0, y, z); sp.target.position.set(0, .5, 0); return sp };
 const spot = mkSpot(5.4, 2.6, 34); S.add(spot, spot.target);
-const rim = new THREE.DirectionalLight(0xbfdfff, 1.6); rim.position.set(3.5, 2, -3.5); S.add(rim);
-const fill = new THREE.DirectionalLight(0xffffff, .5); fill.position.set(2, 1, 4); S.add(fill);
+const rim = new THREE.DirectionalLight(0x19b85f, 2.2); rim.position.set(3.5, 2, -3.5); S.add(rim);   // stage lighting (2026-11-24, after the RVL look): green back rim,
+const rim2 = new THREE.DirectionalLight(0xdffff0, 1.1); rim2.position.set(-3.8, 2.6, -3); S.add(rim2);   // cool white kicker on the other edge,
+const under = new THREE.PointLight(0x00c060, 2.4, 6, 1.4); under.position.set(3.0, .02, .9); S.add(under);   // and an emerald bounce from the floor, front-right
+const fill = new THREE.DirectionalLight(0xffffff, .35); fill.position.set(2, 1, 4); S.add(fill);
+{ const c = document.createElement('canvas'); c.width = c.height = 256; const g = c.getContext('2d'), gr = g.createRadialGradient(128, 128, 10, 128, 128, 128);
+  gr.addColorStop(0, 'rgba(0,0,0,.85)'); gr.addColorStop(.45, 'rgba(0,0,0,.45)'); gr.addColorStop(1, 'rgba(0,0,0,0)'); g.fillStyle = gr; g.fillRect(0, 0, 256, 256);
+  const sh = new THREE.Mesh(new THREE.PlaneGeometry(2.9, 2.9), new THREE.MeshBasicMaterial({map: new THREE.CanvasTexture(c), transparent: true, depthWrite: false, toneMapped: false}));
+  sh.rotation.x = -Math.PI / 2; sh.position.y = .003; sh.renderOrder = -1; S.add(sh); }   // soft contact shadow on the stage floor
+{ const st = document.createElement('div'); st.className = 'stagefx'; st.setAttribute('aria-hidden', 'true'); hero.insertBefore(st, cv); }
 const cam = new THREE.PerspectiveCamera(24, 1, .1, 50);
 { const az = -0.36, el = .34, d = 5.9; cam.position.set(Math.sin(az) * Math.cos(el) * d, .56 + Math.sin(el) * d, Math.cos(az) * Math.cos(el) * d); cam.lookAt(0, .5, 0); }
 
@@ -2638,10 +2653,10 @@ const CUBE_SCALE = 1.15, cubeSrc = {}, TL = new THREE.TextureLoader();
 let ROOM = null;   // bright studio reflections for the cube boxes (chrome would read black in the app's dark scene)
 function studioEnv(){   // equirect canvas (works in every renderer: three PMREMs it per context): softboxes on a grey studio
   const c = document.createElement('canvas'); c.width = 1024; c.height = 512; const g = c.getContext('2d');
-  const sky = g.createLinearGradient(0, 0, 0, 512); sky.addColorStop(0, '#d8dde6'); sky.addColorStop(.45, '#6c7380'); sky.addColorStop(.55, '#3a3f48'); sky.addColorStop(1, '#101215');
+  const sky = g.createLinearGradient(0, 0, 0, 512); sky.addColorStop(0, '#e2ece6'); sky.addColorStop(.42, '#55665d'); sky.addColorStop(.55, '#222c27'); sky.addColorStop(1, '#070c09');
   g.fillStyle = sky; g.fillRect(0, 0, 1024, 512);
   g.fillStyle = '#ffffff'; for(const [x, y, w, h] of [[120, 150, 150, 110], [430, 120, 220, 70], [760, 160, 120, 140], [0, 0, 1024, 40]]){ g.globalAlpha = .9; g.fillRect(x, y, w, h) }
-  g.globalAlpha = .5; g.fillStyle = '#9fc4ff'; g.fillRect(560, 210, 300, 30); g.globalAlpha = 1;
+  g.globalAlpha = .22; g.fillStyle = '#19b85f'; g.fillRect(310, 190, 40, 190); g.fillRect(905, 170, 36, 210); g.globalAlpha = .18; g.fillStyle = '#7dffb8'; g.fillRect(560, 210, 300, 24); g.globalAlpha = .1; g.fillStyle = '#00a050'; g.fillRect(0, 345, 1024, 50); g.globalAlpha = 1;
   const t = new THREE.CanvasTexture(c); t.mapping = THREE.EquirectangularReflectionMapping; t.colorSpace = THREE.SRGBColorSpace; return t }
 const tex = (f, srgb, rep) => { const t = TL.load('assets/3d/' + f); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.anisotropy = 8; if(srgb) t.colorSpace = THREE.SRGBColorSpace; if(rep) t.repeat.set(rep, rep); return t };
 let CT = null;
@@ -2666,8 +2681,22 @@ function cubeTex(){ if(CT) return CT;
       const gr = horiz ? g.createLinearGradient(0, y, 0, y + px) : g.createLinearGradient(x, 0, x + px, 0); const hi = horiz ? 1 : .62;
       gr.addColorStop(0, dk); gr.addColorStop(.5, `rgb(${rgb.map(v => Math.round(v*hi)).join(',')})`); gr.addColorStop(1, dk); g.fillStyle = gr; g.fillRect(x, y, px, px) }
     const t = new THREE.CanvasTexture(c); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(4, 4); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; return t };
-  const gcarbon = weave([8, 150, 70], '#011a0c'), bcarbon = weave([120, 200, 245], '#06182a');   // light blue carbon (2026-11-23)
-  return CT = {gcarbon, bcarbon, puzzle, carbon, zebra, noise, lcol: tex('leather_col.jpg', true), lred: tex('leather_green_col.jpg', true), lrough: tex('leather_rough.jpg'), lnrm: tex('leather_nrm.jpg'), pinata: (t => (t.repeat.set(.8, 2), t))(tex('pinata_col.jpg', true)), pinataB: (t => (t.repeat.set(.8, 2), t))(tex('pinata_bump.jpg'))} }
+  const weaveHQ = (hi, lo, rep) => {   // fine 2x2 twill with real relief (2026-11-24): albedo + normal map, tows shaded like round fibre bundles
+    const N = 1024, n = 16, px = N / n, c = document.createElement('canvas'); c.width = c.height = N; const g = c.getContext('2d'), im = g.createImageData(N, N), H = new Float32Array(N * N);
+    for(let y = 0; y < N; y++) for(let x = 0; x < N; x++){ const i = x / px | 0, j = y / px | 0, horiz = ((i + j) % 4) < 2, u = (horiz ? x : y) % px / px, v = (horiz ? y : x) % px / px;
+      const gap = v < .06 || v > .94 ? 0 : 1, cyl = Math.pow(Math.sin(Math.PI * v), .55), und = .82 + .18 * Math.sin(Math.PI * u), fib = .9 + .1 * Math.sin((horiz ? y : x) * 2.1 + Math.sin((horiz ? x : y) * .05) * 3);
+      const h = gap * cyl * und; H[y * N + x] = h; const k = gap * (.35 + .65 * cyl * cyl) * fib * (horiz ? 1 : .7), o = 4 * (y * N + x);
+      for(let q = 0; q < 3; q++) im.data[o + q] = Math.round(lo[q] + (hi[q] - lo[q]) * k); im.data[o + 3] = 255 }
+    g.putImageData(im, 0, 0);
+    const cn = document.createElement('canvas'); cn.width = cn.height = N; const gn = cn.getContext('2d'), nm = gn.createImageData(N, N), st = 3.2;
+    for(let y = 0; y < N; y++) for(let x = 0; x < N; x++){ const hx = H[y * N + (x + 1) % N] - H[y * N + (x + N - 1) % N], hy = H[((y + 1) % N) * N + x] - H[((y + N - 1) % N) * N + x];
+      let nx = -hx * st, ny = hy * st, nz = 1; const l = Math.hypot(nx, ny, nz), o = 4 * (y * N + x); nm.data[o] = (nx / l * .5 + .5) * 255; nm.data[o + 1] = (ny / l * .5 + .5) * 255; nm.data[o + 2] = (nz / l * .5 + .5) * 255; nm.data[o + 3] = 255 }
+    gn.putImageData(nm, 0, 0);
+    const mk = (cv, srgb) => { const t = new THREE.CanvasTexture(cv); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(rep, rep); t.anisotropy = 16; if(srgb) t.colorSpace = THREE.SRGBColorSpace; return t };
+    return {map: mk(c, true), nrm: mk(cn)} };
+  const gcarbon = weave([8, 150, 70], '#011a0c'), bcarbon = weave([120, 200, 245], '#06182a');
+  const HQ = {carbon: weaveHQ([58, 60, 66], [4, 4, 5], 3.5), gcarbon: weaveHQ([14, 168, 82], [1, 18, 9], 3.5), bcarbon: weaveHQ([130, 205, 245], [5, 22, 40], 3.5)};   // light blue carbon (2026-11-23)
+  return CT = {HQ, gcarbon, bcarbon, puzzle, carbon, zebra, noise, lcol: tex('leather_col.jpg', true), lred: tex('leather_green_col.jpg', true), lrough: tex('leather_rough.jpg'), lnrm: tex('leather_nrm.jpg'), pinata: (t => (t.repeat.set(.8, 2), t))(tex('pinata_col.jpg', true)), pinataB: (t => (t.repeat.set(.8, 2), t))(tex('pinata_bump.jpg'))} }
 const M_ = (o) => new THREE.MeshStandardMaterial(o), MP = (o) => new THREE.MeshPhysicalMaterial(o);
 var PUZ_REP = window.PUZ_REP || [1.2, 1.2, .1, .1];
 function puzzleMat(T){   // Puzzle Cube drop (2026-11-23): white stickers tinted per face by the panel's own normal
@@ -2690,12 +2719,12 @@ function cubeMat(skin, name, src){
     AluBlock: M_({color: 0xd4d7dc, metalness: 1, roughness: .3}), BoltSteel: M_({color: 0x9a9da3, metalness: 1, roughness: .18}), BoltChrome: M_({color: 0xe8e9ec, metalness: 1, roughness: .08}),
     InteriorBlack: M_({color: 0x0b0b0d, roughness: .95}), HingeSteel: M_({color: 0xa8abb1, metalness: 1, roughness: .22})};
   let S_ = {};
-  if(skin === 'carbon') S_ = {...chrome(), CarbonPanel: MP({map: T.carbon, metalness: .1, roughness: .4, clearcoat: .8, clearcoatRoughness: .12})};   // silver frame so the black box stands out (Sharon, 2026-11-23)
-  if(skin === 'bluecarbon') S_ = {...chrome(), CarbonPanel: MP({map: T.bcarbon, metalness: .15, roughness: .3, clearcoat: 1, clearcoatRoughness: .05, envMapIntensity: .9})};
-  if(skin === 'greencarbon') S_ = {...chrome(), CarbonPanel: MP({map: T.gcarbon, metalness: .15, roughness: .3, clearcoat: 1, clearcoatRoughness: .05, envMapIntensity: .9})};
+  if(skin === 'carbon') S_ = {...chrome(), CarbonPanel: MP({map: T.HQ.carbon.map, normalMap: T.HQ.carbon.nrm, normalScale: new THREE.Vector2(.9, .9), metalness: .2, roughness: .38, clearcoat: 1, clearcoatRoughness: .05, envMapIntensity: .9})};   // silver frame so the black box stands out (Sharon, 2026-11-23)
+  if(skin === 'bluecarbon') S_ = {...chrome(), CarbonPanel: MP({map: T.HQ.bcarbon.map, normalMap: T.HQ.bcarbon.nrm, normalScale: new THREE.Vector2(.9, .9), metalness: .15, roughness: .3, clearcoat: 1, clearcoatRoughness: .05, envMapIntensity: .9})};
+  if(skin === 'greencarbon') S_ = {...chrome(), CarbonPanel: MP({map: T.HQ.gcarbon.map, normalMap: T.HQ.gcarbon.nrm, normalScale: new THREE.Vector2(.9, .9), metalness: .15, roughness: .3, clearcoat: 1, clearcoatRoughness: .05, envMapIntensity: .9})};
   if(skin === 'puzzle') S_ = {...chrome(), CarbonPanel: puzzleMat(T)};
   if(skin === 'pinata') S_ = {...chrome(), CarbonPanel: M_({map: T.pinata, bumpMap: T.pinataB, bumpScale: 3, roughness: .82, metalness: 0, envMapIntensity: .35})};   // Piñata drop: rainbow paper fringe (2026-11-23)
-  if(skin === 'zebra') S_ = {...chrome(), CarbonPanel: M_({map: T.zebra, roughness: .95, envMapIntensity: .55})};
+  if(skin === 'zebra') S_ = {...chrome(), CarbonPanel: MP({map: T.zebra, bumpMap: T.zebra, bumpScale: 2.2, roughness: .9, sheen: .25, sheenColor: 0xbfbfbf, sheenRoughness: .5, envMapIntensity: .55})};
   if(skin === 'zebrafur') S_ = {...chrome(), CarbonPanel: M_({map: T.zebra, color: 0x8a8a8a, roughness: .95})};
   if(skin === 'hearts') S_ = {...chrome(), HeartsPanel: MP({map: src && src.map, color: 0xd8d8d8, roughness: .35, clearcoat: .6, clearcoatRoughness: .1}),
     HeartRed: MP({color: 0x8a0410, roughness: .12, clearcoat: 1, clearcoatRoughness: .02}), HeartSilver: M_({color: 0xeceef2, metalness: 1, roughness: .12}),
@@ -2806,7 +2835,7 @@ window.MB3D.reveal = function(boxEl, b){
       r.toneMapping = THREE.ACESFilmicToneMapping; r.toneMappingExposure = 1.2; r.outputColorSpace = THREE.SRGBColorSpace; return {cv, R: r, gl: glowLayer(cv), gen: 0} })());
     const gen = ++P.gen, cv2 = P.cv, R2 = P.R; ob.appendChild(cv2);
     const S2 = new THREE.Scene(); S2.environment = S.environment;
-    S2.add(key.clone(), rim.clone(), fill.clone()); { const sp2 = mkSpot(5.4, 2.6, 30); S2.add(sp2, sp2.target) }
+    S2.add(key.clone(), rim.clone(), rim2.clone(), under.clone(), fill.clone()); { const sp2 = mkSpot(5.4, 2.6, 30); S2.add(sp2, sp2.target) }
     const holder = src.clone(true); holder.position.z += BL.zfix;
     const leds = [];
     holder.traverse(o => { if(o.isMesh && o.material.emissive && o.material.emissiveIntensity > 1){ o.material = o.material.clone(); leds.push(o.material) } });
@@ -2895,9 +2924,9 @@ window.MB3D.picker = function(pk, b, cb){
     r.toneMapping = THREE.ACESFilmicToneMapping; r.toneMappingExposure = 1.25; r.outputColorSpace = THREE.SRGBColorSpace; return {cv, R: r, gl: glowLayer(cv), gen: 0} })());
   const gen = ++P.gen, cv3 = P.cv, R3 = P.R; pk.insertBefore(cv3, pk.querySelector('.vig'));
   const S3 = new THREE.Scene(); S3.environment = S.environment; S3.environmentIntensity = .28;
-  S3.add(new THREE.HemisphereLight(0x5a62ff, 0x040308, .45));
-  const sp = new THREE.SpotLight(0xc9c4ff, 34, 16, .3, .75, 1.3); sp.position.set(0, 4.4, RAD + 3.6); sp.target.position.set(0, .55, RAD); S3.add(sp, sp.target);
-  const back = new THREE.DirectionalLight(0x6c72ff, 1.1); back.position.set(0, 3, -4); S3.add(back);
+  S3.add(new THREE.HemisphereLight(0x2fd47e, 0x020806, .45));
+  const sp = new THREE.SpotLight(0xe6fff0, 34, 16, .3, .75, 1.3); sp.position.set(0, 4.4, RAD + 3.6); sp.target.position.set(0, .55, RAD); S3.add(sp, sp.target);
+  const back = new THREE.DirectionalLight(0x19b85f, 2.2); back.position.set(0, 3, -4); S3.add(back);
   const ring = new THREE.Group(); S3.add(ring);
   const C3 = new THREE.PerspectiveCamera(38, 1, .1, 80);
   const gl3 = P.gl; cv3.after(gl3.canvas);
