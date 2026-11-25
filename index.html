@@ -2810,7 +2810,9 @@ function load(k){ if(models[k]) return models[k];
     const holder = new THREE.Group(); holder.add(root); return holder; }) }
 
 const heroGlow = glowLayer(cv);
-function size(){ const w = cv.clientWidth, h = cv.clientHeight; if(!w || !h) return; R.setSize(w, h, false); heroGlow.size(w, h); cam.aspect = w / h; cam.updateProjectionMatrix() }
+function size(){ const w = cv.clientWidth, h = cv.clientHeight; if(!w || !h) return; R.setSize(w, h, false); heroGlow.size(w, h); cam.aspect = w / h;
+ const r = h / w, z = r < .85 ? Math.min(1.32, 1 + (.85 - r) * .95) : 1;   // short hero (Safari toolbars): zoom the box in to use the free room, nudged up so it clears the name (Sharon 2026-11-25)
+ cam.zoom = z; if(z > 1) cam.setViewOffset(w, h, 0, h * .3 * (z - 1), w, h); else cam.clearViewOffset(); cam.updateProjectionMatrix() }
 addEventListener('resize', size); size();
 
 let shown = -1, active = null, swapT = 1, swapAt = 0, pending = null, tiltX = 0, tiltY = 0, tx = 0, ty = 0;
