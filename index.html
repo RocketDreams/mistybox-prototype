@@ -616,7 +616,22 @@ canvas.glowl{-webkit-mask-image:radial-gradient(closest-side,#000 62%,transparen
 .inside4{top:calc(365*var(--U) - var(--dyh,0px) + var(--st,0px))!important}
 .inside4 + .gline{top:calc(458.5*var(--U) - var(--dy,0px) + var(--st,0px))!important}.vals + .gline{top:calc(568.5*var(--U) - var(--dy,0px) + var(--st,0px))!important}
 .t{top:calc(470*var(--U) - var(--dy,0px) + var(--st,0px))!important}.vals{top:calc(522*var(--U) - var(--dy,0px) + var(--st,0px))!important}#buy.cta{top:calc(598*var(--U) - var(--dy,0px) + var(--st,0px))!important}.gift{top:calc(653*var(--U) - var(--dy,0px) + var(--st,0px))!important}.nav{top:calc(703.6*var(--U) - var(--dy,0px) + var(--st,0px))!important}
-html{font-synthesis-weight:none}   /* Dela Gothic One has one weight: never fake-bold it */
+html{font-synthesis-weight:none}
+/* 2026-11-25 Account: Gift Points card (Sharon) */
+#scr .gpcard{position:relative;overflow:hidden;border-radius:16px;border:0;background:radial-gradient(120% 90% at 100% 0%,rgba(0,154,73,.28),transparent 60%),linear-gradient(180deg,#131715,#0a0c0b);box-shadow:inset 0 0 0 1px rgba(25,184,95,.45),0 0 14px rgba(0,154,73,.14)}
+#scr .gpc-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+#scr .gpc-bal{display:flex;align-items:center;gap:8px;margin-top:8px}
+#scr .gpc-bal #gpcIco{display:flex;filter:drop-shadow(0 0 6px rgba(25,184,95,.6))}
+#scr .gpc-bal b{font:700 34px/1 Inter,sans-serif;font-variant-numeric:tabular-nums;color:#fff}
+#scr .gpc-bal small{font:700 13px Inter,sans-serif;color:#3ddc84;letter-spacing:.5px;align-self:flex-end;margin-bottom:4px}
+#scr .gpc-shop{display:inline-flex;align-items:center;gap:4px;height:34px;padding:0 12px;border-radius:9px;border:1px solid #3ddc84;background:linear-gradient(180deg,#19b85f,#008a40);color:#fff;font:400 12px 'Dela Gothic One',sans-serif;letter-spacing:.5px;box-shadow:0 0 12px rgba(0,154,73,.45);cursor:pointer;flex:none}
+#scr .gpc-row{display:grid;grid-template-columns:repeat(3,1fr);margin-top:16px;border-top:1px solid rgba(255,255,255,.08);padding-top:12px}
+#scr .gpc-row>div{display:flex;flex-direction:column;gap:4px}
+#scr .gpc-row>div+div{border-left:1px solid rgba(255,255,255,.08);padding-left:12px}
+#scr .gpc-row small{font:600 11px Inter,sans-serif;color:#9aa39e}
+#scr .gpc-row b{font:700 17px Inter,sans-serif;font-variant-numeric:tabular-nums;color:#fff}
+#scr .gpc-note{margin:12px 0 0;font:500 12px/1.4 Inter,sans-serif;color:#9aa39e}
+   /* Dela Gothic One has one weight: never fake-bold it */
 /* 2026-11-25 box name under the box (Sharon): big gold display font, left aligned, up to 2 lines; WHAT'S INSIDE and the rest follow it (--nh = extra line height) */
 .t{top:calc(331*var(--U) - var(--dyh,0px) + var(--st,0px))!important;left:calc(22*var(--U))!important;right:calc(22*var(--U))!important;text-align:left!important}
 .inside4{top:calc(378*var(--U) + var(--nh,0px) - var(--dyh,0px) + var(--st,0px))!important}
@@ -1343,6 +1358,9 @@ html,body{overscroll-behavior:none}
    <div class="acard"><div class="lab">BALANCE</div><div class="bal" id="aBal">$0</div>
     <div class="kv">Withdrawable <b id="aWd">$0</b></div><button type="button" class="kv gp-kv" id="aGpRow">Gift Points <b><span class="gp-i"></span><span id="aGp">0</span> <i>Shop ›</i></b></button>
     <div class="two"><button class="btn w" id="depBtn">DEPOSIT</button><button class="btn" id="wdBtn">WITHDRAW</button></div></div>
+   <div class="acard gpcard" id="gpCard"><div class="gpc-top"><div><div class="lab">GIFT POINTS</div><div class="gpc-bal"><span id="gpcIco"></span><b id="gpcBal">0</b><small>GP</small></div></div><button type="button" class="gpc-shop" id="gpcShop">GIFT SHOP <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button></div>
+    <div class="gpc-row"><div><small>Earned</small><b id="gpcEarn">0</b></div><div><small>Spent on gifts</small><b id="gpcSpent">0</b></div><div><small>To collect</small><b id="gpcPend">0</b></div></div>
+    <p class="gpc-note">You get 1 GP for every $1 a box reveals below its price. Spend GP in the Gift Shop.</p></div>
    <div class="acard"><div style="font-size:16px;font-weight:600">Refer a Friend</div><div class="psub">Give $5, get $5 after their first purchase.</div>
     <button class="code" id="copyCode" style="width:100%"><span><span class="lab" style="display:block;font-size:9px;letter-spacing:2px;color:var(--dim)">YOUR CODE</span><b>MBX7Q2KD</b></span><span class="pill acc">COPY</span></button>
     <div class="kv">Referrals <b id="refN">0</b></div><div class="kv">Earned <b id="refE">$0</b></div></div>
@@ -1861,7 +1879,9 @@ function startMusic(openAt){if(!S.sound||!ac())return{stop(){},cut(){}};
 let tt;function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),2200)}
 
 /* ---------- balance ---------- */
-function paintBal(){$('#bal').textContent=money(S.bal);$('#aBal').textContent=money(S.bal);$('#aWd').textContent=money(S.bal);$('#aGp').textContent=S.gp.toLocaleString();$('#giftCount').textContent=S.gifts+' sent ›'}
+function paintBal(){$('#bal').textContent=money(S.bal);$('#aBal').textContent=money(S.bal);$('#aWd').textContent=money(S.bal);$('#aGp').textContent=S.gp.toLocaleString();$('#giftCount').textContent=S.gifts+' sent ›';paintGpCard()}
+function paintGpCard(){const c=document.getElementById('gpCard');if(!c)return;const pr=window.GP_PRICE||(()=>0),sp=(S.gpOrders||[]).reduce((a,o)=>a+(o.gp||pr(o.id)),0),g=S.gp||0,f=n=>Math.round(n).toLocaleString();
+ const ic=document.getElementById('gpcIco');if(ic&&!ic.firstChild&&typeof gpIco==='function')ic.innerHTML=gpIco(30);document.getElementById('gpcBal').textContent=f(g);document.getElementById('gpcEarn').textContent=f(g+sp);document.getElementById('gpcSpent').textContent=f(sp);document.getElementById('gpcPend').textContent=f(S.gpPending||0)}
 
 /* ---------- hero carousel ---------- */
 const track=$('#track'),dots=$('#dots'),hero=$('#hero');
@@ -4131,12 +4151,13 @@ window.MB_PH=['backpack','beanie','bottleblack','bottlegreen','candle','cap','ca
     if(!v('#gN')||!v('#gA')||!v('#gC')){er.textContent='Fill in name, street and city.';return}if(!/^\d{5}$/.test(v('#gZ'))){er.textContent='ZIP should be 5 digits.';return}
     S.addr={n:v('#gN'),a:v('#gA'),c:v('#gC'),z:v('#gZ')};save();order(p)})}
  function order(p){if(S.gp<p.gp){toast('Not enough GP');return}if(!p.gc&&S.bal<SHIP){closeSheet();toast(`Shipping costs ${money(SHIP)}. Add funds to your balance first.`);return}if(!p.gc){S.bal=+(S.bal-SHIP).toFixed(2)}const from=S.gp;S.gp-=p.gp;
-  S.gpOrders.unshift(p.gc?{id:p.id,t:Date.now(),cm:S.cmUser}:{id:p.id,t:Date.now(),ship:SHIP,city:S.addr&&S.addr.c,trk:'UPS · 1Z'+Math.random().toString(36).slice(2,9).toUpperCase()});save();try{paintBal()}catch(_){}closeSheet();
+  S.gpOrders.unshift(p.gc?{id:p.id,gp:p.gp,t:Date.now(),cm:S.cmUser}:{id:p.id,gp:p.gp,t:Date.now(),ship:SHIP,city:S.addr&&S.addr.c,trk:'UPS · 1Z'+Math.random().toString(36).slice(2,9).toUpperCase()});save();try{paintBal()}catch(_){}closeSheet();
   const el=document.getElementById('gsBal'),t0=performance.now();const tk=n=>{const u=Math.min(1,(n-t0)/700);el.textContent=fmt(from+(S.gp-from)*(1-Math.pow(1-u,3)));if(u<1)requestAnimationFrame(tk)};requestAnimationFrame(tk);
   try{SFX.coin()}catch(_){}try{navigator.vibrate&&navigator.vibrate([10,30,16])}catch(_){}
   toast(p.gc?`${p.n} added to CrashMania · ${S.cmUser}`:`Ordered · ${p.n} ships to ${S.addr.c} · ${money(SHIP)} shipping`);setTimeout(()=>{if(F!=='ord')render()},50)}
  // account row opens the shop
  const ar=document.getElementById('aGpRow');if(ar)ar.onclick=()=>openGShop();
+ const gc=document.getElementById('gpcShop');if(gc)gc.onclick=()=>openGShop();window.GP_PRICE=id=>(P.find(x=>x.id===id)||{}).gp||0;try{paintGpCard()}catch(_){}
  try{paintBal()}catch(_){}
 })();
 </script>
