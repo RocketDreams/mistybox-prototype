@@ -3881,6 +3881,11 @@ if(document.getElementById('boot'))addEventListener('mb-booted',go,{once:true});
 #gshop .gs-desc{font:500 11.5px/1.35 Inter,sans-serif;color:#9aa39e;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 #gshop .gs-row .gs-price{margin-top:2px;font-size:17px}
 #gshop .gs-chev{flex:none;color:#6c7470}
+/* 2026-11-25 item sheet: product on a white carbon tile (Sharon: no grey backdrop) */
+.gs-sheet .gs-big.wcarb{width:230px;height:230px;margin:0 auto 12px;background:radial-gradient(75% 70% at 50% 35%,rgba(255,255,255,.75),rgba(255,255,255,0) 70%),radial-gradient(120% 100% at 50% 100%,rgba(0,0,0,.18),transparent 60%),linear-gradient(rgba(255,255,255,.3),rgba(255,255,255,.3)),url(assets/wcarbon.png) 0 0/30px 30px,#eceeef;box-shadow:inset 0 0 0 1.5px rgba(25,184,95,.85);clip-path:polygon(16px 0,100% 0,100% calc(100% - 16px),calc(100% - 16px) 100%,0 100%,0 16px)}
+.gs-sheet .gs-big.wcarb img{width:80%;height:80%;object-fit:contain;filter:drop-shadow(0 10px 12px rgba(0,0,0,.35))}
+.gs-sheet .gs-big.wcarb img.fill{width:100%;height:100%;object-fit:cover;filter:none}
+
 
 #gshop .gs-ord{display:flex;align-items:center;gap:12px;padding:10px 12px;margin-bottom:10px;border:1px solid rgba(255,255,255,.14);background:#0d0d10;clip-path:polygon(12px 0,100% 0,100% calc(100% - 12px),calc(100% - 12px) 100%,0 100%,0 12px)}
 #gshop .gs-ord svg{width:56px;height:56px;flex:none}
@@ -4077,7 +4082,7 @@ window.MB_PH=['backpack','beanie','bottleblack','bottlegreen','candle','cap','ca
  // ---- product sheet → address → order
  const addrHTML=()=>S.addr?`<div class="gs-addr"><div><small>SHIP TO</small>${esc(S.addr.n)}<br>${esc(S.addr.a)}, ${esc(S.addr.c)} ${esc(S.addr.z)}</div><button type="button" id="gsChg">Change</button></div>`:'';
  function openItem(p){const need=p.gp-S.gp;
-  openSheet(p.n,`<div class="gs-sheet"><div class="gs-big">${art(p.a)}</div><div class="gs-p">${gpIco(22)}${fmt(p.gp)} GP</div><p class="gs-d">${esc(p.d)}<br>${p.gc?'Delivered instantly to your CrashMania account. Crash Coins are for social play and have no cash value.':`Paid with GP. Shipping ${money(SHIP)}, paid from your $ balance.`}</p>
+  openSheet(p.n,`<div class="gs-sheet"><div class="gs-big wcarb">${hexArt(p.a)}</div><div class="gs-p">${gpIco(22)}${fmt(p.gp)} GP</div><p class="gs-d">${esc(p.d)}<br>${p.gc?'Delivered instantly to your CrashMania account. Crash Coins are for social play and have no cash value.':`Paid with GP. Shipping ${money(SHIP)}, paid from your $ balance.`}</p>
    ${need>0?`<button class="cta sm" disabled>YOU NEED ${fmt(need)} MORE GP</button><p class="note">You have ${fmt(S.gp)} GP. Open boxes to collect more.</p>`:`${p.gc?(S.cmUser?`<div class="gs-addr"><div><small>CRASHMANIA ACCOUNT</small>${esc(S.cmUser)}</div><button type="button" id="gsChg">Change</button></div>`:''):addrHTML()}<button class="cta sm" id="gsGet">${p.gc?(S.cmUser?'GET CRASH COINS':'GET IT · LINK CRASHMANIA'):S.addr?`GET IT · ${fmt(p.gp)} GP + ${money(SHIP)}`:'GET IT · ADD ADDRESS'}</button><p class="note">${p.gc?`${fmt(p.gp)} GP will be taken from your balance.`:`${fmt(p.gp)} GP + ${money(SHIP)} shipping from your $ balance.`}</p>`}</div>`,
    el=>{el.parentElement&&el.parentElement.classList.add('gs-wrap');const g=el.querySelector('#gsGet'),c=el.querySelector('#gsChg');
     if(c)c.onclick=()=>p.gc?cmForm(p):addrForm(p);if(g)g.onclick=()=>p.gc?(S.cmUser?order(p):cmForm(p)):(S.addr?order(p):addrForm(p))})}
