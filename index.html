@@ -4385,7 +4385,7 @@ html.desk[data-dv=boxes] #dk .dk-sd{display:none!important}
 @media (max-width:1380px){#dk .dk-bar{padding:0 24px}#dk .dk-nv button{padding:0 10px;font-size:13px;gap:6px}#dk .dk-nv svg{width:16px;height:16px}#dk .dk-gp{padding:0 10px;font-size:14px}#dk .dk-wl{font-size:15px;padding-left:14px}}
 html.desk #scr #views:has(#v-boxes.on){padding-top:0!important}
 html.desk[data-dv=boxes] #scr#scr#scr#scr #v-boxes{margin:0 auto!important;max-width:1180px;min-height:calc(100vh - 76px)!important}
-html.desk[data-dv=boxes] #scr#scr#scr#scr .hero{left:0!important;right:auto!important;width:56%!important;top:16px!important;height:calc(100vh - 76px - 56px)!important}
+html.desk[data-dv=boxes] #scr#scr#scr#scr .hero{left:0!important;right:auto!important;width:56%!important;--hH:min(calc(100vh - 76px - 150px),540px);height:var(--hH)!important;top:calc((100vh - 76px - var(--hH)) / 2 + 20px)!important}   /* wide canvas so wide boxes (Santa, bags) are never cut */
 html.desk[data-dv=boxes] #scr#scr#scr#scr #hero3d,html.desk[data-dv=boxes] #scr#scr#scr#scr #hero3dg{left:0!important;top:0!important;width:100%!important;height:100%!important}
 html.desk[data-dv=boxes] #scr#scr#scr#scr .arrow{top:calc(50% - 24px)!important;width:48px!important;height:48px!important}
 html.desk[data-dv=boxes] #scr#scr#scr#scr .arrow.l{left:12px!important}html.desk[data-dv=boxes] #scr#scr#scr#scr .arrow.r{left:calc(100% - 60px)!important}
@@ -4436,6 +4436,11 @@ html.desk[data-dv=boxes] #dk .dk-cats,html.desk[data-dv=boxes] #dk .dk-vip{displ
 #dk .dk-vip .bar i{display:block;height:100%;background:linear-gradient(90deg,#00702f,#3ddc84)}
 #dk .dk-vip .tx span{font:500 11.5px Inter,sans-serif;color:#c3c7cf}
 #dk .dk-vip .tx span em{font-style:normal;color:#e8c45a;font-weight:700}
+
+#dk .dk-vip .gf{width:46px;height:46px;flex:none;filter:drop-shadow(0 0 8px rgba(43,255,142,.45));animation:dkGift 2.4s ease-in-out infinite}
+#dk .dk-vip .gf svg{width:100%;height:100%}
+@keyframes dkGift{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-3px) rotate(-4deg)}}
+#dk .dk-vip{width:390px}
 </style>
 <div id="dk" aria-hidden="false">
  <div class="dk-bk"><svg id="dkHex"></svg></div>
@@ -4444,7 +4449,7 @@ html.desk[data-dv=boxes] #dk .dk-cats,html.desk[data-dv=boxes] #dk .dk-vip{displ
   <div class="dk-tr"><button class="dk-gp" id="dkGp" type="button">⬢ <span>0</span> <small>GP</small></button><button class="dk-wl" id="dkWl" type="button" aria-label="Add funds"><span>$0</span><i>+</i></button></div></div>
 
  <div class="dk-cats" id="dkCats" role="tablist" aria-label="Categories"></div>
- <button class="dk-vip" id="dkVip" type="button" aria-label="VIP level and loyalty progress"><span class="lv" id="dkVipLv"></span><span class="tx"><b id="dkVipT">VIP LEVEL</b><span class="bar"><i id="dkVipBar"></i></span><span id="dkVipS"></span></span></button>
+ <button class="dk-vip" id="dkVip" type="button" aria-label="VIP level and loyalty progress"><span class="lv" id="dkVipLv"></span><span class="tx"><b id="dkVipT">VIP LEVEL</b><span class="bar"><i id="dkVipBar"></i></span><span id="dkVipS"></span></span><span class="gf" id="dkVipGift" title="Your next VIP gift"></span></button>
  <aside class="dk-sd l"><div class="dk-pn dk-fr"><div class="dk-eb">What's inside</div><div id="dkIn" style="margin-top:8px"></div><button class="dk-lk" id="dkOdds" type="button">See every watch &amp; its probability →</button></div></aside>
  <aside class="dk-sd r"><div class="dk-pn dk-fr"><div class="dk-row"><div><div class="dk-eb">Leaderboard · this week</div><div class="dk-big" id="dkPts">0</div></div><button class="dk-lk" style="margin:0" data-go="leaderboard" type="button">View →</button></div></div>
   <div class="dk-pn dk-fr"><div class="dk-row"><div><div class="dk-eb">Gift Points</div><div class="dk-big" id="dkGp2" style="color:#3ddc84">0</div></div><button class="dk-lk" style="margin:0" id="dkShop" type="button">Gift Shop →</button></div></div>
@@ -4494,6 +4499,7 @@ html.desk[data-dv=boxes] #dk .dk-cats,html.desk[data-dv=boxes] #dk .dk-vip{displ
  const uid=(h,t)=>h.replace(/id="([^"]+)"/g,'id="$1-'+t+'"').replace(/url\(#([^)]+)\)/g,'url(#$1-'+t+')');   // the app's drawer copies are hidden, so give the cloned gradients their own ids
  cats.innerHTML=[...document.querySelectorAll('#cats .mb-cat')].map(b=>{const c=b.dataset.c,live=c==='watches'||c==='bags';return `<button type="button" data-c="${c}" class="${live?'':'soon'}">${uid(b.querySelector('svg').outerHTML,'dk'+c)}${b.textContent.trim()}${live?'':'<small>SOON</small>'}</button>`}).join('');
  cats.addEventListener('click',e=>{const b=e.target.closest('[data-c]');if(b&&window.MBCat)MBCat.pick(b.dataset.c)});
+ {const g=document.querySelector('#dwLoyal .mb-gift svg');if(g)document.getElementById('dkVipGift').innerHTML=uid(g.outerHTML,'dkgift')}
  const lvH=n=>`<svg viewBox="0 0 48 54"><defs><linearGradient id="dkvg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f4f5f7"/><stop offset=".4" stop-color="#8e939b"/><stop offset=".7" stop-color="#e9ebee"/><stop offset="1" stop-color="#7e838b"/></linearGradient></defs><polygon points="24,1 47,14 47,40 24,53 1,40 1,14" fill="url(#dkvg)"/><polygon points="24,6 42,16.5 42,37.5 24,48 6,37.5 6,16.5" fill="#0d0e11"/><text x="24" y="34" text-anchor="middle" font-family="Archivo,sans-serif" font-weight="900" font-size="20" fill="#fff">${n}</text></svg>`;
  vip.onclick=()=>{const g=document.querySelector('#dwLoyal .mb-gift');if(g)g.click();const tip=document.getElementById('gift-tip');if(tip&&typeof toast==='function')toast((tip.querySelector('small')?.textContent||'')+': '+(tip.querySelector('b')?.textContent||'')+' · '+(tip.querySelector('span')?.textContent||''))};
  const syncX=()=>{if(window.MBCat)cats.querySelectorAll('[data-c]').forEach(b=>b.classList.toggle('on',b.dataset.c===MBCat.cat));
