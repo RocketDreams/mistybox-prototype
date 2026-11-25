@@ -4292,4 +4292,88 @@ window.MB_PH=['backpack','beanie','bottleblack','bottlegreen','candle','cap','ca
  SFX.coin=function(){if(!on())return;tone([[146.8,.11,.5],[220,.07,.45],[293.7,.05,.4],[440,.012,.2]],AC.currentTime+.02,.02)};
 })();
 </script>
+<style id="desk-css">
+/* ===== Desktop shell (Sharon 2026-11-25): RVL desktop structure, MistyBox design. The app column stays the phone app; the shell adds top dk-bar, side panels, hex backdrop ===== */
+#dk{display:none}
+html.desk .phone{z-index:2!important}
+html.desk body{background:#050407;overflow:hidden}
+html.desk #dk{display:block}
+html.desk .stage-glow,html.desk .snd{display:none!important}
+html.desk .phone{left:50%!important;top:76px!important;transform:translateX(-50%)!important;width:470px!important;height:calc(100vh - 76px)!important;border-radius:0!important;padding:0!important;background:none!important;box-shadow:0 0 0 1px rgba(255,255,255,.07),0 0 80px rgba(0,0,0,.9)!important}
+html.desk .screen{width:100%!important;height:100%!important;border-radius:0!important}
+html.desk #top .mklogo,html.desk #burger,html.desk #walletBtn,html.desk #nav{display:none!important}
+#dk .dk-bk{position:fixed;inset:0;z-index:0;pointer-events:none}
+#dk .dk-bk svg{width:100%;height:100%}
+#dk .dk-bar{position:fixed;left:0;right:0;top:0;height:76px;z-index:30;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:0 36px;background:rgba(5,4,7,.86);backdrop-filter:blur(14px);border-bottom:1px solid rgba(255,255,255,.09);font-family:Inter,sans-serif;color:#fff}
+#dk .dk-bar .dk-lg{height:24px;cursor:pointer}
+#dk .dk-fr{position:relative;isolation:isolate;background:linear-gradient(135deg,#f4f5f7,#8e939b 40%,#e9ebee 70%,#7e838b);--c:14px;clip-path:polygon(var(--c) 0,100% 0,100% calc(100% - var(--c)),calc(100% - var(--c)) 100%,0 100%,0 var(--c))}
+#dk .dk-fr::before{content:"";position:absolute;inset:1.5px;z-index:-1;background:#101013;clip-path:polygon(calc(var(--c) - .6px) 0,100% 0,100% calc(100% - var(--c) + .6px),calc(100% - var(--c) + .6px) 100%,0 100%,0 calc(var(--c) - .6px))}
+#dk .dk-nv{display:flex;gap:6px;padding:5px;--c:12px}
+#dk .dk-nv button{display:flex;align-items:center;gap:8px;height:40px;padding:0 18px;font:600 14px Inter,sans-serif;color:#c3c7cf;background:none;border:0;cursor:pointer;position:relative;z-index:1}
+#dk .dk-nv button:hover{color:#fff}
+#dk .dk-nv button.on{background:linear-gradient(135deg,#f4f5f7,#8e939b 40%,#e9ebee 70%,#7e838b);color:#0b0b0d;clip-path:polygon(9px 0,100% 0,100% calc(100% - 9px),calc(100% - 9px) 100%,0 100%,0 9px)}
+#dk .dk-nv svg{width:18px;height:18px}
+#dk .dk-tr{justify-self:end;display:flex;align-items:center;gap:12px}
+#dk .dk-gp{display:flex;align-items:center;gap:7px;height:42px;padding:0 14px;border:1px solid rgba(25,184,95,.55);background:rgba(0,154,73,.12);font:700 15px Inter,sans-serif;color:#fff;cursor:pointer;clip-path:polygon(0 0,100% 0,100% calc(100% - 9px),calc(100% - 9px) 100%,0 100%)}
+#dk .dk-gp small{font:600 11px Inter,sans-serif;color:#3ddc84}
+#dk .dk-wl{display:flex;align-items:center;gap:12px;height:44px;padding:0 4px 0 18px;border:1px solid rgba(255,255,255,.22);border-radius:22px;background:#0c0c0e;font:700 17px Inter,sans-serif;color:#fff;cursor:pointer}
+#dk .dk-wl i{width:34px;height:34px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff,#c9ccd2);display:grid;place-items:center;color:#111;font:700 20px Inter,sans-serif;font-style:normal}
+#dk .dk-sd{position:fixed;top:104px;width:300px;z-index:5;font-family:Inter,sans-serif;color:#fff;display:none;flex-direction:column;gap:14px}
+html.desk[data-dv=boxes] #dk .dk-sd{display:flex}
+#dk .dk-sd.l{right:calc(50% + 235px + 28px)}#dk .dk-sd.r{left:calc(50% + 235px + 28px)}
+#dk .dk-pn{padding:18px 20px;--c:16px}
+#dk .dk-eb{font:700 11px Inter,sans-serif;letter-spacing:2.4px;text-transform:uppercase;color:#8f9893}
+#dk .dk-wi{display:flex;align-items:center;gap:12px;padding:9px 0;border-top:1px solid rgba(255,255,255,.08)}
+#dk .dk-wi:first-child{border:0}
+#dk .dk-wi img{width:50px;height:50px;object-fit:contain;flex:none}
+#dk .dk-wi b{display:block;font:700 14px Inter,sans-serif}#dk .dk-wi small{display:block;font:500 12px Inter,sans-serif;color:#8f9893;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:130px}
+#dk .dk-wi em{margin-left:auto;font:800 14px Archivo,sans-serif;font-stretch:125%;font-style:normal}
+#dk .dk-lk{display:block;white-space:nowrap;margin-top:12px;font:700 13px Inter,sans-serif;color:#3ddc84;background:none;border:0;cursor:pointer;padding:0}
+#dk .dk-big{font:900 26px Archivo,sans-serif;font-stretch:125%;margin-top:4px}
+#dk .dk-row{display:flex;justify-content:space-between;align-items:flex-end;gap:10px}
+#dk .dk-bxs{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px}
+#dk .dk-bxs button{padding:6px 4px 5px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.1);cursor:pointer;color:#fff;clip-path:polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px)}
+#dk .dk-bxs button.on{border-color:#19b85f;background:rgba(0,154,73,.18)}
+#dk .dk-bxs img{width:100%;aspect-ratio:1;object-fit:contain;display:block}
+#dk .dk-bxs b{display:block;font:800 10.5px Archivo,sans-serif;font-stretch:125%;margin-top:2px}
+</style>
+<div id="dk" aria-hidden="false">
+ <div class="dk-bk"><svg id="dkHex"></svg></div>
+ <div class="dk-bar"><img class="dk-lg" src="assets/logo-white.png" alt="MistyBox" data-go="boxes">
+  <nav class="dk-nv dk-fr" aria-label="Main"></nav>
+  <div class="dk-tr"><button class="dk-gp" id="dkGp" type="button">⬢ <span>0</span> <small>GP</small></button><button class="dk-wl" id="dkWl" type="button" aria-label="Add funds"><span>$0</span><i>+</i></button></div></div>
+ <aside class="dk-sd l"><div class="dk-pn dk-fr"><div class="dk-eb">What's inside</div><div id="dkIn" style="margin-top:8px"></div><button class="dk-lk" id="dkOdds" type="button">See every watch &amp; its probability →</button></div></aside>
+ <aside class="dk-sd r"><div class="dk-pn dk-fr"><div class="dk-row"><div><div class="dk-eb">Leaderboard · this week</div><div class="dk-big" id="dkPts">0</div></div><button class="dk-lk" style="margin:0" data-go="leaderboard" type="button">View →</button></div></div>
+  <div class="dk-pn dk-fr"><div class="dk-row"><div><div class="dk-eb">Gift Points</div><div class="dk-big" id="dkGp2" style="color:#3ddc84">0</div></div><button class="dk-lk" style="margin:0" id="dkShop" type="button">Gift Shop →</button></div></div>
+  <div class="dk-pn dk-fr"><div class="dk-eb">All boxes</div><div class="dk-bxs" id="dkBx"></div></div></aside>
+</div>
+<script id="desk-js">
+(()=>{const R=document.documentElement,MQ=matchMedia('(min-width:1100px) and (hover:hover)'),$=s=>document.querySelector(s);
+ const ICO={boxes:'<path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"/><path d="M4 7.5l8 4.5 8-4.5M12 12v9"/>',showroom:'<path d="M4 10h16v10H4zM3 6l2-3h14l2 3v4H3z"/><path d="M10 20v-5h4v5"/>',collection:'<path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13l9 5 9-5"/>',leaderboard:'<path d="M8 4h8v6a4 4 0 01-8 0z"/><path d="M8 6H5a3 3 0 003 4M16 6h3a3 3 0 01-3 4M12 14v4M8 21h8"/>',account:'<circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4-6 8-6s7 2 8 6"/>'};
+ $('#dk .dk-nv').innerHTML=Object.keys(ICO).map(v=>`<button type="button" data-go="${v}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round">${ICO[v]}</svg>${v[0].toUpperCase()+v.slice(1)}</button>`).join('');
+ const go=v=>{const b=document.querySelector(`#nav button[data-v="${v}"]`);if(b)b.click();else if(typeof show==='function')show(v)};
+ document.getElementById('dk').addEventListener('click',e=>{const g=e.target.closest('[data-go]');if(g){go(g.dataset.go);return}
+  const bx=e.target.closest('[data-bx]');if(bx){const i=+bx.dataset.bx;go('boxes');if(typeof cur!=='undefined'&&i!==cur)window.go(i,i>cur?1:-1);return}});
+ $('#dkWl').onclick=()=>$('#walletBtn').click();
+ $('#dkGp').onclick=$('#dkShop').onclick=()=>{if(window.openGShop)openGShop()};
+ $('#dkOdds').onclick=()=>{if(typeof openOdds==='function')openOdds(cur)};
+ const money=v=>'$'+(+v).toLocaleString(undefined,{minimumFractionDigits:v%1?2:0,maximumFractionDigits:2});
+ $('#dkBx').innerHTML=BOXES.filter(b=>b.cat!=='bags').slice(0,12).map(b=>`<button type="button" data-bx="${BOXES.indexOf(b)}" title="${b.tier}"><img src="${b.img}" alt="${b.tier}" loading="lazy"><b>${money(b.price)}</b></button>`).join('');
+ let lastCur=-1,lastSig='';
+ const sync=()=>{if(!R.classList.contains('desk'))return;const v=(document.getElementById('scr')||{}).dataset?.view||'boxes';R.dataset.dv=v;
+  document.querySelectorAll('#dk .dk-nv button').forEach(b=>b.classList.toggle('on',b.dataset.go===v));
+  const sig=S.bal+'|'+S.gp+'|'+S.pts;if(sig!==lastSig){lastSig=sig;$('#dkWl span').textContent=$('#bal').textContent;$('#dkGp span').textContent=(S.gp||0).toLocaleString();$('#dkGp2').textContent=(S.gp||0).toLocaleString();$('#dkPts').textContent=(S.pts||0).toLocaleString()}
+  if(typeof cur!=='undefined'&&cur!==lastCur){lastCur=cur;const b=BOXES[cur];const it=[...(b.items||[])].sort((a,c)=>c.price-a.price).slice(0,5);
+   $('#dkIn').innerHTML=it.map(w=>`<div class="dk-wi"><img src="${w.img}" alt=""><div><b>${w.brand}</b><small>${w.model}</small></div><em>${money(w.price)}</em></div>`).join('');
+   document.querySelectorAll('#dkBx button').forEach(x=>x.classList.toggle('on',+x.dataset.bx===cur))}};
+ const hex=()=>{const sv=$('#dkHex'),W=innerWidth,H=innerHeight,r=46,w=Math.sqrt(3)*r;let s='',k=0;const rnd=i=>{const x=Math.sin(i*99.13)*43758.5;return x-Math.floor(x)};
+  for(let y=-r,row=0;y<H+r;y+=r*1.5,row++)for(let x=(row%2?w/2:0)-w;x<W+w;x+=w){k++;const pts=[...Array(6)].map((_,i)=>{const a=Math.PI/180*(60*i-30);return(x+r*.93*Math.cos(a)).toFixed(1)+','+(y+r*.93*Math.sin(a)).toFixed(1)}).join(' ');
+   const fade=Math.max(.25,1-y/H*.9),lit=rnd(k)>.88;s+=`<polygon points="${pts}" fill="${lit?`rgba(0,154,73,${(.14+rnd(k+7)*.28)*fade})`:`rgba(255,255,255,${.02*fade+.008})`}" stroke="rgba(0,0,0,.6)" stroke-width="3"/>`}
+  sv.setAttribute('viewBox',`0 0 ${W} ${H}`);sv.innerHTML=s};
+ const apply=()=>{const on=MQ.matches;const was=R.classList.contains('desk');R.classList.toggle('desk',on);if(on)hex();
+  if(on!==was){try{fit()}catch(e){}requestAnimationFrame(()=>dispatchEvent(new Event('resize')))}};
+ const of=window.fit;if(typeof of==='function'){window.fit=function(){if(R.classList.contains('desk')){$('#phone').style.transform='';return}return of.apply(this,arguments)}}
+ MQ.addEventListener('change',apply);addEventListener('resize',()=>{if(R.classList.contains('desk'))hex()});apply();setInterval(sync,300);sync();
+})();
+</script>
 </body></html>
