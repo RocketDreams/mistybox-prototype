@@ -616,6 +616,16 @@ canvas.glowl{-webkit-mask-image:radial-gradient(closest-side,#000 62%,transparen
 .inside4{top:calc(365*var(--U) - var(--dyh,0px) + var(--st,0px))!important}
 .inside4 + .gline{top:calc(458.5*var(--U) - var(--dy,0px) + var(--st,0px))!important}.vals + .gline{top:calc(568.5*var(--U) - var(--dy,0px) + var(--st,0px))!important}
 .t{top:calc(470*var(--U) - var(--dy,0px) + var(--st,0px))!important}.vals{top:calc(522*var(--U) - var(--dy,0px) + var(--st,0px))!important}#buy.cta{top:calc(598*var(--U) - var(--dy,0px) + var(--st,0px))!important}.gift{top:calc(653*var(--U) - var(--dy,0px) + var(--st,0px))!important}.nav{top:calc(703.6*var(--U) - var(--dy,0px) + var(--st,0px))!important}
+/* 2026-11-25 box name under the box (Sharon): big gold Archivo, left aligned, up to 2 lines; WHAT'S INSIDE and the rest follow it (--nh = extra line height) */
+.t{top:calc(331*var(--U) - var(--dyh,0px) + var(--st,0px))!important;left:calc(22*var(--U))!important;right:calc(22*var(--U))!important;text-align:left!important}
+.inside4{top:calc(378*var(--U) + var(--nh,0px) - var(--dyh,0px) + var(--st,0px))!important}
+.inside4 + .gline{top:calc(471.5*var(--U) + var(--nh,0px) - var(--dy,0px) + var(--st,0px))!important}
+.vals{top:calc(485.5*var(--U) + var(--nh,0px) - var(--dy,0px) + var(--st,0px))!important}
+.vals + .gline{top:calc(532*var(--U) + var(--nh,0px) - var(--dy,0px) + var(--st,0px))!important}
+#buy.cta{top:calc(558*var(--U) + var(--nh,0px) - var(--dy,0px) + var(--st,0px))!important}
+.gift{top:calc(613*var(--U) + var(--nh,0px) - var(--dy,0px) + var(--st,0px))!important}
+#scr#scr#scr#scr #name{display:block!important;white-space:normal!important;text-align:left!important;font:900 calc(42*var(--U))/.98 Archivo,sans-serif!important;font-stretch:125%!important;font-style:normal!important;letter-spacing:1px!important;text-transform:uppercase;
+ background:none!important;color:#e9c15a!important;-webkit-text-fill-color:#e9c15a!important;text-shadow:0 2px 0 rgba(0,0,0,.35)!important;filter:none!important;transform:none!important;padding:0!important;max-width:100%}
 /* wallet grows with the balance (right-anchored) */
 .wallet{left:auto!important;right:calc(13.8*var(--U))!important;width:auto!important;min-width:calc(131*var(--U));display:flex!important;align-items:center;padding:0 calc(36*var(--U)) 0 calc(32*var(--U))!important}
 .wallet #bal{position:static!important;transform:none!important;white-space:nowrap}
@@ -1860,8 +1870,10 @@ const slides=BOXES.map((b,i)=>{const sl=document.createElement('div');sl.classNa
 let cur=0;
 const SHORT={bluecarbon:'Sky Carbon',pinata:'Piñata',puzzle:'Puzzle Cube',hearts:'Hearts',hoops:'Hoops',alu:'Aluminium',santa:'Santa',xmas:'Christmas',nye:'New Year',valentine:'Valentine',patrick:'Shamrock',eggs:'Easter',kings:'Kings',game:'Big Game'};
 const TITLE=b=>(SHORT[b.key]||b.tier).toUpperCase();   // short names, no 'BOX'
-function fitTitle(){const h=$('#name');if(!h)return;h.style.fontSize='';const max=h.parentElement.clientWidth*.9;let fs=parseFloat(getComputedStyle(h).fontSize);
- for(let i=0;i<20&&h.scrollWidth>max&&fs>14;i++){fs*=.94;h.style.setProperty('font-size',fs+'px','important')}}
+function fitTitle(){const h=$('#name');if(!h)return;h.style.fontSize='';const max=h.parentElement.clientWidth;let fs=parseFloat(getComputedStyle(h).fontSize);
+ const lh=()=>parseFloat(getComputedStyle(h).lineHeight)||fs;   // gold name under the box (2026-11-25): up to 2 lines, shrink only if a word overflows or it needs a 3rd line
+ for(let i=0;i<20&&(h.scrollWidth>max+1||h.offsetHeight>lh()*2.3)&&fs>14;i++){fs*=.94;h.style.setProperty('font-size',fs+'px','important')}
+ const sc=$('#scr');if(sc)sc.style.setProperty('--nh',Math.max(0,h.offsetHeight-lh()*1.15)+'px')}
 function paintBox(){const b=BOXES[cur];$('#name').textContent=TITLE(b);fitTitle();
  {const seen=new Set(),list=[...b.items].sort((x,y)=>y.price-x.price).filter(i=>!seen.has(i.id)&&seen.add(i.id));
   let top=list.slice(0,Math.max(15,Math.min(list.length,20)));while(top.length&&top.length<15)top=top.concat(list).slice(0,15);   // at least 15 in the strip
