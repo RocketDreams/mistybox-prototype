@@ -1171,6 +1171,9 @@ html,body{overscroll-behavior:none}
 .reveal .holo .hi img{max-width:164px!important;max-height:172px!important}
 .reveal .holo .hc{height:262px!important;width:330px!important}
 .reveal .holo-beam{width:460px!important;height:540px!important}
+/* 2026-11-25 Sharon: colour watch photos instead of cyan holograms */
+.reveal .holo .hi img,.reveal .holo .hlay .hi img{filter:drop-shadow(0 6px 14px rgba(0,0,0,.55))!important;opacity:1!important}
+.reveal .holo .hc::after{display:none!important}
 /* hologram text (2026-11-19, Sharon): big prices on every watch while it spins; the name shows only once the winner locks */
 .reveal .holo .hlay .hi .sp{display:none!important}
 .reveal .holo .hlay .ht{gap:2px!important;margin-top:4px!important}
@@ -2096,12 +2099,10 @@ function openBox(bi){const b=BOXES[bi];scr.scrollTop=0;const GIFT=window.__giftF
  // ---- canvas carousel (2026-11-19, Safari smoothness): while spinning, the watches are drawn on ONE canvas from pre-tinted
  // bitmaps (prepared during the box spin); at the lock it hands over to the DOM cards (full colour, name, close-up flight).
  const HC=holo.querySelector('.hc'),HCV=document.createElement('canvas');HCV.className='hcv';HC.appendChild(HCV);const HG=HCV.getContext('2d');
- const CDPR=Math.min(2,devicePixelRatio||1),TINT=window.__mbTint||(window.__mbTint=new Map());   // shared across openings (perf: no new canvases per open)let CV_ON=false,CG=null;
+ const CDPR=Math.min(2,devicePixelRatio||1),TINT=window.__mbCol||(window.__mbCol=new Map());   // shared across openings (perf: no new canvases per open)let CV_ON=false,CG=null;
  const tint=src=>TINT.has(src)?Promise.resolve():new Promise(res=>{const im=new Image();im.onload=()=>{try{const k=Math.min(164/im.naturalWidth,172/im.naturalHeight,1),w=Math.round(im.naturalWidth*k),h=Math.round(im.naturalHeight*k),
     c=document.createElement('canvas');c.width=Math.round(w*CDPR);c.height=Math.round(h*CDPR);const g=c.getContext('2d');g.drawImage(im,0,0,c.width,c.height);
-    const d=g.getImageData(0,0,c.width,c.height),a=d.data;for(let i=0;i<a.length;i+=4){const l=Math.pow((a[i]*.3+a[i+1]*.59+a[i+2]*.11)/255,.75);   // bright cyan hologram, white highlights (matches the old CSS filter)
-     a[i]=Math.min(255,18+215*l*l);a[i+1]=Math.min(255,92+200*l);a[i+2]=Math.min(255,104+190*l);a[i+3]=a[i+3]*.9}
-    g.putImageData(d,0,0);TINT.set(src,{c,w,h})}catch(e){}res()};im.onerror=()=>res();im.src=src});
+    /* 2026-11-25 Sharon: real colour watch photos, no cyan hologram tint */TINT.set(src,{c,w,h})}catch(e){}res()};im.onerror=()=>res();im.src=src});
  // one image at a time, spread over the box spin, so the opening never stalls
  const CV_READY=(async()=>{const U=[...new Set(STRIP.map(x=>x.img))];for(const u of U){if(TINT.has(u))continue;await tint(u);await new Promise(r=>setTimeout(r,0))}return U.every(u=>TINT.has(u))})();
  let CV_OK=false;CV_READY.then(v=>{CV_OK=v});
