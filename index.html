@@ -1257,7 +1257,19 @@ html,body{overscroll-behavior:none}
 #boot.sp-go .sp-w img{transition:transform .75s cubic-bezier(.16,.84,.24,1);transform:none}
 #boot.sp-go .sp-tag{transition:opacity .8s .4s ease,letter-spacing 1.2s .4s cubic-bezier(.16,.84,.24,1),padding 1.2s .4s cubic-bezier(.16,.84,.24,1);opacity:1;letter-spacing:4px;padding-left:4px}
 @media (prefers-reduced-motion:reduce){#boot.sp-go .sp-w img,#boot.sp-go .sp-tag{transition:none}}
-</style></head>
+/* 2026-11-25 Legal category in Account + in-app legal reader */
+.msec{margin:22px 20px 8px;font:700 11px/1 Inter,sans-serif;letter-spacing:2.4px;text-transform:uppercase;color:var(--mb-text-3,#8a918d)}
+.menu.legal{margin-top:0}
+.lgdoc{font:500 13.5px/1.55 Inter,sans-serif;color:#d6dbd8;padding:0 20px 28px}
+.lgdoc .lgup{font-size:11.5px;color:#8a918d;margin:0 0 12px}
+.lgdoc h2{font:900 14px/1.25 Archivo,sans-serif;font-stretch:125%;letter-spacing:.6px;text-transform:uppercase;color:#fff;margin:22px 0 8px}
+.lgdoc p,.lgdoc li{margin:0 0 9px}.lgdoc ul,.lgdoc ol{padding-left:20px;margin:0 0 10px}
+.lgdoc strong{color:#fff}.lgdoc a{color:#19b85f;text-decoration:underline}
+.lgdoc table{width:100%;border-collapse:collapse;margin:8px 0 14px;font-size:12px;display:block;overflow-x:auto}
+.lgdoc th,.lgdoc td{border:1px solid rgba(255,255,255,.12);padding:7px 8px;text-align:left;vertical-align:top}.lgdoc th{background:rgba(0,154,73,.14);color:#fff}
+.lgdoc blockquote{margin:10px 0;padding:8px 12px;border-left:3px solid #009a49;background:rgba(0,154,73,.08)}
+.foot a{color:inherit;text-decoration:underline;cursor:pointer}
+</style><script src="assets/legal.js"></script></head>
 <body>
 <div id="boot" role="status" aria-live="polite" aria-label="Loading MistyBox"><div class="bt-sw"></div><div class="bt-glow"></div><img class="bt-mark" src="assets/mark.png" alt="MistyBox"><div class="bt-bar"><i></i></div><div class="bt-txt">Loading <span id="bootPct">0%</span></div><div class="sp" aria-hidden="true"><div class="sp-w sp-l"><img src="assets/logo-white.png" alt=""></div><div class="sp-slot"></div><div class="sp-w sp-r"><img src="assets/logo-white.png" alt=""></div><div class="sp-tag">Luxury Shopping Reinvented</div></div></div>
 <div class="stage-glow" id="sg"></div>
@@ -1382,7 +1394,17 @@ html,body{overscroll-behavior:none}
     <button data-m="help">Help &amp; Support <span>›</span></button>
     <button data-m="reset">Reset demo <span>›</span></button>
    </div>
-   <div class="foot">Terms of Service · Privacy Policy · Refunds &amp; Sell-back · Shipping &amp; Delivery<br>© 2026 MistyBox · 18+</div>
+   <div class="msec">Legal &amp; policies</div>
+   <div class="menu legal" id="legalMenu">
+    <button data-lg="terms-of-service">Terms of Service <span>›</span></button>
+    <button data-lg="privacy-policy">Privacy Policy <span>›</span></button>
+    <button data-lg="cookie-policy">Cookie Policy <span>›</span></button>
+    <button data-lg="refunds-sell-back">Refunds &amp; Sell-back <span>›</span></button>
+    <button data-lg="shipping-delivery">Shipping &amp; Delivery <span>›</span></button>
+    <button data-lg="fairness">Item Values &amp; Provably Fair <span>›</span></button>
+    <button data-lg="responsible-purchasing">Responsible Purchasing <span>›</span></button>
+   </div>
+   <div class="foot"><a data-lg="terms-of-service">Terms of Service</a> · <a data-lg="privacy-policy">Privacy Policy</a> · <a data-lg="responsible-purchasing">Responsible Purchasing</a><br>© 2026 MistyBox · Rocket Dreams Inc. · 18+</div>
   </section>
  </div>
 
@@ -2461,6 +2483,10 @@ $('#promoF').onsubmit=e=>{e.preventDefault();const v=$('#promo').value.trim().to
  else $('#promoErr').textContent=v?`“${v}” isn’t a valid code. Check the spelling and try again.`:'Enter a code first.'};
 if(S.promo)$('#promos').textContent=S.promo+' · applied.';
 const HOW=`<div class="steps"><div><b>1. Choose a box</b>Every box shows its price, every watch it can hold, each watch’s fair market value and how often each rarity appears.</div><div><b>2. Open it</b>An independently verified system selects your watch. You always receive a real watch.</div><div><b>3. Decide</b>Keep it in your insured vault, ship it to your door, or sell it back instantly for 90% of fair market value.</div><div><b>4. Climb</b>Each open earns leaderboard points and Gift Points.</div></div>`;
+window.openLegal=k=>{const L=window.MB_LEGAL&&MB_LEGAL[k];if(!L){toast('Not available');return}
+ openSheet(L.t,`<div class="lgdoc">${L.h}</div>`,el=>{el.onclick=e=>{const a=e.target.closest('a[href]');if(!a)return;const h=a.getAttribute('href'),key=h.split('#')[0];
+  if(MB_LEGAL[key]){e.preventDefault();openLegal(key)}else if(/^https?:/.test(h)){a.target='_blank';a.rel='noopener'}}})};
+document.addEventListener('click',e=>{const b=e.target.closest('[data-lg]');if(!b)return;e.preventDefault();e.stopPropagation();openLegal(b.dataset.lg)},true);
 $('.menu').onclick=e=>{const b=e.target.closest('[data-m]');if(!b)return;const m=b.dataset.m;
  if(m==='how')openSheet('How it works',HOW);
  if(m==='prefs')openSheet('Preferences',`<div class="form"><label>BACKGROUND COLOUR</label><div class="mbx-bgs">${Object.entries(BGC).map(([k,v])=>`<button type="button" data-bg="${k}" class="${(S.bgc||'black')===k?'on':''}" aria-label="${v.n}"><i style="background:${v.c}"></i><span>${v.n}</span></button>`).join('')}</div>
@@ -2469,7 +2495,7 @@ $('.menu').onclick=e=>{const b=e.target.closest('[data-m]');if(!b)return;const m
  if(m==='country')openSheet('Shipping country',`<div class="form"><button class="btn w">🇺🇸 United States</button><p class="note">MistyBox ships to the United States only right now.</p></div>`);
  if(m==='gifts')openSheet('Gifts',`<div class="form"><p class="note">You’ve sent ${S.gifts} gift${S.gifts===1?'':'s'}.</p><button class="cta sm" id="gNew">SEND A GIFT</button></div>`,el=>el.querySelector('#gNew').onclick=()=>{closeSheet();show('boxes');setTimeout(()=>$('#giftBtn').click(),350)});
  if(m==='billing')openSheet('Billing & wallet',`<div class="form"><div class="kv" style="margin:0">Balance <b>${money(S.bal)}</b></div><div class="kv" style="margin:0">Card <b>•••• 4242 (demo)</b></div><button class="cta sm" id="bDep">ADD FUNDS</button></div>`,el=>el.querySelector('#bDep').onclick=()=>{closeSheet();setTimeout(openDeposit,300)});
- if(m==='help')openSheet('Help & Support',`<div class="steps"><div><b>Live chat</b>Mon–Fri, 9:00–18:00 ET.</div><div><b>Email</b>support@mistybox.com</div><div><b>Refunds & sell-back</b>Sell any vaulted watch back for 90% of fair market value, any time.</div></div>`);
+ if(m==='help')openSheet('Help & Support',`<div class="steps"><div><b>Live chat</b>Mon–Fri, 9:00–18:00 ET.</div><div><b>Email</b>support@mistybox.com</div><div><b>Refunds & sell-back</b>Sell any vaulted watch back for 90% of fair market value within 7 days. After 7 days it is sold back automatically.</div></div><button class="btn" data-lg="support" style="margin-top:12px">FAQ &amp; responsible purchasing</button>`);
  if(m==='reset'){S=JSON.parse(JSON.stringify(DEF));save();paintBal();renderCol();renderLB();paintSnd();toast('Demo reset')}};
 
 /* ---------- ticker ---------- */
@@ -3482,7 +3508,7 @@ au.innerHTML=`<div class="au-sw"></div><div class="au-glow"></div><div class="au
  <div class="au-or"><span></span>or with email<span></span></div>
  <label class="au-f"><span>Email</span><input id="auE" type="email" placeholder="you@example.com" autocomplete="email" inputmode="email"></label>
  <label class="au-f"><span>Password</span><input id="auP" type="password" placeholder="At least 6 characters" autocomplete="new-password"></label>
- <label class="au-ck"><input type="checkbox" id="auAge"><i></i><span>I’m 18 or older and agree to the <a href="#" onclick="return false">Terms</a> and <a href="#" onclick="return false">Privacy Policy</a>.</span></label>
+ <label class="au-ck"><input type="checkbox" id="auAge"><i></i><span>I’m 18 or older and agree to the <a href="#" data-lg="terms-of-service">Terms</a> and <a href="#" data-lg="privacy-policy">Privacy Policy</a>.</span></label>
  <div class="au-err" id="auErr" role="alert"></div>
  <button class="cta" type="button" id="auGo"><span id="auGoT">CREATE ACCOUNT</span> <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h16M14 6l6 6-6 6"/></svg></button>
  <p class="au-alt"><span id="auAltL">Already a member?</span> <button type="button" id="auMode">Sign in</button></p>
