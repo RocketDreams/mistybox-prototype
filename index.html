@@ -4336,6 +4336,47 @@ html.desk[data-dv=boxes] #dk .dk-sd{display:flex}
 #dk .dk-bxs button.on{border-color:#19b85f;background:rgba(0,154,73,.18)}
 #dk .dk-bxs img{width:100%;aspect-ratio:1;object-fit:contain;display:block}
 #dk .dk-bxs b{display:block;font:800 10.5px Archivo,sans-serif;font-stretch:125%;margin-top:2px}
+
+/* ===== Desktop wide pages (Sharon 2026-11-25: "not a mobile column"): every page except Boxes uses the full desktop width ===== */
+html.desk:not([data-dv=boxes]) .phone{width:min(1240px,calc(100vw - 64px))!important;box-shadow:none!important}
+html.desk:not([data-dv=boxes]) #scr .bg{opacity:0}
+html.desk:not([data-dv=boxes]) #scr{background:transparent!important}
+html.desk:not([data-dv=boxes]) #scr #top{display:none!important}
+html.desk:not([data-dv=boxes]) #scr #views{padding:36px 0 60px!important}
+html.desk:not([data-dv=boxes]) #scr .view.on{max-width:1180px;margin:0 auto}
+html.desk:not([data-dv=boxes]) #scr .view .pad{padding-left:0!important;padding-right:0!important}
+html.desk:not([data-dv=boxes]) #scr .view .ptitle{font-size:44px!important}
+html.desk:not([data-dv=boxes]) #scr .view .psub{font-size:15px!important;max-width:620px}
+/* showroom: search + chips row, 5-up grid */
+html.desk[data-dv=showroom] #v-showroom.on{display:grid!important;grid-template-columns:420px 1fr;column-gap:16px;align-items:center}
+html.desk[data-dv=showroom] #v-showroom>.pad{grid-column:1/-1}
+html.desk[data-dv=showroom] #v-showroom>.search{margin:18px 0 0!important}
+html.desk[data-dv=showroom] #v-showroom>.chips{margin:18px 0 0!important;padding:0!important;flex-wrap:wrap;overflow:visible!important}
+html.desk[data-dv=showroom] #v-showroom>.grid{grid-column:1/-1;grid-template-columns:repeat(5,1fr)!important;gap:14px!important;margin:22px 0 0!important;padding:0!important}
+/* collection: 3-up grid, sell-all inline */
+html.desk[data-dv=collection] #v-collection .chips,html.desk[data-dv=collection] #v-collection .mbx-vsub,html.desk[data-dv=collection] #v-collection .mbx-vbar{margin-left:0!important;margin-right:0!important;padding-left:0!important;padding-right:0!important}
+html.desk[data-dv=collection] #v-collection .chips{max-width:420px}
+html.desk[data-dv=collection] #scr .mbx-vhead{margin-top:0!important;min-height:0}
+html.desk[data-dv=collection] #scr .mbx-vhead .ptitle{font-size:44px!important}
+html.desk[data-dv=collection] #scr #colGrid{display:grid!important;grid-template-columns:repeat(3,1fr)!important;align-items:start;gap:14px!important;padding:0!important;margin:16px 0 0!important}
+html.desk[data-dv=collection] #v-collection .mbx-sellwrap{position:static!important;margin:22px 0 0!important;padding:0!important;background:none!important;display:flex;justify-content:flex-end}
+html.desk[data-dv=collection] #v-collection .mbx-sellwrap .cta{width:320px!important}
+/* leaderboard + account: header row, then two independent columns (#dkL/#dkR built by the desktop script) */
+html.desk[data-dv=leaderboard] #v-leaderboard.on,html.desk[data-dv=account] #v-account.on{display:grid!important;grid-template-columns:1fr 1fr;column-gap:36px;align-items:start}
+#v-leaderboard>.pad,#v-account>.pad{grid-column:1/-1}
+html.desk[data-dv=leaderboard] #v-leaderboard>.dk-lbhd{display:flex;flex-direction:column;align-items:flex-end;justify-content:flex-end;grid-column:2;grid-row:1}
+html.desk[data-dv=leaderboard] #v-leaderboard>.pad{grid-column:1;grid-row:1}
+html.desk[data-dv=leaderboard] .dk-lbhd .seg{margin:0!important;width:100%}
+html.desk[data-dv=leaderboard] .dk-lbhd #reset{margin:12px 0 0!important}
+html.desk:not([data-dv=boxes]) .dk-col>*{margin-left:0!important;margin-right:0!important}
+html.desk[data-dv=leaderboard] .dk-col .lb2-pod{padding:30px 0 0!important}
+html.desk[data-dv=leaderboard] .dk-col .lb2-ranks{margin-top:30px!important}
+html.desk[data-dv=leaderboard] .dk-col .lb2-cta{width:100%!important}
+html.desk[data-dv=leaderboard] .dk-col .sec{padding:0!important;margin-top:22px!important}
+html.desk[data-dv=leaderboard] .dk-col .lb2-r{height:64px}
+html.desk[data-dv=account] .dk-col>.acard,html.desk[data-dv=account] .dk-col>.menu{margin-top:0!important;margin-bottom:16px!important}
+/* sheets stay a centred panel on wide pages */
+html.desk:not([data-dv=boxes]) #scr .sheet{left:calc(50% - 320px)!important;right:calc(50% - 320px)!important}
 </style>
 <div id="dk" aria-hidden="false">
  <div class="dk-bk"><svg id="dkHex"></svg></div>
@@ -4370,9 +4411,21 @@ html.desk[data-dv=boxes] #dk .dk-sd{display:flex}
   for(let y=-r,row=0;y<H+r;y+=r*1.5,row++)for(let x=(row%2?w/2:0)-w;x<W+w;x+=w){k++;const pts=[...Array(6)].map((_,i)=>{const a=Math.PI/180*(60*i-30);return(x+r*.93*Math.cos(a)).toFixed(1)+','+(y+r*.93*Math.sin(a)).toFixed(1)}).join(' ');
    const fade=Math.max(.25,1-y/H*.9),lit=rnd(k)>.88;s+=`<polygon points="${pts}" fill="${lit?`rgba(0,154,73,${(.14+rnd(k+7)*.28)*fade})`:`rgba(255,255,255,${.02*fade+.008})`}" stroke="rgba(0,0,0,.6)" stroke-width="3"/>`}
   sv.setAttribute('viewBox',`0 0 ${W} ${H}`);sv.innerHTML=s};
- const apply=()=>{const on=MQ.matches;const was=R.classList.contains('desk');R.classList.toggle('desk',on);if(on)hex();
+ const apply=()=>{const on=MQ.matches;if(on)cols();const was=R.classList.contains('desk');R.classList.toggle('desk',on);if(on)hex();
   if(on!==was){try{fit()}catch(e){}requestAnimationFrame(()=>dispatchEvent(new Event('resize')))}};
  const of=window.fit;if(typeof of==='function'){window.fit=function(){if(R.classList.contains('desk')){$('#phone').style.transform='';return}return of.apply(this,arguments)}}
+ 
+ // wide pages: switch layout the moment the view changes; keep the app's unit at column size so nothing scales up
+
+ // two-column pages on desktop: move the existing nodes into column wrappers (ids and handlers stay the same)
+ const cols=()=>{const mk=(sec,left,right,hd)=>{const V=document.getElementById(sec);if(!V||V.querySelector('.dk-col'))return;
+   if(hd){const h=document.createElement('div');h.className='dk-lbhd';hd.forEach(q=>{const n=V.querySelector(q);if(n)h.appendChild(n)});V.insertBefore(h,V.children[1]||null)}
+   const L=document.createElement('div'),Rr=document.createElement('div');L.className=Rr.className='dk-col';
+   left.forEach(q=>V.querySelectorAll(':scope>'+q).forEach(n=>L.appendChild(n)));right.forEach(q=>V.querySelectorAll(':scope>'+q).forEach(n=>Rr.appendChild(n)));V.appendChild(L);V.appendChild(Rr)};
+  mk('v-leaderboard',['.lb2-pod','.lb2-me','.lb2-cta','.lb2-how'],['.lb2-ranks','.sec','.ppb'],['.seg','#reset']);
+  mk('v-account',['.acard'],['.menu:not(.legal)','.msec','.menu.legal','.foot'])};
+ const oShow=window.show;if(typeof oShow==='function'){window.show=function(v){const r=oShow.apply(this,arguments);if(R.classList.contains('desk')){R.dataset.dv=v;requestAnimationFrame(()=>{try{fitHero()}catch(e){}})}return r}}
+ const oFit=window.fitHero;if(typeof oFit==='function'){window.fitHero=function(){const r=oFit.apply(this,arguments);if(R.classList.contains('desk')){const sc=document.getElementById('scr'),u=470/393;sc.style.setProperty('--u',u);sc.style.setProperty('--U',u+'px')}return r}}
  MQ.addEventListener('change',apply);addEventListener('resize',()=>{if(R.classList.contains('desk'))hex()});apply();setInterval(sync,300);sync();
 })();
 </script>
