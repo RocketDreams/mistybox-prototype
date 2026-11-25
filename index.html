@@ -1273,7 +1273,8 @@ html,body{overscroll-behavior:none}
 /* Leaderboard v2 (Sharon 2026-11-25): exclusive Champion boxes (open, trophy/medal), hex rank badges, steel cut frames */
 #v-leaderboard{--lbsteel:linear-gradient(135deg,#f4f5f7,#8e939b 40%,#e9ebee 70%,#7e838b);--lbgold:linear-gradient(135deg,#f3dc8e 0%,#a8822f 40%,#e9c15a 70%,#7d5f1e 100%);--lbbr:linear-gradient(135deg,#f0b58a,#8a4a22 45%,#d98a52 75%,#6a3414)}
 #v-leaderboard .lb2-fr{position:relative;isolation:isolate;background:var(--lbsteel);--c:14px;clip-path:polygon(var(--c) 0,100% 0,100% calc(100% - var(--c)),calc(100% - var(--c)) 100%,0 100%,0 var(--c))}
-#v-leaderboard .lb2-fr::before{content:"";position:absolute;inset:1.5px;z-index:-1;background:#101013;clip-path:polygon(calc(var(--c) - .6px) 0,100% 0,100% calc(100% - var(--c) + .6px),calc(100% - var(--c) + .6px) 100%,0 100%,0 calc(var(--c) - .6px))}
+#scr#scr #v-leaderboard :is(.seg,.ppb)::before{background:rgba(8,8,10,.45)!important}
+#v-leaderboard .lb2-fr::before{content:"";position:absolute;inset:1.5px;z-index:-1;background:rgba(8,8,10,.45);clip-path:polygon(calc(var(--c) - .6px) 0,100% 0,100% calc(100% - var(--c) + .6px),calc(100% - var(--c) + .6px) 100%,0 100%,0 calc(var(--c) - .6px))}
 #scr #v-leaderboard #reset{display:flex;align-items:center;gap:8px;margin:14px 20px 0;font:600 10.5px Inter,sans-serif;letter-spacing:2.2px;color:#8f9893}
 #scr #v-leaderboard #reset::before{content:"";width:7px;height:7px;border-radius:50%;background:#19b85f;box-shadow:0 0 8px #19b85f;flex:none}
 #v-leaderboard .lb2-pod{display:grid;grid-template-columns:1fr 1.18fr 1fr;align-items:end;gap:8px;padding:18px 16px 0}
@@ -1289,7 +1290,7 @@ html,body{overscroll-behavior:none}
 #v-leaderboard .lb2-hex.none{background:#2a2d33;color:#cfd3da}
 #v-leaderboard .lb2-card{width:100%;--c:13px;padding:26px 4px 12px;display:flex;flex-direction:column;align-items:center;text-align:center}
 #v-leaderboard .first .lb2-card{background:var(--lbgold);padding:30px 4px 15px}
-#v-leaderboard .first .lb2-card::before{background:linear-gradient(180deg,#241c0b,#111114 70%)}
+#v-leaderboard .first .lb2-card::before{background:linear-gradient(180deg,rgba(60,44,8,.55),rgba(8,8,10,.4) 70%)}
 #v-leaderboard .lb2-who{font:700 14px Inter,sans-serif;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 #v-leaderboard .lb2-pts{font:800 13px Archivo,sans-serif;font-stretch:125%;color:#dfe3e1;margin-top:3px}
 #v-leaderboard .first .lb2-pts{color:#e8c45a;font-size:14px}
@@ -1310,7 +1311,7 @@ html,body{overscroll-behavior:none}
 #v-leaderboard .lb2-cut{display:flex;align-items:center;gap:10px;padding:8px 16px;font:700 9.5px Inter,sans-serif;letter-spacing:2px;color:#19b85f;text-transform:uppercase}
 #v-leaderboard .lb2-cut::before,#v-leaderboard .lb2-cut::after{content:"";flex:1;height:1px;background:repeating-linear-gradient(90deg,rgba(25,184,95,.6) 0 6px,transparent 6px 11px)}
 #v-leaderboard .lb2-me{margin:14px 16px 0;--c:16px;padding:18px;background:linear-gradient(135deg,#3ddc84,#00702f 45%,#19b85f 75%,#00552a)}
-#v-leaderboard .lb2-me::before{background:linear-gradient(160deg,#0d2318,#0f1110 60%)}
+#v-leaderboard .lb2-me::before{background:linear-gradient(160deg,rgba(0,80,40,.4),rgba(8,8,10,.45) 60%)}
 #v-leaderboard .lb2-lab{font:700 10px Inter,sans-serif;letter-spacing:2.4px;color:#9fd9b8}
 #v-leaderboard .lb2-row{display:flex;align-items:flex-end;justify-content:space-between;gap:12px}
 #v-leaderboard .lb2-big{font:900 36px/1.05 Archivo,sans-serif;font-stretch:125%;margin-top:4px;color:#fff}
@@ -4403,6 +4404,14 @@ html.desk[data-dv=boxes] #scr#scr#scr#scr #insideTop{display:grid!important;grid
 html.desk[data-dv=boxes] #scr#scr#scr#scr #insideTop>*{margin:0!important;width:auto!important}
 html.desk[data-dv=boxes] #scr#scr#scr#scr #blist{display:grid!important;grid-template-columns:repeat(3,1fr);gap:12px;padding:0!important}
 html.desk[data-dv=boxes] #scr#scr#scr#scr #blist>*{margin:0!important;width:auto!important}
+
+/* Leaderboard frames as outline only (Sharon 2026-11-25: everything on a see-through background, the page background must never be hidden) */
+#scr#scr #v-leaderboard :is(.lb2-fr,.seg,.ppb){background:transparent!important}
+#scr#scr #v-leaderboard :is(.lb2-fr,.seg,.ppb)::after{content:""!important;display:block!important;position:absolute;inset:0;z-index:-1;pointer-events:none;background:var(--frm,linear-gradient(135deg,#f4f5f7,#8e939b 40%,#e9ebee 70%,#7e838b));
+ clip-path:polygon(evenodd,var(--c,var(--cut)) 0,100% 0,100% calc(100% - var(--c,var(--cut))),calc(100% - var(--c,var(--cut))) 100%,0 100%,0 var(--c,var(--cut)),var(--c,var(--cut)) 0,
+  calc(var(--c,var(--cut)) + .9px) 1.5px,1.5px calc(var(--c,var(--cut)) + .9px),1.5px calc(100% - 1.5px),calc(100% - var(--c,var(--cut)) - .9px) calc(100% - 1.5px),calc(100% - 1.5px) calc(100% - var(--c,var(--cut)) - .9px),calc(100% - 1.5px) 1.5px,calc(var(--c,var(--cut)) + .9px) 1.5px)}
+#scr#scr #v-leaderboard .first .lb2-card{--frm:linear-gradient(135deg,#f3dc8e 0%,#a8822f 40%,#e9c15a 70%,#7d5f1e 100%)}
+#scr#scr #v-leaderboard .lb2-me{--frm:linear-gradient(135deg,#3ddc84,#00702f 45%,#19b85f 75%,#00552a)}
 </style>
 <div id="dk" aria-hidden="false">
  <div class="dk-bk"><svg id="dkHex"></svg></div>
