@@ -3868,6 +3868,20 @@ if(document.getElementById('boot'))addEventListener('mb-booted',go,{once:true});
 #gshop .gs-name{font:600 13.5px/1.25 Inter,sans-serif;min-height:34px}
 #gshop .gs-price{display:flex;align-items:center;gap:6px;margin-top:8px;font:700 16px Inter,sans-serif;font-variant-numeric:tabular-nums}
 #gshop .gs-price.short{color:#9aa0a9}
+/* 2026-11-25 Gift Shop list: one product per row, product inside a white hex with a fine green stroke, details on the right */
+#gshop .gs-list{display:flex;flex-direction:column;gap:10px}
+#gshop .gs-row{flex-direction:row;align-items:center;gap:14px;padding:10px 14px 10px 10px;background:linear-gradient(90deg,#141417,#09090a);box-shadow:inset 0 0 0 1px rgba(255,255,255,.1);clip-path:polygon(12px 0,100% 0,100% calc(100% - 12px),calc(100% - 12px) 100%,0 100%,0 12px)}
+#gshop .gs-hex{flex:none;width:104px;height:120px;padding:1.5px;background:#19b85f;clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%)}
+#gshop .gs-hex .hx{width:100%;height:100%;display:grid;place-items:center;background:radial-gradient(70% 60% at 50% 38%,#fff 0,#f4f5f6 50%,#dcdfe2 85%,#c9cdd1 100%);clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%)}
+#gshop .gs-hex img{width:74%;height:auto;aspect-ratio:1;object-fit:contain;filter:drop-shadow(0 6px 6px rgba(0,0,0,.28))}
+#gshop .gs-hex img.fill{width:100%;height:100%;object-fit:cover;filter:none}
+#gshop .gs-tx{flex:1;min-width:0;display:flex;flex-direction:column;gap:5px}
+#gshop .gs-row .gs-tag{margin-bottom:0}
+#gshop .gs-row .gs-name{font:700 15px/1.2 Inter,sans-serif;min-height:0}
+#gshop .gs-desc{font:500 11.5px/1.35 Inter,sans-serif;color:#9aa39e;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+#gshop .gs-row .gs-price{margin-top:2px;font-size:17px}
+#gshop .gs-chev{flex:none;color:#6c7470}
+
 #gshop .gs-ord{display:flex;align-items:center;gap:12px;padding:10px 12px;margin-bottom:10px;border:1px solid rgba(255,255,255,.14);background:#0d0d10;clip-path:polygon(12px 0,100% 0,100% calc(100% - 12px),calc(100% - 12px) 100%,0 100%,0 12px)}
 #gshop .gs-ord svg{width:56px;height:56px;flex:none}
 #gshop .gs-ord div{flex:1;min-width:0;font:600 13.5px Inter}
@@ -3921,6 +3935,8 @@ window.MB_PH=['backpack','beanie','bottleblack','bottlegreen','candle','cap','ca
   cloth:`<rect x="30" y="58" width="60" height="38" fill="#2a6fd6" transform="rotate(-6 60 77)"/><rect x="28" y="46" width="60" height="38" fill="#e9c15a" transform="rotate(4 58 65)"/><rect x="32" y="34" width="60" height="38" fill="#6d737b"/><path d="M32 34 h60 v38" fill="none" stroke="#9aa0a9" stroke-dasharray="2 3"/>`,
   tools:`<rect x="22" y="22" width="76" height="76" rx="6" fill="#15161a" stroke="#3a3d46"/><path d="M38 34 L46 86 L50 86 L42 34 Z" fill="url(#sv)"/><rect x="58" y="32" width="6" height="34" rx="2" fill="#c0392b"/><rect x="59.5" y="66" width="3" height="22" fill="url(#sv)"/><rect x="74" y="32" width="6" height="34" rx="2" fill="#2a6fd6"/><rect x="75.5" y="66" width="3" height="22" fill="url(#sv)"/><rect x="88" y="34" width="4" height="52" rx="2" fill="url(#sv)"/>`};
  const PH=new Set(window.MB_PH||[]);   // product photos generated with ChatGPT (2026-11-23); others fall back to the 3D render
+ const NOCUT=new Set(['chargerpad','leatherbox','mbwatch','mbwatchsteel','presbox','winderdouble']);   // no transparent render yet: photo fills the hex
+ const hexArt=k=>NOCUT.has(k)?`<img class="fill" src="assets/gifts/ph/${k}.jpg" alt="" decoding="async">`:`<img src="assets/gifts/${k}.webp" alt="" decoding="async">`;
  const art=k=>PH.has(k)?`<img class="ph" src="assets/gifts/ph/${k}.jpg" alt="" decoding="async">`:`<img src="assets/gifts/${k}.webp" alt="" decoding="async">`;   // realistic 3D product renders (2026-11-23), replace with real photos when merch exists
  const P=[
   {id:'tee',a:'tee',n:'MistyBox Black Tee',gp:450,mb:1,d:'Heavyweight organic cotton tee, relaxed fit, white MistyBox wordmark on the chest.'},
@@ -4020,7 +4036,7 @@ window.MB_PH=['backpack','beanie','bottleblack','bottlegreen','candle','cap','ca
  function render(){const b=document.getElementById('gsBody');bal();
   if(F==='ord'){b.innerHTML=S.gpOrders.length?S.gpOrders.map(o=>{const p=P.find(x=>x.id===o.id)||P[0];return `<div class="gs-ord">${art(p.a)}<div>${esc(p.n)}<small>${new Date(o.t).toLocaleDateString('en-US',{month:'short',day:'numeric'})} · ${fmt(p.gp)} GP${o.cm?`<br>Delivered to CrashMania · ${esc(o.cm)}`:` · ${money(o.ship||SHIP)} shipping<br>Shipping to ${esc(o.city||'you')} · ${esc(o.trk)}`}</small></div></div>`}).join(''):`<div class="gs-empty">No gifts ordered yet.<br>Pick something from the shop and it ships to you for free.</div>`;return}
   const list=P.filter(p=>F==='all'||p.cat===F);
-  b.innerHTML=`<div class="gs-grid">${list.map(p=>`<button type="button" class="gs-card" data-id="${p.id}"><div class="in"><div class="gs-art">${art(p.a)}</div>${p.gc?'<span class="gs-tag cm"><img src="assets/crashmania-logo.png" alt="CrashMania"></span>':`<span class="gs-tag${p.mb?' mb':''}">${p.mb?'MistyBox':'Essentials'}</span>`}<div class="gs-name">${esc(p.n)}</div><div class="gs-price${S.gp<p.gp?' short':''}">${gpIco(16)}${fmt(p.gp)}</div></div></button>`).join('')}</div>`}
+  b.innerHTML=`<div class="gs-list">${list.map(p=>`<button type="button" class="gs-card gs-row" data-id="${p.id}"><div class="gs-hex"><div class="hx">${hexArt(p.a)}</div></div><div class="gs-tx">${p.gc?'<span class="gs-tag cm"><img src="assets/crashmania-logo.png" alt="CrashMania"></span>':`<span class="gs-tag${p.mb?' mb':''}">${p.mb?'MistyBox':'Essentials'}</span>`}<div class="gs-name">${esc(p.n)}</div><div class="gs-desc">${esc(p.d||'')}</div><div class="gs-price${S.gp<p.gp?' short':''}">${gpIco(18)}${fmt(p.gp)}</div></div><svg class="gs-chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button>`).join('')}</div>`}
  sh.querySelector('.gs-tabs').onclick=e=>{const t=e.target.closest('button');if(!t)return;F=t.dataset.f;sh.querySelectorAll('.gs-tabs button').forEach(x=>x.classList.toggle('on',x===t));render();try{SFX.tap()}catch(_){}};
  sh.querySelector('.gs-back').onclick=()=>closeGShop();
  const ib=sh.querySelector('.gs-info'),tip=sh.querySelector('#gsTip'),setTip=v=>{tip.classList.toggle('on',v);ib.setAttribute('aria-expanded',v)};
