@@ -4416,12 +4416,35 @@ html.desk[data-dv=boxes] #scr#scr#scr#scr #blist>*{margin:0!important;width:auto
 /* Gift Shop on desktop: two product columns */
 html.desk #gshop .gs-list{display:grid!important;grid-template-columns:1fr 1fr;gap:12px}
 html.desk #gshop .gs-list>*{margin:0!important}
+
+/* Desktop Boxes: categories bar (left) + VIP card (right), from the app's drawers (Sharon 2026-11-25) */
+#dk .dk-cats,#dk .dk-vip{display:none;position:fixed;top:92px;z-index:6;font-family:Inter,sans-serif;color:#fff}
+html.desk[data-dv=boxes] #dk .dk-cats,html.desk[data-dv=boxes] #dk .dk-vip{display:flex}
+#dk .dk-cats{left:max(32px,calc(50vw - 590px));gap:8px}
+#dk .dk-cats button{display:flex;align-items:center;gap:8px;height:46px;padding:0 16px 0 10px;border:1px solid rgba(255,255,255,.14);background:rgba(8,8,10,.35);color:#c3c7cf;font:600 14px Inter,sans-serif;cursor:pointer;clip-path:polygon(9px 0,100% 0,100% calc(100% - 9px),calc(100% - 9px) 100%,0 100%,0 9px)}
+#dk .dk-cats button svg{width:28px;height:28px}
+#dk .dk-cats button:hover{color:#fff;border-color:rgba(255,255,255,.3)}
+#dk .dk-cats button.on{color:#fff;border-color:#19b85f;background:rgba(0,154,73,.2)}
+#dk .dk-cats button.soon{opacity:.55}
+#dk .dk-cats button small{font:700 9px Inter,sans-serif;letter-spacing:1.2px;color:#8f9893;margin-left:2px}
+#dk .dk-vip{right:max(32px,calc(50vw - 590px));align-items:center;gap:14px;padding:10px 14px 10px 10px;border:1px solid rgba(255,255,255,.14);background:rgba(8,8,10,.35);clip-path:polygon(12px 0,100% 0,100% calc(100% - 12px),calc(100% - 12px) 100%,0 100%,0 12px);cursor:pointer;width:340px}
+#dk .dk-vip .lv{width:48px;height:50px;flex:none}
+#dk .dk-vip .lv svg{width:100%;height:100%}
+#dk .dk-vip .tx{flex:1;min-width:0;text-align:left;display:block}#dk .dk-vip .tx>span{display:block}
+#dk .dk-vip .tx b{display:block;font:900 13px Archivo,sans-serif;font-stretch:125%;letter-spacing:1px}
+#dk .dk-vip .bar{height:8px;margin:7px 0 5px;background:rgba(255,255,255,.1);clip-path:polygon(4px 0,100% 0,100% calc(100% - 4px),calc(100% - 4px) 100%,0 100%,0 4px)}
+#dk .dk-vip .bar i{display:block;height:100%;background:linear-gradient(90deg,#00702f,#3ddc84)}
+#dk .dk-vip .tx span{font:500 11.5px Inter,sans-serif;color:#c3c7cf}
+#dk .dk-vip .tx span em{font-style:normal;color:#e8c45a;font-weight:700}
 </style>
 <div id="dk" aria-hidden="false">
  <div class="dk-bk"><svg id="dkHex"></svg></div>
  <div class="dk-bar"><img class="dk-lg" src="assets/logo-white.png" alt="MistyBox" data-go="boxes">
   <nav class="dk-nv dk-fr" aria-label="Main"></nav>
   <div class="dk-tr"><button class="dk-gp" id="dkGp" type="button">⬢ <span>0</span> <small>GP</small></button><button class="dk-wl" id="dkWl" type="button" aria-label="Add funds"><span>$0</span><i>+</i></button></div></div>
+
+ <div class="dk-cats" id="dkCats" role="tablist" aria-label="Categories"></div>
+ <button class="dk-vip" id="dkVip" type="button" aria-label="VIP level and loyalty progress"><span class="lv" id="dkVipLv"></span><span class="tx"><b id="dkVipT">VIP LEVEL</b><span class="bar"><i id="dkVipBar"></i></span><span id="dkVipS"></span></span></button>
  <aside class="dk-sd l"><div class="dk-pn dk-fr"><div class="dk-eb">What's inside</div><div id="dkIn" style="margin-top:8px"></div><button class="dk-lk" id="dkOdds" type="button">See every watch &amp; its probability →</button></div></aside>
  <aside class="dk-sd r"><div class="dk-pn dk-fr"><div class="dk-row"><div><div class="dk-eb">Leaderboard · this week</div><div class="dk-big" id="dkPts">0</div></div><button class="dk-lk" style="margin:0" data-go="leaderboard" type="button">View →</button></div></div>
   <div class="dk-pn dk-fr"><div class="dk-row"><div><div class="dk-eb">Gift Points</div><div class="dk-big" id="dkGp2" style="color:#3ddc84">0</div></div><button class="dk-lk" style="margin:0" id="dkShop" type="button">Gift Shop →</button></div></div>
@@ -4465,6 +4488,19 @@ html.desk #gshop .gs-list>*{margin:0!important}
   mk('v-account',['.acard'],['.menu:not(.legal)','.msec','.menu.legal','.foot'])};
  const oShow=window.show;if(typeof oShow==='function'){window.show=function(v){const r=oShow.apply(this,arguments);if(R.classList.contains('desk')){R.dataset.dv=v;requestAnimationFrame(()=>{try{fitHero()}catch(e){}})}return r}}
  const oFit=window.fitHero;if(typeof oFit==='function'){window.fitHero=function(){const r=oFit.apply(this,arguments);if(R.classList.contains('desk')){const sc=document.getElementById('scr'),u=470/393;sc.style.setProperty('--u',u);sc.style.setProperty('--U',u+'px');sc.style.setProperty('--ox',Math.max(0,(sc.clientWidth-393*u)/2)+'px')}return r}}
+
+ // categories + VIP on the desktop Boxes page, mirrored from the app's drawers
+ const cats=document.getElementById('dkCats'),vip=document.getElementById('dkVip');
+ const uid=(h,t)=>h.replace(/id="([^"]+)"/g,'id="$1-'+t+'"').replace(/url\(#([^)]+)\)/g,'url(#$1-'+t+')');   // the app's drawer copies are hidden, so give the cloned gradients their own ids
+ cats.innerHTML=[...document.querySelectorAll('#cats .mb-cat')].map(b=>{const c=b.dataset.c,live=c==='watches'||c==='bags';return `<button type="button" data-c="${c}" class="${live?'':'soon'}">${uid(b.querySelector('svg').outerHTML,'dk'+c)}${b.textContent.trim()}${live?'':'<small>SOON</small>'}</button>`}).join('');
+ cats.addEventListener('click',e=>{const b=e.target.closest('[data-c]');if(b&&window.MBCat)MBCat.pick(b.dataset.c)});
+ const lvH=n=>`<svg viewBox="0 0 48 54"><defs><linearGradient id="dkvg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f4f5f7"/><stop offset=".4" stop-color="#8e939b"/><stop offset=".7" stop-color="#e9ebee"/><stop offset="1" stop-color="#7e838b"/></linearGradient></defs><polygon points="24,1 47,14 47,40 24,53 1,40 1,14" fill="url(#dkvg)"/><polygon points="24,6 42,16.5 42,37.5 24,48 6,37.5 6,16.5" fill="#0d0e11"/><text x="24" y="34" text-anchor="middle" font-family="Archivo,sans-serif" font-weight="900" font-size="20" fill="#fff">${n}</text></svg>`;
+ vip.onclick=()=>{const g=document.querySelector('#dwLoyal .mb-gift');if(g)g.click();const tip=document.getElementById('gift-tip');if(tip&&typeof toast==='function')toast((tip.querySelector('small')?.textContent||'')+': '+(tip.querySelector('b')?.textContent||'')+' · '+(tip.querySelector('span')?.textContent||''))};
+ const syncX=()=>{if(window.MBCat)cats.querySelectorAll('[data-c]').forEach(b=>b.classList.toggle('on',b.dataset.c===MBCat.cat));
+  const tr=document.querySelector('#loyal .mb-track'),lab=document.querySelector('#dwLoyal .mb-drawer-tab')?.getAttribute('aria-label')||'',m=/level (\d+)/i.exec(lab),tip=document.getElementById('gift-tip');
+  document.getElementById('dkVipT').textContent='VIP LEVEL '+(m?m[1]:'');const lvE=document.getElementById('dkVipLv');if(m&&lvE.dataset.n!==m[1]){lvE.dataset.n=m[1];lvE.innerHTML=lvH(m[1])}if(tr){document.getElementById('dkVipBar').style.width=tr.querySelector('i')?.style.width||'0';
+   document.getElementById('dkVipS').innerHTML=`${tr.querySelector('span')?.textContent||''} pts · next: <em>${tip?.querySelector('b')?.textContent||''}</em>`}};
+ setInterval(syncX,500);syncX();
  MQ.addEventListener('change',apply);addEventListener('resize',()=>{if(R.classList.contains('desk'))hex()});apply();setInterval(sync,300);sync();
 })();
 </script>
