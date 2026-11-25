@@ -4338,11 +4338,11 @@ html.desk[data-dv=boxes] #dk .dk-sd{display:flex}
 #dk .dk-bxs b{display:block;font:800 10.5px Archivo,sans-serif;font-stretch:125%;margin-top:2px}
 
 /* ===== Desktop wide pages (Sharon 2026-11-25: "not a mobile column"): every page except Boxes uses the full desktop width ===== */
-html.desk:not([data-dv=boxes]) .phone{width:min(1240px,calc(100vw - 64px))!important;box-shadow:none!important}
-html.desk:not([data-dv=boxes]) #scr .bg{opacity:0}
-html.desk:not([data-dv=boxes]) #scr{background:transparent!important}
-html.desk:not([data-dv=boxes]) #scr #top{display:none!important}
-html.desk:not([data-dv=boxes]) #scr #views{padding:36px 0 60px!important}
+html.desk .phone{width:min(1240px,calc(100vw - 64px))!important;box-shadow:none!important}
+html.desk #scr .bg{opacity:0}
+html.desk #scr{background:transparent!important}
+html.desk #scr #top{display:none!important}
+html.desk #scr #views{padding:36px 0 60px!important}
 html.desk:not([data-dv=boxes]) #scr .view.on{max-width:1180px;margin:0 auto}
 html.desk:not([data-dv=boxes]) #scr .view .pad{padding-left:0!important;padding-right:0!important}
 html.desk:not([data-dv=boxes]) #scr .view .ptitle{font-size:44px!important}
@@ -4377,6 +4377,30 @@ html.desk[data-dv=leaderboard] .dk-col .lb2-r{height:64px}
 html.desk[data-dv=account] .dk-col>.acard,html.desk[data-dv=account] .dk-col>.menu{margin-top:0!important;margin-bottom:16px!important}
 /* sheets stay a centred panel on wide pages */
 html.desk:not([data-dv=boxes]) #scr .sheet{left:calc(50% - 320px)!important;right:calc(50% - 320px)!important}
+
+/* ===== Desktop Boxes page, full width (Sharon 2026-11-25): 3D box stage on the left, name / values / open on the right, lists below ===== */
+html.desk[data-dv=boxes] #dk .dk-sd{display:none!important}
+html.desk #scr #views:has(#v-boxes.on){padding-top:0!important}
+html.desk[data-dv=boxes] #scr#scr#scr#scr #v-boxes{margin:0 auto!important;max-width:1180px;min-height:calc(100vh - 76px)!important}
+html.desk[data-dv=boxes] #scr#scr#scr#scr .hero{left:0!important;right:auto!important;width:56%!important;top:16px!important;height:calc(100vh - 76px - 56px)!important}
+html.desk[data-dv=boxes] #scr#scr#scr#scr #hero3d,html.desk[data-dv=boxes] #scr#scr#scr#scr #hero3dg{left:0!important;top:0!important;width:100%!important;height:100%!important}
+html.desk[data-dv=boxes] #scr#scr#scr#scr .arrow{top:calc(50% - 24px)!important;width:48px!important;height:48px!important}
+html.desk[data-dv=boxes] #scr#scr#scr#scr .arrow.l{left:12px!important}html.desk[data-dv=boxes] #scr#scr#scr#scr .arrow.r{left:calc(100% - 60px)!important}
+html.desk[data-dv=boxes] #scr#scr#scr#scr .gline{display:none!important}
+html.desk[data-dv=boxes] #scr#scr#scr#scr .inside4{--ox:0px;visibility:visible!important;left:58%!important;top:calc(50vh + 100px)!important;border-top:1px solid rgba(255,255,255,.1);padding-top:6px!important;width:calc(393*var(--U))!important}
+html.desk[data-dv=boxes] #scr#scr#scr#scr .t{left:58%!important;right:0!important;top:calc(50vh - 260px)!important;text-align:left!important}
+html.desk[data-dv=boxes] #scr#scr#scr#scr #name{font-size:64px!important;text-align:left!important}
+html.desk[data-dv=boxes] #scr#scr#scr#scr .vals{--ox:0px;left:58%!important;right:auto!important;width:calc(393*var(--U))!important;top:calc(50vh - 120px)!important}
+html.desk[data-dv=boxes] #scr#scr#scr#scr #buy.cta{left:58%!important;width:calc(393*var(--U))!important;top:calc(50vh - 30px)!important;height:62px!important}
+html.desk[data-dv=boxes] #scr#scr#scr#scr .gift{left:58%!important;right:auto!important;width:calc(393*var(--U))!important;top:calc(50vh + 52px)!important}
+html.desk[data-dv=boxes] #scr#scr#scr#scr #giftBtn + .sec{margin-top:calc(100vh - 76px)!important}
+html.desk[data-dv=boxes] #scr#scr#scr#scr #v-boxes>.sec{display:flex!important;padding-left:0!important;padding-right:0!important;margin-bottom:14px!important}
+html.desk[data-dv=boxes] #scr#scr#scr#scr #v-boxes>.sec ~ .sec{margin-top:36px!important}
+html.desk[data-dv=boxes] #scr#scr#scr#scr #v-boxes>.foot{margin-top:30px!important;padding-bottom:30px}
+html.desk[data-dv=boxes] #scr#scr#scr#scr #insideTop{display:grid!important;grid-template-columns:repeat(4,1fr);gap:12px;padding:0!important}
+html.desk[data-dv=boxes] #scr#scr#scr#scr #insideTop>*{margin:0!important;width:auto!important}
+html.desk[data-dv=boxes] #scr#scr#scr#scr #blist{display:grid!important;grid-template-columns:repeat(3,1fr);gap:12px;padding:0!important}
+html.desk[data-dv=boxes] #scr#scr#scr#scr #blist>*{margin:0!important;width:auto!important}
 </style>
 <div id="dk" aria-hidden="false">
  <div class="dk-bk"><svg id="dkHex"></svg></div>
@@ -4425,7 +4449,7 @@ html.desk:not([data-dv=boxes]) #scr .sheet{left:calc(50% - 320px)!important;righ
   mk('v-leaderboard',['.lb2-pod','.lb2-me','.lb2-cta','.lb2-how'],['.lb2-ranks','.sec','.ppb'],['.seg','#reset']);
   mk('v-account',['.acard'],['.menu:not(.legal)','.msec','.menu.legal','.foot'])};
  const oShow=window.show;if(typeof oShow==='function'){window.show=function(v){const r=oShow.apply(this,arguments);if(R.classList.contains('desk')){R.dataset.dv=v;requestAnimationFrame(()=>{try{fitHero()}catch(e){}})}return r}}
- const oFit=window.fitHero;if(typeof oFit==='function'){window.fitHero=function(){const r=oFit.apply(this,arguments);if(R.classList.contains('desk')){const sc=document.getElementById('scr'),u=470/393;sc.style.setProperty('--u',u);sc.style.setProperty('--U',u+'px')}return r}}
+ const oFit=window.fitHero;if(typeof oFit==='function'){window.fitHero=function(){const r=oFit.apply(this,arguments);if(R.classList.contains('desk')){const sc=document.getElementById('scr'),u=470/393;sc.style.setProperty('--u',u);sc.style.setProperty('--U',u+'px');sc.style.setProperty('--ox',Math.max(0,(sc.clientWidth-393*u)/2)+'px')}return r}}
  MQ.addEventListener('change',apply);addEventListener('resize',()=>{if(R.classList.contains('desk'))hex()});apply();setInterval(sync,300);sync();
 })();
 </script>
