@@ -4340,8 +4340,8 @@ html.desk[data-dv=boxes] #dk .dk-sd{display:flex}
 #dk .dk-bxs b{display:block;font:800 10.5px Archivo,sans-serif;font-stretch:125%;margin-top:2px}
 
 /* ===== Desktop wide pages (Sharon 2026-11-25: "not a mobile column"): every page except Boxes uses the full desktop width ===== */
-html.desk .phone{width:min(1240px,calc(100vw - 64px))!important;box-shadow:none!important}
-html.desk #scr .bg{opacity:0}
+html.desk .phone{width:100vw!important;box-shadow:none!important}   /* full width so the app's own animated hex background covers the whole screen (Sharon 2026-11-25) */
+html.desk #dk .dk-bk{display:none}
 html.desk #scr{background:transparent!important}
 html.desk #scr #top{display:none!important}
 html.desk #scr #views{padding:36px 0 60px!important}
@@ -4441,6 +4441,10 @@ html.desk[data-dv=boxes] #dk .dk-cats,html.desk[data-dv=boxes] #dk .dk-vip{displ
 #dk .dk-vip .gf svg{width:100%;height:100%}
 @keyframes dkGift{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-3px) rotate(-4deg)}}
 #dk .dk-vip{width:390px}
+
+/* during the spin and reveal: only the opening on screen, like mobile */
+html.desk:has(#reveal.on) #dk .dk-cats,html.desk:has(#reveal.on) #dk .dk-vip{display:none!important}
+html.desk:has(#reveal.on) #scr#scr#scr#scr .inside4,html.desk:has(#reveal.on) #scr#scr#scr#scr .t,html.desk:has(#reveal.on) #scr#scr#scr#scr .vals,html.desk:has(#reveal.on) #scr#scr#scr#scr #buy,html.desk:has(#reveal.on) #scr#scr#scr#scr .gift{visibility:hidden!important}
 </style>
 <div id="dk" aria-hidden="false">
  <div class="dk-bk"><svg id="dkHex"></svg></div>
