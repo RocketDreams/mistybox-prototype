@@ -1,5 +1,6 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8">
+<html lang="en"><head>
+<meta name="mb-build" content="1795621361"><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="MistyBox">
@@ -4515,4 +4516,9 @@ html.desk:has(#reveal.on) #scr#scr#scr#scr .inside4,html.desk:has(#reveal.on) #s
  MQ.addEventListener('change',apply);addEventListener('resize',()=>{if(R.classList.contains('desk'))hex()});apply();setInterval(sync,300);sync();
 })();
 </script>
+<script id="mb-autoupdate">/* GitHub Pages caches the page for up to 10 min: if a newer build is live, reload once (2026-11-25) */
+(()=>{const cur=document.querySelector('meta[name=mb-build]')?.content;if(!cur)return;
+ const chk=()=>fetch(location.pathname+'?build='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=/name="mb-build" content="(\d+)"/.exec(t);
+  if(m&&m[1]!==cur){let k='mbReloaded'+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,1)}catch(e){}location.reload()}}).catch(()=>{});
+ setTimeout(chk,1500);document.addEventListener('visibilitychange',()=>{if(!document.hidden)chk()})})();</script>
 </body></html>
