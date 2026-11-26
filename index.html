@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="en"><head>
-<meta name="mb-build" content="1795682733"><meta charset="utf-8">
+<meta name="mb-build" content="1795705956"><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="MistyBox">
@@ -4586,11 +4586,11 @@ function pkDust(pk){const cv=pk.querySelector('.pk-dust');if(!cv)return;const g=
 <script id="agegate-js">
 (function(){
  var ag=document.getElementById('ag');if(!ag)return;
- var K='mbAge18';try{if(sessionStorage.getItem(K)==='1'){ag.remove();return}}catch(e){}
+ 
  function pane(n){ag.querySelectorAll('.ag-pane').forEach(function(p){p.classList.toggle('on',p.dataset.p===n)});var f=ag.querySelector('.ag-pane.on .ag-b');f&&f.focus({preventScroll:true})}
  function open(){ag.hidden=false;requestAnimationFrame(function(){ag.classList.add('on');pane('ask')})}
  ag.addEventListener('click',function(e){var b=e.target.closest('[data-a]');if(!b)return;var a=b.dataset.a;
-  if(a==='yes'){try{sessionStorage.setItem(K,'1')}catch(e){}ag.classList.remove('on');setTimeout(function(){ag.remove()},380)}
+  if(a==='yes'){ag.classList.remove('on');setTimeout(function(){ag.remove()},380)}
   else if(a==='no')pane('no');else pane('ask')});
  if(!document.getElementById('boot'))open();else addEventListener('mb-booted',open,{once:true});
 })();
