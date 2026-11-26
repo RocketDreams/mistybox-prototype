@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="en"><head>
-<meta name="mb-build" content="1795705956"><meta charset="utf-8">
+<meta name="mb-build" content="1795706042"><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="MistyBox">
@@ -4490,7 +4490,7 @@ html.desk:has(#reveal.on) #scr#scr#scr#scr .inside4,html.desk:has(#reveal.on) #s
   for(let y=-r,row=0;y<H+r;y+=r*1.5,row++)for(let x=(row%2?w/2:0)-w;x<W+w;x+=w){k++;const pts=[...Array(6)].map((_,i)=>{const a=Math.PI/180*(60*i-30);return(x+r*.93*Math.cos(a)).toFixed(1)+','+(y+r*.93*Math.sin(a)).toFixed(1)}).join(' ');
    const fade=Math.max(.25,1-y/H*.9),lit=rnd(k)>.88;s+=`<polygon points="${pts}" fill="${lit?`rgba(0,154,73,${(.14+rnd(k+7)*.28)*fade})`:`rgba(255,255,255,${.02*fade+.008})`}" stroke="rgba(0,0,0,.6)" stroke-width="3"/>`}
   sv.setAttribute('viewBox',`0 0 ${W} ${H}`);sv.innerHTML=s};
- const apply=()=>{const on=MQ.matches;if(on)cols();const was=R.classList.contains('desk');R.classList.toggle('desk',on);if(on)hex();
+ const DK=/[?&]desktop\b/.test(location.search);const apply=()=>{const on=DK&&MQ.matches;if(on)cols();const was=R.classList.contains('desk');R.classList.toggle('desk',on);if(on)hex();
   if(on!==was){try{fit()}catch(e){}requestAnimationFrame(()=>dispatchEvent(new Event('resize')))}};
  const of=window.fit;if(typeof of==='function'){window.fit=function(){if(R.classList.contains('desk')){$('#phone').style.transform='';return}return of.apply(this,arguments)}}
  
